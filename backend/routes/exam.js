@@ -6,7 +6,8 @@ import {
   submitExamAnswer,
   tabSwitch,
   completeExam,
-  getStats
+  getStats,
+  startAIExam
 } from '../controllers/examController.js';
 
 const router = express.Router();
@@ -16,6 +17,7 @@ router.get('/stats', protect, getStats);
 
 // 🔥 then dynamic routes
 router.post('/start', protect, startExam);
+router.post('/start-ai', protect, startAIExam);
 router.get('/:id', protect, getExam);
 router.post('/:id/answer', protect, submitExamAnswer);
 router.post('/:id/tab-switch', protect, tabSwitch);

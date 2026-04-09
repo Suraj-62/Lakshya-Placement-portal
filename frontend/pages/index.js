@@ -1,212 +1,206 @@
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { ArrowRight, Code, Brain, LineChart } from "lucide-react";
 
-function Home() {
-  const [symbols, setSymbols] = useState([]);
-
-  useEffect(() => {
-    const arr = Array.from({ length: 40 }).map(() => ({
-      left: Math.random() * 100,
-      duration: 10 + Math.random() * 10,
-      size: 14 + Math.random() * 20,
-      symbol: ["< />", "{ }", "[ ]", "+", "*", "</>", "==", "&&", "||"][
-        Math.floor(Math.random() * 9)
-      ],
-    }));
-    setSymbols(arr);
-  }, []);
-
+export default function Home() {
   return (
-    <div className="min-h-screen text-white relative overflow-hidden bg-[#020617]">
-
-      {/* 🔥 BACKGROUND GLOW */}
-      <div className="absolute inset-0">
-        <div className="absolute w-[600px] h-[600px] bg-purple-700 opacity-20 blur-[120px] top-[-100px] left-[-100px]"></div>
-        <div className="absolute w-[500px] h-[500px] bg-cyan-500 opacity-20 blur-[120px] bottom-[-100px] right-[-100px]"></div>
-      </div>
-
-      {/* FLOATING SYMBOLS */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {symbols.map((item, i) => (
-          <span
-            key={i}
-            className="code-symbol"
-            style={{
-              left: `${item.left}%`,
-              animationDuration: `${item.duration}s`,
-              fontSize: `${item.size}px`,
-            }}
-          >
-            {item.symbol}
-          </span>
-        ))}
-      </div>
-
-      {/* 🔥 NAVBAR */}
-      <div className="relative z-10 flex justify-between items-center px-10 py-6 backdrop-blur-md bg-white/5 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <img src="/lakshya.png" className="w-10 h-10 rounded-lg" />
-          <h1 className="text-2xl font-bold text-yellow-400 tracking-wide">
-            LAKSHYA
-          </h1>
-        </div>
-
-        <div className="flex gap-6 items-center">
-          <Link href="#about" className="hover:text-purple-400 transition">
-            About
-          </Link>
-          <Link href="#contact" className="hover:text-purple-400 transition">
-            Contact
-          </Link>
-
-          <Link
-            href="/auth/login"
-            className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 hover:scale-105 transition shadow-lg"
-          >
-            Login
-          </Link>
-        </div>
-      </div>
-
-      {/* 🔥 HERO */}
-      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between px-10 pt-24 pb-20 gap-12">
-
-        {/* LEFT */}
-        <div className="max-w-xl">
-          <h1 className="text-6xl font-extrabold leading-tight">
-            Build Skills.{" "}
-            <span className="bg-gradient-to-r from-purple-400 via-cyan-400 to-yellow-300 bg-clip-text text-transparent">
-              Crack Interviews.
-            </span>{" "}
-            Get Hired.
-          </h1>
-
-          <p className="mt-6 text-lg text-gray-400">
-            AI-powered coding practice, mock interviews, and real-time feedback — all in one platform.
-          </p>
-
-          <div className="mt-8 flex gap-4">
-            <Link
-              href="/auth/register"
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 font-semibold shadow-lg hover:scale-105 transition"
-            >
-              Get Started 
-            </Link>
-
-            <Link
-              href="/auth/login"
-              className="px-6 py-3 rounded-xl border border-white/20 hover:bg-white/10 transition backdrop-blur"
-            >
-              Login
-            </Link>
+    <div className="min-h-screen bg-[#0c0a09] text-stone-300 font-sans selection:bg-amber-700/30">
+      
+      {/* Navbar */}
+      <nav className="fixed top-0 w-full z-50 border-b border-amber-900/20 bg-[#0c0a09]/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#8b5e3c] flex items-center justify-center font-bold text-orange-50 shadow-inner shadow-orange-200/20">
+              L
+            </div>
+            <span className="text-xl font-bold text-orange-50 tracking-tight">
+              Lakshya
+            </span>
           </div>
-        </div>
-
-        {/* RIGHT IMAGE */}
-        <div className="relative w-full md:w-[520px] group">
-          <div className="absolute -inset-2 bg-gradient-to-r from-purple-500 to-cyan-500 blur-xl opacity-40 group-hover:opacity-70 transition"></div>
-
-          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl">
-            <img
-              src="/graduation photo.jpg"
-              className="w-full h-[400px] object-cover rounded-xl"
-            />
-          </div>
-
           
-        </div>
-      </div>
-
-      {/* 🔥 FEATURES */}
-      <div className="relative z-10 grid md:grid-cols-3 gap-6 px-10 pb-20">
-        {[
-          {
-            title: "AI Mock Interviews",
-            desc: "Practice real interview scenarios with AI",
-          },
-          {
-            title: "Live Coding",
-            desc: "Solve coding problems with instant feedback",
-          },
-          {
-            title: "Performance Analytics",
-            desc: "Track your growth and improve faster",
-          },
-        ].map((item, i) => (
-          <div key={i} className="card hover:scale-105 transition">
-            <h3 className="text-xl font-bold">{item.title}</h3>
-            <p className="mt-2 text-gray-400">{item.desc}</p>
+          <div className="hidden md:flex gap-8 text-sm font-medium">
+            <Link href="#features" className="hover:text-amber-400 transition-colors">Features</Link>
+            <Link href="#about" className="hover:text-amber-400 transition-colors">About</Link>
+            <Link href="#contact" className="hover:text-amber-400 transition-colors">Contact</Link>
           </div>
-        ))}
-      </div>
 
-      {/* ABOUT */}
-      <div id="about" className="relative z-10 px-10 py-16 text-center">
-        <h2 className="text-3xl font-bold mb-6 text-cyan-400">
-          About LAKSHYA
-        </h2>
-
-        <p className="text-gray-400 max-w-3xl mx-auto leading-relaxed">
-          Lakshya helps students prepare for placements with structured learning,
-          coding practice, mock interviews, and performance tracking. Our goal is
-          to make you confident and job-ready.
-        </p>
-      </div>
-
-      {/* CONTACT */}
-      <div id="contact" className="relative z-10 px-10 pb-10 text-center">
-        <h2 className="text-3xl font-bold mb-6 text-yellow-400">
-          Contact Us
-        </h2>
-
-        <div className="text-gray-400 space-y-2">
-          <p>Email: mishrasuraj6299@gmail.com</p>
-          <p>Phone: 6299323274</p>
+          <div className="flex items-center gap-4 text-sm font-medium">
+            <Link href="/auth/login" className="hover:text-amber-400 transition-colors">
+              Log in
+            </Link>
+            <Link href="/auth/register" className="px-4 py-2 bg-[#8b5e3c] text-orange-50 rounded-lg hover:bg-[#7a5234] transition-colors shadow-md">
+              Sign up
+            </Link>
+          </div>
         </div>
-      </div>
+      </nav>
 
-      {/* FOOTER */}
-      <div className="relative z-10 text-center pb-6 text-gray-500 text-sm">
-        © {new Date().getFullYear()} Lakshya. All rights reserved.
-      </div>
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+        {/* Abstract Background Elements */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#8b5e3c]/10 blur-[120px] rounded-full pointer-events-none"></div>
 
-      {/* STYLES */}
-      <style jsx>{`
-        .tag {
-          position: absolute;
-          background: rgba(255,255,255,0.1);
-          backdrop-filter: blur(10px);
-          padding: 6px 14px;
-          border-radius: 999px;
-          font-size: 13px;
-          border: 1px solid rgba(255,255,255,0.2);
-        }
+        <div className="max-w-7xl mx-auto px-6 text-center relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-900/10 border border-amber-700/20 text-amber-500 text-sm mb-8 font-medium">
+            <span className="flex h-2 w-2 rounded-full bg-amber-500"></span>
+            Human-centric placement preparation
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-orange-50 mb-6 max-w-4xl mx-auto leading-tight">
+            Master the code. <br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-400">
+              Ace the interview.
+            </span>
+          </h1>
+          
+          <p className="text-lg md:text-xl text-stone-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+            AI-powered coding practice, structured mock interviews, and real-time performance analytics designed to feel natural and encouraging.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="/auth/register" className="w-full sm:w-auto px-8 py-4 bg-orange-50 text-stone-900 rounded-xl font-semibold hover:bg-orange-100 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-amber-900/10">
+              Start Practicing Now
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link href="#features" className="w-full sm:w-auto px-8 py-4 bg-stone-900 border border-amber-900/30 text-amber-50 rounded-xl font-semibold hover:bg-stone-800 transition-all">
+              View Curriculum
+            </Link>
+          </div>
+        </div>
+      </section>
 
-        .card {
-          background: rgba(255,255,255,0.05);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255,255,255,0.1);
-          padding: 24px;
-          border-radius: 18px;
-        }
+      {/* Trusted By / Prepare For Marquee */}
+      <section className="py-12 border-y border-amber-900/10 bg-[#070504] overflow-hidden flex flex-col items-center relative z-10">
+        <p className="text-xs sm:text-sm font-bold tracking-[0.2em] text-[#8b5e3c] uppercase mb-8 shadow-black drop-shadow-lg">
+          Prepare for Top Tech Giants
+        </p>
+        
+        {/* Marquee Wrapper mask to fade edges cleanly */}
+        <div 
+          className="w-full max-w-[100vw] flex overflow-hidden relative" 
+          style={{ WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)', maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)' }}
+        >
+          {/* Marquee Track container that is double wide to loop seamlessly */}
+          <div className="flex w-max animate-marquee hover:[animation-play-state:paused] items-center">
+             
+             {/* Single Set of items - We repeat it twice below */}
+             {[
+               "Tata Consultancy Services", "Google", "Microsoft", "Wipro", 
+               "Accenture", "Infosys", "Cognizant", "Amazon", "Capgemini", "IBM"
+             ].map((company, i) => (
+                <div key={`set1-${i}`} className="flex items-center justify-center px-10 sm:px-16 whitespace-nowrap">
+                  <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-stone-800 uppercase tracking-tighter hover:text-stone-600 transition-colors duration-300">
+                    {company}
+                  </span>
+                </div>
+             ))}
 
-        .code-symbol {
-          position: absolute;
-          top: 100%;
-          color: rgba(0, 255, 200, 0.15);
-          font-family: monospace;
-          animation: floatUp linear infinite;
-        }
+             {/* Duplicated Set for Seamless Loop (Tailwind marquee shifts exactly -50% to align perfectly here) */}
+             {[
+               "Tata Consultancy Services", "Google", "Microsoft", "Wipro", 
+               "Accenture", "Infosys", "Cognizant", "Amazon", "Capgemini", "IBM"
+             ].map((company, i) => (
+                <div key={`set2-${i}`} className="flex items-center justify-center px-10 sm:px-16 whitespace-nowrap">
+                  <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-stone-800 uppercase tracking-tighter hover:text-stone-600 transition-colors duration-300">
+                    {company}
+                  </span>
+                </div>
+             ))}
 
-        @keyframes floatUp {
-          0% { transform: translateY(0); opacity: 0; }
-          10% { opacity: 1; }
-          100% { transform: translateY(-120vh); opacity: 0; }
-        }
-      `}</style>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section id="features" className="py-24 border-t border-amber-900/20 bg-[#0c0a09]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl font-bold text-orange-50 mb-4">Built for Success</h2>
+            <p className="text-stone-400 max-w-2xl mx-auto">Our platform provides comprehensive tools to bridge the gap between learning and landing your dream job.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="p-8 rounded-2xl bg-stone-900/50 border border-amber-900/20 hover:border-amber-700/40 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-amber-900/20 flex items-center justify-center mb-6">
+                <Brain className="w-6 h-6 text-amber-500" />
+              </div>
+              <h3 className="text-xl font-semibold text-orange-50 mb-3">AI Mock Interviews</h3>
+              <p className="text-stone-400 leading-relaxed">
+                Experience realistic interview scenarios with our advanced AI. Get instant feedback on your problem-solving approach.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-stone-900/50 border border-amber-900/20 hover:border-amber-700/40 transition-colors overflow-hidden group">
+              <div className="w-12 h-12 rounded-xl bg-orange-900/20 flex items-center justify-center mb-6 relative z-10">
+                <Code className="w-6 h-6 text-orange-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-orange-50 mb-3 relative z-10">Live Coding Environment</h3>
+              <p className="text-stone-400 leading-relaxed relative z-10">
+                Write, compile, and run code in multiple languages directly in your browser with an intuitive, distraction-free editor.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-stone-900/50 border border-amber-900/20 hover:border-amber-700/40 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-[#8b5e3c]/20 flex items-center justify-center mb-6">
+                <LineChart className="w-6 h-6 text-[#c19a6b]" />
+              </div>
+              <h3 className="text-xl font-semibold text-orange-50 mb-3">Performance Analytics</h3>
+              <p className="text-stone-400 leading-relaxed">
+                Track your progress over time. Identify weak areas with detailed metrics on accuracy, speed, and topic proficiency.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="py-24 border-t border-amber-900/20 bg-[#0c0a09]">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+            <h2 className="text-3xl font-bold text-orange-50 mb-6">About Lakshya</h2>
+            <p className="text-stone-400 text-lg leading-relaxed">
+                Lakshya aims to democratize tech placement preparation. Whether you are aiming for FAANG or top startups, our structured learning paths and realistic mock environments ensure you won't be caught off-guard.
+            </p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="pt-16 pb-8 border-t border-amber-900/20 bg-stone-900/30 px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 rounded-lg bg-[#8b5e3c] flex items-center justify-center font-bold text-orange-50 shadow-inner shadow-orange-200/20">
+                L
+              </div>
+              <span className="text-xl font-bold text-orange-50 tracking-tight">
+                Lakshya
+              </span>
+            </div>
+            <p className="text-stone-400 max-w-sm">
+              Master the code. Ace the interview. Your comprehensive platform for tech placement preparation.
+            </p>
+          </div>
+          
+          <div id="contact" className="md:justify-self-end">
+            <h3 className="text-xl font-semibold text-orange-50 mb-6">Get in Touch</h3>
+            <ul className="space-y-3">
+              <li className="flex items-center gap-3 text-stone-400">
+                 <span className="text-amber-500">Email:</span>
+                 <a href="mailto:mishrasuraj6299@gmail.com" className="hover:text-amber-400 transition-colors">mishrasuraj6299@gmail.com</a>
+              </li>
+              <li className="flex items-center gap-3 text-stone-400">
+                 <span className="text-amber-500">Phone:</span>
+                 <span className="text-stone-300">6299323274</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="text-center pt-8 border-t border-amber-900/20">
+          <p className="text-stone-500 text-sm">
+            © {new Date().getFullYear()} Lakshya. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
 
 Home.getLayout = (page) => page;
-export default Home;

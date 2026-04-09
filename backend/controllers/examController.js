@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 import Question from '../models/Question.js';
 import Exam from '../models/Exam.js';
+import User from '../models/User.js';
+import Category from '../models/Category.js';
+import { GoogleGenAI } from '@google/genai';
 
 // ✅ START EXAM
 export const startExam = async (req, res, next) => {
@@ -55,6 +58,98 @@ export const startExam = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     next(error);
+  }
+};
+
+// ✅ START AI EXAM
+export const startAIExam = async (req, res, next) => {
+  try {
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const { category, count = 7, duration = 30 } = req.body;
+
+    let categoryName = "General Computer Science";
+    let catId = null;
+
+    if (category && mongoose.Types.ObjectId.isValid(category)) {
+      catId = new mongoose.Types.ObjectId(category);
+      const catObj = await Category.findById(catId);
+      if (catObj) categoryName = catObj.name;
+    } else {
+      return res.status(400).json({ message: "Valid Category is required for AI generation." });
+    }
+
+    const prompt = `
+Generate ${count} company-level placement questions (multiple choice) for the technical category: ${categoryName}. 
+The difficulty should be appropriate for FAANG and top tech companies interviews (mix of medium and hard).
+Output raw JSON ONLY. No markdown blocks, no formatting wrapper. It must be an array of objects perfectly stringifiable.
+JSON Array Format expected:
+[
+  {
+    "questionText": "Question text here?",
+    "options": ["Option A", "Option B", "Option C", "Option D"],
+    "correctAnswer": "Option B",
+    "explanation": "Why this is correct.",
+    "difficulty": "medium",
+    "topic": "Specific sub-topic"
+  }
+]
+    `;
+
+    const result = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-lite',
+      contents: prompt
+    });
+
+    let rawText = result.text.trim();
+    // Use regex to robustly strip markdown formatting if the model returns any
+    rawText = rawText.replace(/^```(?:json)?/i, '').replace(/```$/i, '').trim();
+
+    const questionsData = JSON.parse(rawText);
+
+    if (!Array.isArray(questionsData) || questionsData.length === 0) {
+      throw new Error("Invalid AI raw shape generated");
+    }
+
+    // Embed attributes and save
+    const docs = questionsData.map(q => ({
+      ...q,
+      category: catId,
+      type: 'mcq',
+      isAIGenerated: true
+    }));
+
+    const savedQuestions = await Question.insertMany(docs);
+    const questionsIds = savedQuestions.map(q => q._id);
+
+    const startTime = new Date();
+    const endTime = new Date(startTime.getTime() + duration * 60000);
+
+    const exam = await Exam.create({
+      user: req.user._id,
+      questions: questionsIds,
+      duration,
+      startTime,
+      endTime,
+      status: 'ongoing',
+      answers: [],
+      tabSwitchCount: 0,
+    });
+
+    const populatedExam = await Exam.findById(exam._id).populate({
+      path: 'questions',
+      populate: { path: 'category' }
+    });
+
+    res.json({
+      examId: exam._id,
+      questions: populatedExam.questions,
+      endTime: exam.endTime,
+      duration: exam.duration,
+    });
+
+  } catch (error) {
+    console.log("AI Generation Error:", error);
+    res.status(500).json({ message: "Failed to generate AI questions. Please try again." });
   }
 };
 
@@ -150,6 +245,27 @@ export const completeExam = async (req, res, next) => {
       : 0;
 
     await exam.save();
+
+    // 🏆 GAMIFICATION & ANALYTICS
+    const userObj = await User.findById(exam.user);
+    if (userObj) {
+      userObj.totalAttempts += exam.questions.length;
+      userObj.totalCorrect += correctCount;
+      userObj.points += (correctCount * 10); // 10 points per correct answer
+
+      // Badges system
+      if (userObj.totalCorrect >= 10 && !userObj.badges.includes("Beginner")) {
+        userObj.badges.push("Beginner");
+      }
+      if (userObj.totalCorrect >= 50 && !userObj.badges.includes("Intermediate")) {
+        userObj.badges.push("Intermediate");
+      }
+      if (userObj.totalCorrect >= 100 && !userObj.badges.includes("Expert")) {
+        userObj.badges.push("Expert");
+      }
+
+      await userObj.save();
+    }
 
     res.json(exam);
 

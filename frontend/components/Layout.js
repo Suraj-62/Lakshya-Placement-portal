@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useEffect, useRef } from 'react';
+import { LogOut, User as UserIcon, LayoutDashboard, ChevronDown, Trophy } from 'lucide-react';
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
@@ -11,185 +11,99 @@ export default function Layout({ children }) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef();
 
-  // USER INITIAL
   const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : '';
 
-  //  FIXED SYMBOLS (NO HYDRATION ERROR)
-  const [symbols, setSymbols] = useState([]);
-
-  useEffect(() => {
-    const generated = Array.from({ length: 40 }).map(() => ({
-      left: Math.random() * 100,
-      duration: 8 + Math.random() * 10,
-      size: 14 + Math.random() * 20,
-      symbol: ["< />", "{ }", "[ ]", "+", "*", "</>", "==", "&&", "||"][
-        Math.floor(Math.random() * 9)
-      ]
-    }));
-
-    setSymbols(generated);
-  }, []);
-
-  //  OUTSIDE CLICK CLOSE
   useEffect(() => {
     function handleClickOutside(event) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setOpen(false);
       }
     }
-
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
-    <div className="min-h-screen text-white relative overflow-hidden">
+    <div className="min-h-screen bg-[#0c0a09] text-stone-300 font-sans selection:bg-amber-700/30">
+      
+      {/* Navbar */}
+      <nav className="fixed top-0 w-full z-50 border-b border-amber-900/20 bg-[#0c0a09]/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          
+          <div onClick={() => router.push(user ? '/dashboard' : '/')} className="flex items-center gap-3 cursor-pointer">
+            <div className="w-8 h-8 rounded-lg bg-[#8b5e3c] flex items-center justify-center font-bold text-orange-50 shadow-inner shadow-orange-200/20">L</div>
+            <span className="text-xl font-bold text-orange-50 tracking-tight">Lakshya</span>
+          </div>
 
-      {/* BACKGROUND */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#020617] via-[#0f172a] to-[#1e293b]"></div>
+          <div className="flex items-center gap-6">
+            {user ? (
+              <div className="flex items-center gap-6">
+                <Link href="/dashboard" className="text-sm font-medium text-stone-400 hover:text-orange-50 transition-colors hidden sm:block">Dashboard</Link>
+                <Link href="/leaderboard" className="text-sm font-medium text-stone-400 hover:text-orange-50 transition-colors hidden sm:block">Leaderboard</Link>
+                
+                <div className="h-4 w-px bg-stone-700 hidden sm:block"></div>
 
-      {/* FLOATING CODE */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        {symbols.map((item, i) => (
-          <span
-            key={i}
-            className="code-symbol"
-            style={{
-              left: `${item.left}%`,
-              animationDuration: `${item.duration}s`,
-              fontSize: `${item.size}px`,
-            }}
-          >
-            {item.symbol}
-          </span>
-        ))}
-      </div>
-
-      {/* NAVBAR */}
-      <nav className="relative z-20 bg-white/5 backdrop-blur-xl border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex justify-between h-16 items-center">
-
-            {/* LEFT */}
-            <div
-              onClick={() => router.push('/dashboard')}
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <Image src="/lakshya.png" alt="logo" width={40} height={40} />
-              <span className="text-lg font-bold text-yellow-400">
-                Lakshya
-              </span>
-            </div>
-
-            {/* RIGHT */}
-            <div className="flex items-center gap-5">
-
-              {user ? (
-                <>
-                  <select className="bg-white/10 border border-white/20 rounded px-2 py-1 text-sm">
-                    <option>English</option>
-                    <option>Hindi</option>
-                  </select>
-
-                  <span className="text-sm text-gray-400">
-                    ID: {user?._id?.slice(-6)}
-                  </span>
-
-                  {/* DROPDOWN */}
-                  <div className="relative" ref={dropdownRef}>
-                    <div
-                      onClick={() => setOpen(!open)}
-                      className="flex items-center gap-3 cursor-pointer"
-                    >
-                      <div className="w-10 h-10 rounded-full bg-[#8b5e3c] flex items-center justify-center text-white font-bold text-lg">
+                <div className="relative" ref={dropdownRef}>
+                  <div onClick={() => setOpen(!open)} className="flex items-center gap-2 cursor-pointer group">
+                    {user?.avatar ? (
+                      <div className="w-9 h-9 rounded-full bg-stone-900 border border-amber-700/50 group-hover:border-amber-500 transition-colors shadow-sm relative flex items-center justify-center">
+                        <img 
+                          src={`http://localhost:5000${user.avatar}`} 
+                          alt="Avatar" 
+                          className="w-full h-full object-cover rounded-full absolute inset-0"
+                          onError={(e) => { e.currentTarget.style.display='none'; e.currentTarget.nextElementSibling.style.display='flex'; }}
+                        />
+                        {/* Hidden fallback if image fails */}
+                        <div className="hidden w-full h-full items-center justify-center font-bold text-sm text-amber-500 rounded-full">
+                          {userInitial}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-amber-900/40 text-amber-500 border border-amber-700/30 flex items-center justify-center font-bold text-sm group-hover:bg-amber-900/60 transition-colors">
                         {userInitial}
                       </div>
-
-                      <span className="font-medium">{user.name}</span>
-                    </div>
-
-                    {open && (
-                      <div className="absolute right-0 mt-3 w-44 bg-[#0f172a] border border-white/10 rounded-lg z-50 shadow-xl">
-
-                        <button
-                          onClick={() => {
-                            setOpen(false);
-                            router.push('/profile');
-                          }}
-                          className="block w-full px-4 py-3 hover:bg-white/10 text-left"
-                        >
-                          Edit Profile
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            setOpen(false);
-                            logout();
-                          }}
-                          className="block w-full px-4 py-3 hover:bg-white/10 text-left"
-                        >
-                          Logout
-                        </button>
-
-                      </div>
                     )}
+                    <ChevronDown className="w-4 h-4 text-stone-500 group-hover:text-stone-300 transition-colors" />
                   </div>
-                </>
-              ) : (
-                <>
-                  <Link href="/auth/login" className="text-gray-300">
-                    Login
-                  </Link>
 
-                  <Link
-                    href="/auth/register"
-                    className="bg-indigo-600 px-4 py-2 rounded-md"
-                  >
-                    Register
-                  </Link>
-                </>
-              )}
-
-            </div>
-
+                  {open && (
+                    <div className="absolute right-0 mt-3 w-48 py-2 bg-stone-900 border border-amber-900/30 rounded-xl shadow-2xl z-50 transform origin-top-right transition-all">
+                      <div className="px-4 py-2 border-b border-amber-900/20 text-sm text-stone-400">
+                         Signed in as <br/> <strong className="text-orange-50">{user.name}</strong>
+                      </div>
+                      <div className="py-1">
+                        <button onClick={() => { setOpen(false); router.push('/dashboard'); }} className="w-full px-4 py-2 text-left text-sm text-stone-300 hover:bg-white/5 hover:text-orange-50 flex items-center gap-2 transition-colors">
+                          <LayoutDashboard className="w-4 h-4" /> Dashboard
+                        </button>
+                        <button onClick={() => { setOpen(false); router.push('/leaderboard'); }} className="w-full px-4 py-2 text-left text-sm text-stone-300 hover:bg-white/5 hover:text-orange-50 flex items-center gap-2 transition-colors">
+                          <Trophy className="w-4 h-4" /> Leaderboard
+                        </button>
+                        <button onClick={() => { setOpen(false); router.push('/profile'); }} className="w-full px-4 py-2 text-left text-sm text-stone-300 hover:bg-white/5 hover:text-orange-50 flex items-center gap-2 transition-colors">
+                          <UserIcon className="w-4 h-4" /> Edit Profile
+                        </button>
+                        <div className="my-1 border-t border-amber-900/20"></div>
+                        <button onClick={() => { setOpen(false); logout(); }} className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors">
+                          <LogOut className="w-4 h-4" /> Logout
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-4 text-sm font-medium">
+                <Link href="/auth/login" className="hover:text-amber-400 transition-colors">Log in</Link>
+                <Link href="/auth/register" className="px-4 py-2 bg-[#8b5e3c] text-orange-50 rounded-lg hover:bg-[#7a5234] transition-colors shadow-md">Sign up</Link>
+              </div>
+            )}
           </div>
         </div>
       </nav>
 
-      {/*  MAIN */}
-      <main className="relative z-10 max-w-7xl mx-auto px-6 py-10">
+      {/* Main Content */}
+      <main className="pt-24 pb-12 px-6 max-w-7xl mx-auto relative z-10 w-full min-h-[calc(100vh-64px)]">
         {children}
       </main>
-
-      {/*  CSS */}
-      <style jsx>{`
-        .code-symbol {
-          position: absolute;
-          top: 100%;
-          color: rgba(0, 255, 150, 0.12);
-          font-family: monospace;
-          animation: floatUp linear infinite;
-        }
-
-        @keyframes floatUp {
-          0% {
-            transform: translateY(0);
-            opacity: 0;
-          }
-          10% {
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(-120vh);
-            opacity: 0;
-          }
-        }
-      `}</style>
 
     </div>
   );

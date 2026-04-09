@@ -4,6 +4,6 @@
   "/_document": "pages/_document.js",
   "/dashboard": "pages/dashboard.js",
   "/exam/[id]": "pages/exam/[id].js",
-  "/exam/start": "pages/exam/start.js",
-  "/exam/[id]/result": "pages/exam/[id]/result.js"
+  "/exam/[id]/result": "pages/exam/[id]/result.js",
+  "/leaderboard": "pages/leaderboard.js"
 }

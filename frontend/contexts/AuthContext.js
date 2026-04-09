@@ -70,6 +70,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ✅ GOOGLE LOGIN
+  const continueWithGoogle = async (idToken) => {
+    try {
+      const { data } = await api.post('/auth/google', { idToken });
+
+      setUser(data);
+      localStorage.setItem('user', JSON.stringify(data));
+
+      toast.success('Google SignIn successful ✅');
+
+      return {
+        success: true,
+        user: data,
+      };
+
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Google SignIn failed ❌');
+      return { success: false };
+    }
+  };
+
   // ✅ LOGOUT (FULL CLEAN)
   const logout = async () => {
     try {
@@ -94,6 +115,7 @@ export const AuthProvider = ({ children }) => {
         loading,
         login,
         register,
+        continueWithGoogle,
         logout,
       }}
     >

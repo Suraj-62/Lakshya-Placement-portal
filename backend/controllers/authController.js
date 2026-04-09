@@ -2,6 +2,7 @@ import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
+import { OAuth2Client } from 'google-auth-library';
 
 
 // ✅ REGISTER
@@ -39,6 +40,27 @@ export const loginUser = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
+
+      // STREAK LOGIC
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (!user.lastActiveDate) {
+        user.streak = 1;
+      } else {
+        const lastActive = new Date(user.lastActiveDate);
+        lastActive.setHours(0, 0, 0, 0);
+        const diffTime = today - lastActive;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+          user.streak += 1;
+        } else if (diffDays > 1) {
+          user.streak = 1;
+        }
+      }
+      user.lastActiveDate = new Date();
+      await user.save();
 
       generateToken(res, user._id);
 
@@ -150,4 +172,67 @@ export const resetPassword = async (req, res) => {
   await user.save();
 
   res.json({ message: "Password updated successfully ✅" });
+};
+
+// ✅ GOOGLE LOGIN
+export const googleLogin = async (req, res, next) => {
+  try {
+    const { idToken } = req.body;
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const { email, name, picture } = ticket.getPayload();
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Generate a secure random password for Google-authenticated users
+      const generatedPassword = crypto.randomBytes(16).toString('hex');
+      user = await User.create({
+        name,
+        email,
+        password: generatedPassword,
+        avatar: picture,
+      });
+    }
+
+    // STREAK LOGIC
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (!user.lastActiveDate) {
+      user.streak = 1;
+    } else {
+      const lastActive = new Date(user.lastActiveDate);
+      lastActive.setHours(0, 0, 0, 0);
+      const diffTime = today - lastActive;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 1) {
+        user.streak += 1;
+      } else if (diffDays > 1) {
+        user.streak = 1;
+      }
+    }
+    user.lastActiveDate = new Date();
+    await user.save();
+
+    generateToken(res, user._id);
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      role: user.role,
+    });
+
+  } catch (error) {
+    console.error("Google Auth Error:", error);
+    res.status(401).json({ message: 'Invalid Google Token' });
+  }
 };

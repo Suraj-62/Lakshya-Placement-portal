@@ -14,6 +14,8 @@ import progressRoutes from './routes/progress.js';
 import adminRoutes from './routes/admin.js';
 import examRoutes from './routes/exam.js';
 import userRoutes from './routes/user.js';
+import bookmarkRoutes from './routes/bookmark.js';
+import leaderboardRoutes from './routes/leaderboard.js';
 
 dotenv.config();
 connectDB();
@@ -45,6 +47,8 @@ app.use('/api/progress', progressRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/exam', examRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/bookmarks', bookmarkRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use(notFound);
 app.use(errorHandler);

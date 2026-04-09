@@ -21,7 +21,18 @@ const userSchema = new mongoose.Schema({
 
   // 🔥 ADD THESE (IMPORTANT)
   resetToken: String,
-  resetTokenExpire: Date
+  resetTokenExpire: Date,
+
+  // 🏆 Gamification & Analytics
+  points: { type: Number, default: 0 },
+  streak: { type: Number, default: 0 },
+  lastActiveDate: { type: Date },
+  badges: [{ type: String }],
+  totalCorrect: { type: Number, default: 0 },
+  totalAttempts: { type: Number, default: 0 },
+
+  // 📌 Bookmarks
+  bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }]
 
 }, { timestamps: true });
 

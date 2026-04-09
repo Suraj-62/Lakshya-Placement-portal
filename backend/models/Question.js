@@ -10,6 +10,7 @@ const questionSchema = new mongoose.Schema({
   explanation: String,
   type: { type: String, enum: ['mcq', 'code', 'text'], default: 'mcq' },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  isAIGenerated: { type: Boolean, default: false },
 }, { timestamps: true });
 
 questionSchema.index({ category: 1, difficulty: 1 });
