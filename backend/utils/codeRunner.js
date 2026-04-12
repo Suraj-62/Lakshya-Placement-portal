@@ -237,10 +237,13 @@ export const runAgainstTestCases = async (code, language, testCases, functionNam
 
     // Normalization helper
     const normalize = (str) => {
+        let trimmed = str.trim();
         try {
-            return JSON.stringify(JSON.parse(str.trim()));
+            let parsed = JSON.parse(trimmed);
+            if (typeof parsed === 'string') return parsed;
+            return JSON.stringify(parsed);
         } catch (e) {
-            return str.trim();
+            return trimmed.replace(/^"|"$/g, '').replace(/^'|'$/g, '');
         }
     };
 
