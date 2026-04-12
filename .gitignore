@@ -3,7 +3,10 @@ backend/node_modules/
 frontend/node_modules/
 
 .env
+.env.local
 uploads/
 build/
 dist/
 target/
+frontend/.next/
+.next/
