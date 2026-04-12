@@ -138,7 +138,8 @@ export const forgotPassword = async (req, res) => {
     },
   });
 
-  const link = `http://localhost:3000/auth/reset/${token}`;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const link = `${frontendUrl}/auth/reset/${token}`;
 
   await transporter.sendMail({
     to: user.email,

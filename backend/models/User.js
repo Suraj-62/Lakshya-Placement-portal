@@ -30,9 +30,12 @@ const userSchema = new mongoose.Schema({
   badges: [{ type: String }],
   totalCorrect: { type: Number, default: 0 },
   totalAttempts: { type: Number, default: 0 },
+  solvedCodingQuestions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }],
 
   // 📌 Bookmarks
-  bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }]
+  bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }],
+
+  isBlocked: { type: Boolean, default: false }
 
 }, { timestamps: true });
 

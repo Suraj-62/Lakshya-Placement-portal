@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { Eye, EyeOff, User, Map, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, User, Map, Sparkles, ArrowRight } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
 import toast from 'react-hot-toast';
 
@@ -45,87 +45,77 @@ function Login() {
     <div className="min-h-screen flex font-sans bg-[#0c0a09] selection:bg-amber-700/30">
 
       {/* LEFT - PRESENTATION (WOW FACTOR) */}
-      <div className="hidden lg:flex w-1/2 relative items-center justify-center bg-[#050404] overflow-hidden p-12 border-r border-white/5">
+      <div className="hidden lg:flex w-1/2 relative flex-col justify-center bg-black overflow-hidden p-16 border-r border-white/5">
         
-        {/* Abstract Glowing Orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-600/20 blur-[120px] rounded-full animate-pulse z-0"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-[#8b5e3c]/20 blur-[130px] rounded-full z-0 animation-delay-2000"></div>
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay z-0"></div>
+        {/* Sleek Mesh Gradient */}
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_0%_0%,_rgba(217,119,6,0.15)_0%,_transparent_50%),radial-gradient(circle_at_100%_100%,_rgba(59,130,246,0.1)_0%,_transparent_50%)] z-0"></div>
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.02] mix-blend-overlay z-0"></div>
         
-        {/* Glassmorphism Hero Card */}
-        <div className="relative z-10 w-full max-w-lg p-10 rounded-[3rem] bg-stone-900/40 border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
-          <div className="flex flex-col items-start">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#8b5e3c] to-[#6a462c] flex items-center justify-center font-bold text-3xl text-orange-50 mb-10 shadow-xl shadow-amber-900/30 border border-amber-700/30">
-              L
-            </div>
-            
-            <h1 className="text-4xl xl:text-5xl font-extrabold text-white mb-6 leading-[1.15] tracking-tight">
-              Master the Code. <br/> 
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
-                Ace the Interview.
-              </span>
-            </h1>
-            
-            <p className="text-stone-300 text-lg leading-relaxed mb-10">
-              Join thousands of students securing their dream tech placements through structured, human-centric preparation module designed for success.
-            </p>
+        <div className="relative z-10 max-w-xl">
+          <div className="inline-flex h-16 px-6 rounded-2xl bg-white items-center justify-center font-black text-3xl text-black mb-12 shadow-[0_0_40px_rgba(255,255,255,0.2)] tracking-tight">
+            Lakshya
+          </div>
+          
+          <h1 className="text-5xl xl:text-6xl font-black text-white mb-8 leading-[1.1] tracking-tighter">
+            Elevate your <br/> 
+            <span className="text-stone-400">
+              engineering career.
+            </span>
+          </h1>
+          
+          <p className="text-stone-400 text-lg leading-relaxed mb-12 font-medium max-w-md">
+            Join the elite tier of engineers securing top-tier tech placements through our rigorously structured, professional-grade platform.
+          </p>
 
-            {/* Social Proof / Stats */}
-            <div className="flex flex-col xl:flex-row items-center gap-6 p-5 rounded-3xl bg-black/40 border border-white/5 w-full shadow-inner">
-               <div className="flex -space-x-4">
-                  {['S','A','R'].map((initial, i) => (
-                    <div key={i} className="w-12 h-12 rounded-full border-2 border-[#12100e] bg-stone-800 flex items-center justify-center text-sm font-bold text-amber-500 shadow-md">
-                      {initial}
-                    </div>
-                  ))}
-                  <div className="w-12 h-12 rounded-full border-2 border-[#12100e] bg-amber-900/50 flex items-center justify-center text-xs font-bold text-amber-400 backdrop-blur-sm">
-                    +2k
+          {/* Social Proof / Stats */}
+          <div className="flex items-center gap-6 pt-8 border-t border-white/10">
+             <div className="flex -space-x-4">
+                {['S','A','R'].map((initial, i) => (
+                  <div key={i} className="w-12 h-12 rounded-full border-2 border-black bg-stone-900 flex items-center justify-center text-sm font-bold text-white shadow-lg">
+                    {initial}
                   </div>
+                ))}
+             </div>
+             <div className="flex flex-col">
+               <div className="flex items-center gap-1 text-amber-500 mb-1">
+                 {[1,2,3,4,5].map(v => <Sparkles key={v} className="w-4 h-4 fill-current" />)}
                </div>
-               <div className="flex flex-col">
-                 <div className="flex items-center gap-1.5 text-amber-400 mb-0.5">
-                   {[1,2,3,4,5].map(v => <Sparkles key={v} className="w-4 h-4 fill-current" />)}
-                 </div>
-                 <span className="text-sm font-medium text-stone-400 tracking-wide">
-                   Over <strong className="text-white">10,000+</strong> active learners
-                 </span>
-               </div>
-            </div>
+               <span className="text-sm font-bold text-stone-400">
+                 Trusted by <span className="text-white">10k+</span> students
+               </span>
+             </div>
           </div>
         </div>
       </div>
 
       {/* RIGHT - AUTH FORM */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 xl:p-24 bg-[#0c0a09] relative">
-        
-        {/* Subtle Background Accent */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-amber-900/10 blur-[100px] rounded-full z-0 pointer-events-none"></div>
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 xl:p-24 bg-[#0a0a0a] relative">
 
-        <div className="w-full max-w-md relative z-10 animate-in slide-in-from-right-8 duration-700 fade-in">
+        <div className="w-full max-w-sm relative z-10 animate-in slide-in-from-right-8 duration-700 fade-in">
           
-          <div className="lg:hidden w-14 h-14 rounded-2xl bg-gradient-to-br from-[#8b5e3c] to-[#6a462c] flex items-center justify-center font-bold text-2xl text-orange-50 mb-8 shadow-xl shadow-amber-900/30 border border-amber-700/30">
-            L
+          <div className="lg:hidden inline-flex h-12 px-5 rounded-xl bg-white items-center justify-center font-black text-xl text-black mb-10 shadow-lg tracking-tight">
+            Lakshya
           </div>
           
           <div className="mb-10">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-3 tracking-tight">
-              {isAdmin ? "Admin Access" : "Welcome Back"}
+            <h2 className="text-3xl font-black text-white mb-2 tracking-tighter">
+              {isAdmin ? "Admin Access" : "Welcome back"}
             </h2>
-            <p className="text-stone-400 text-lg">
-              {isAdmin ? "System administration control panel." : "Sign in to continue your preparation journey."}
+            <p className="text-stone-400 font-medium">
+              {isAdmin ? "Secure system administration." : "Sign in to your professional workspace."}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
 
             {/* EMAIL */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-stone-300 tracking-wide uppercase">Email Address</label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-stone-400 uppercase tracking-widest">Email</label>
               <div className="relative group">
                 <input
                   type="email"
                   placeholder="name@example.com"
-                  className="w-full p-4 rounded-2xl bg-stone-900/50 border border-white/10 text-white placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-transparent focus:bg-stone-900/80 transition-all duration-300 shadow-inner"
+                  className="w-full p-3.5 rounded-xl bg-transparent border border-white/10 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-white/30 focus:border-white/30 transition-all font-medium"
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
@@ -133,39 +123,40 @@ function Login() {
             </div>
 
             {/* PASSWORD */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-bold text-stone-300 tracking-wide uppercase">Password</label>
-                <Link href="/auth/forgot" className="text-sm font-bold text-amber-500 hover:text-amber-400 transition-colors">
-                  Forgot password?
+                <label className="text-xs font-bold text-stone-400 uppercase tracking-widest">Password</label>
+                <Link href="/auth/forgot" className="text-xs font-bold text-stone-400 hover:text-white transition-colors">
+                  Forgot?
                 </Link>
               </div>
               <div className="relative group">
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="w-full p-4 rounded-2xl bg-stone-900/50 border border-white/10 text-white placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-transparent focus:bg-stone-900/80 transition-all duration-300 shadow-inner"
+                  className="w-full p-3.5 rounded-xl bg-transparent border border-white/10 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-white/30 focus:border-white/30 transition-all font-medium"
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-4 text-stone-500 hover:text-stone-300 focus:outline-none transition-colors"
+                  className="absolute right-4 top-3.5 text-stone-500 hover:text-white focus:outline-none transition-colors"
                 >
-                  {showPassword ? <EyeOff className="w-6 h-6" /> : <Eye className="w-6 h-6" />}
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
             </div>
 
             {/* SUBMIT */}
-            <div className="pt-2">
-              <button className={`w-full py-4 rounded-2xl font-bold text-lg text-white transition-all duration-300 transform hover:-translate-y-1 ${
+            <div className="pt-4">
+              <button className={`w-full py-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${
                 isAdmin
-                  ? "bg-stone-800 hover:bg-stone-700 border border-white/10 shadow-xl shadow-stone-900/50"
-                  : "bg-gradient-to-r from-[#8b5e3c] to-[#7a5234] hover:from-[#7a5234] hover:to-[#6a462c] shadow-xl shadow-amber-900/20"
+                  ? "bg-stone-800 text-white hover:bg-stone-700"
+                  : "bg-white text-black hover:bg-stone-200"
               }`}>
-                {isAdmin ? "Log in as Admin" : "Sign In to Lakshya"}
+                {isAdmin ? "Access Control Panel" : "Sign In to Workspace"}
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 

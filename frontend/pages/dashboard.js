@@ -4,10 +4,12 @@ import api from '../lib/api';
 import CategoryGrid from '../components/CategoryGrid';
 import withAuth from '../components/withAuth';
 import Link from 'next/link';
-import { Target, CheckCircle2, XCircle, Activity, PlayCircle, BarChart3, PieChart as PieChartIcon, Flame, Trophy, Award, TrendingDown, BookOpen } from 'lucide-react';
 import { 
-  PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, 
-  XAxis, YAxis, CartesianGrid, Area, AreaChart 
+  Target, CheckCircle2, Flame, Trophy, BrainCircuit, 
+  Settings, TrendingUp, Code
+} from 'lucide-react';
+import { 
+  ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Bar, Cell 
 } from 'recharts';
 
 function Dashboard() {
@@ -17,20 +19,29 @@ function Dashboard() {
   const [dashboardData, setDashboardData] = useState({
     totalAttempts: 0,
     totalCorrect: 0,
+    codingSolved: 0,
+    totalMcqsInDb: 0,
+    totalCodingInDb: 0,
     overallAccuracy: 0,
     accuracyTrend: [],
+    skillMastery: [],
     points: 0,
     badges: [],
     streak: 0,
   });
   const [weakTopics, setWeakTopics] = useState([]);
-  const [summary, setSummary] = useState('');
+  const [aiReport, setAiReport] = useState({
+    strength: "",
+    objective: "",
+    level: "Beginner"
+  });
+  const [loading, setLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
 
   // FETCH DATA
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fallback for categories if endpoint fails, so Dashboard still loads
         let catRes = { data: [] };
         try { catRes = await api.get('/categories'); } catch(e) {}
         
@@ -43,297 +54,224 @@ function Dashboard() {
         setCategories(catRes.data);
         setDashboardData(dashRes.data);
         setWeakTopics(weakRes.data.weakTopics || []);
-        setSummary(sumRes.data.summary || '');
         
+        if (typeof sumRes.data.summary === 'object') {
+           setAiReport(sumRes.data.summary);
+        } else {
+           setAiReport({ strength: sumRes.data.summary, objective: "Take more tests for specific goals.", level: "Active" });
+        }
+        
+        setLoading(false);
       } catch (err) {
-        console.error("Dashboard fetching error: ", err);
+        console.error("Dashboard error: ", err);
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
-  const hasData = dashboardData.totalAttempts > 0;
-  const incorrect = dashboardData.totalAttempts - dashboardData.totalCorrect;
+  const skillData = categories.length > 0
+    ? categories.map(cat => {
+        const found = dashboardData.skillMastery?.find(s => s.subject === cat.name);
+        return { subject: cat.name, value: found ? parseFloat(found.value) : 0 };
+      })
+    : dashboardData.skillMastery?.length > 0 
+      ? dashboardData.skillMastery 
+      : [
+          { subject: 'Data Structures', value: 0 },
+          { subject: 'Algorithms', value: 0 },
+          { subject: 'Database', value: 0 },
+          { subject: 'Operating System', value: 0 },
+        ];
 
-  // Chart Data Preparation
-  const pieData = [
-    { name: 'Correct', value: dashboardData.totalCorrect || (hasData ? 0 : 1), color: '#10b981' },
-    { name: 'Incorrect', value: incorrect > 0 ? incorrect : 0, color: '#f43f5e' }
-  ];
-
-  // Map history trend, ensuring valid display points
-  let historyData = dashboardData.accuracyTrend;
-  if (!historyData || historyData.length === 0) {
-    historyData = [
-      { name: 'Mock 1', score: 40 },
-      { name: 'Mock 2', score: 55 },
-      { name: 'Current', score: hasData ? dashboardData.overallAccuracy : 0 }
-    ];
-  }
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-stone-800 border border-stone-700 p-3 rounded-lg shadow-xl">
+          <p className="text-orange-50 font-semibold">{`${payload[0].payload.subject}`}</p>
+          <p className="text-amber-500 text-sm mt-1">{`Mastery: ${parseFloat(payload[0].value).toFixed(1)}%`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
-    <div className="animate-in fade-in duration-500">
-      
-      {/* Header */}
-      <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 mb-10 text-center md:text-left relative z-10">
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-5">
-           {user?.avatar ? (
-             <div className="w-24 h-24 shrink-0 rounded-full bg-stone-900 border-[3px] border-amber-900/50 shadow-xl shadow-amber-900/20 relative flex items-center justify-center">
-               <img 
-                 src={`http://localhost:5000${user.avatar}`} 
-                 alt="Profile" 
-                 className="w-full h-full object-cover rounded-full absolute inset-0"
-                 onError={(e) => { e.currentTarget.style.display='none'; e.currentTarget.nextElementSibling.style.display='flex'; }}
-               />
-               {/* Hidden fallback if image fails */}
-               <div className="hidden w-full h-full items-center justify-center text-4xl font-bold text-amber-500/50 rounded-full">
-                 {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+    <div className="min-h-screen bg-[#0a0a0a] text-stone-200 pb-20 animate-in fade-in duration-500">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        
+        {/* Header Segment */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+           <div className="flex items-center gap-5">
+             <div className="relative">
+                {user?.avatar && !imageError ? (
+                  <img 
+                      src={`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000'}${user.avatar}?t=${new Date().getTime()}`} 
+                      alt="Profile" 
+                      className="w-16 h-16 rounded-full object-cover border border-stone-700 bg-stone-900" 
+                      onError={() => setImageError(true)} 
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-2xl font-bold text-amber-500">
+                     {user?.name?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                {/* Status dot */}
+                <div className="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-[#0a0a0a] rounded-full"></div>
+             </div>
+             <div>
+                <h1 className="text-3xl font-bold text-white tracking-tight">{user?.name}</h1>
+                <p className="text-stone-400 text-sm flex items-center gap-2 mt-1">
+                   {user?.email}
+                </p>
+             </div>
+           </div>
+           
+           <div className="flex items-center gap-3">
+              <Link href="/profile" className="p-2 bg-[#121212] hover:bg-stone-800 border border-white/5 rounded-xl transition-colors text-stone-400 hover:text-white">
+                 <Settings className="w-5 h-5" />
+              </Link>
+           </div>
+        </div>
+
+        {/* 5-Grid Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+            <div className="bg-[#121212] border border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-white/10 transition-colors">
+               <div className="flex items-center gap-3 mb-4">
+                   <div className="p-2 bg-amber-500/10 text-amber-500 rounded-lg"><Flame className="w-5 h-5" /></div>
+                   <span className="text-sm font-medium text-stone-400">Day Streak</span>
                </div>
-             </div>
-           ) : (
-             <div className="w-24 h-24 shrink-0 rounded-full bg-stone-800 border-[3px] border-amber-900/30 shadow-xl shadow-amber-900/20 flex items-center justify-center text-4xl font-bold text-amber-500/50">
-               {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
-             </div>
-           )}
-           <div className="pt-2">
-             <h1 className="text-3xl font-bold text-orange-50 tracking-tight">
-               Welcome back, <span className="text-amber-500">{user?.name}</span>
-             </h1>
-             <p className="text-stone-400 mt-2 text-lg">
-                <span className="font-semibold text-amber-500/80 mr-2">Resume Insight:</span> 
-                {summary || 'Take your first test to generate your performance summary.'}
-             </p>
-             
-             {/* Gamification Badges Row */}
-             {dashboardData.badges?.length > 0 && (
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-4">
-                   {dashboardData.badges.map((badge, idx) => (
-                      <span key={idx} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-950 border border-amber-700 text-amber-400 text-xs font-bold uppercase tracking-wider shadow-[0_0_10px_rgba(245,158,11,0.2)]">
-                        <Award className="w-3.5 h-3.5" />
-                        {badge}
-                      </span>
-                   ))}
+               <div className="text-3xl font-bold text-white">{dashboardData.streak}</div>
+            </div>
+            
+            <div className="bg-[#121212] border border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-white/10 transition-colors">
+               <div className="flex items-center gap-3 mb-4">
+                   <div className="p-2 bg-blue-500/10 text-blue-500 rounded-lg"><Trophy className="w-5 h-5" /></div>
+                   <span className="text-sm font-medium text-stone-400">Total Points</span>
+               </div>
+               <div className="text-3xl font-bold text-white">{dashboardData.points}</div>
+            </div>
+            
+            <div className="bg-[#121212] border border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-white/10 transition-colors">
+               <div className="flex items-center gap-3 mb-4">
+                   <div className="p-2 bg-emerald-500/10 text-emerald-500 rounded-lg"><CheckCircle2 className="w-5 h-5" /></div>
+                   <span className="text-sm font-medium text-stone-400">MCQs Solved</span>
+               </div>
+               <div className="flex items-baseline gap-2">
+                 <div className="text-3xl font-bold text-white">{dashboardData.totalCorrect}</div>
+                 <span className="text-xs text-stone-500 font-medium tracking-wide">
+                    / {dashboardData.totalMcqsInDb}
+                 </span>
+               </div>
+            </div>
+
+            <div className="bg-[#121212] border border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-white/10 transition-colors">
+               <div className="flex items-center gap-3 mb-4">
+                   <div className="p-2 bg-pink-500/10 text-pink-500 rounded-lg"><Code className="w-5 h-5" /></div>
+                   <span className="text-sm font-medium text-stone-400">Coding Solved</span>
+               </div>
+               <div className="flex items-baseline gap-2">
+                 <div className="text-3xl font-bold text-white">{dashboardData.codingSolved}</div>
+                 <span className="text-xs text-stone-500 font-medium tracking-wide">
+                    / {dashboardData.totalCodingInDb}
+                 </span>
+               </div>
+            </div>
+            
+            <div className="bg-[#121212] border border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-white/10 transition-colors col-span-2 md:col-span-1">
+               <div className="flex items-center gap-3 mb-4">
+                   <div className="p-2 bg-purple-500/10 text-purple-400 rounded-lg"><Target className="w-5 h-5" /></div>
+                   <span className="text-sm font-medium text-stone-400">Avg Accuracy</span>
+               </div>
+               <div className="text-3xl font-bold text-white">{dashboardData.overallAccuracy}%</div>
+            </div>
+        </div>
+
+        {/* Middle Section: Bar Chart & AI Report */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {/* Proficiency Bar Chart (Col-span-2) */}
+            <div className="lg:col-span-2 bg-[#121212] border border-white/5 rounded-3xl p-6 md:p-8">
+                <div className="flex items-center justify-between mb-8">
+                    <h2 className="text-lg font-semibold text-white">Topic Proficiency</h2>
                 </div>
-             )}
-           </div>
-        </div>
+                <div className="w-full h-[280px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={skillData} layout="horizontal" margin={{ top: 20, right: 10, left: -20, bottom: 40 }}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1f1f1f" />
+                            <XAxis 
+                                dataKey="subject" 
+                                tick={{ fill: '#a8a29e', fontSize: 11 }} 
+                                axisLine={false}
+                                tickLine={false}
+                                angle={-45}
+                                textAnchor="end"
+                            />
+                            <YAxis type="number" hide domain={[0, 100]} />
+                            <Tooltip cursor={{ fill: '#1a1a1a' }} content={<CustomTooltip />} />
+                            <Bar 
+                                dataKey="value" 
+                                radius={[6, 6, 0, 0]} 
+                                barSize={32}
+                            >
+                              {skillData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#f59e0b' : '#d97706'} />
+                              ))}
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
 
-        {/* Gamification Top Stats */}
-        <div className="flex gap-4 md:pt-2">
-           <div className="flex flex-col items-center justify-center bg-[#151210] border border-orange-900/30 rounded-3xl p-5 min-w-[110px] shadow-lg">
-              <Flame className="w-7 h-7 text-orange-500 mb-2 drop-shadow-[0_0_12px_rgba(249,115,22,0.8)]" />
-              <span className="text-2xl font-black text-orange-50">{dashboardData.streak}</span>
-              <span className="text-[10px] uppercase tracking-wider text-stone-500 font-bold mt-1">Day Streak</span>
-           </div>
-           <div className="flex flex-col items-center justify-center bg-[#151210] border border-yellow-900/30 rounded-3xl p-5 min-w-[110px] shadow-lg">
-              <Trophy className="w-7 h-7 text-yellow-400 mb-2 drop-shadow-[0_0_12px_rgba(250,204,21,0.6)]" />
-              <span className="text-2xl font-black text-orange-50">{dashboardData.points}</span>
-              <span className="text-[10px] uppercase tracking-wider text-stone-500 font-bold mt-1">Total Points</span>
-           </div>
-        </div>
-      </div>
-
-      {/* Stats Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        
-        {/* Total Attempts */}
-        <div className="bg-stone-900/60 border border-amber-900/20 rounded-3xl p-6 flex items-start justify-between hover:border-amber-700/40 transition-colors shadow-lg">
-          <div>
-            <p className="text-stone-400 text-sm font-medium mb-1">Total Attempts</p>
-            <p className="text-3xl font-bold text-orange-50">{dashboardData.totalAttempts}</p>
-          </div>
-          <div className="w-12 h-12 rounded-xl bg-amber-900/20 flex items-center justify-center">
-            <Activity className="w-6 h-6 text-amber-500" />
-          </div>
-        </div>
-
-        {/* Correct */}
-        <div className="bg-stone-900/60 border border-amber-900/20 rounded-3xl p-6 flex items-start justify-between hover:border-amber-700/40 transition-colors shadow-lg">
-          <div>
-            <p className="text-stone-400 text-sm font-medium mb-1">Correct</p>
-            <p className="text-3xl font-bold text-emerald-500">{dashboardData.totalCorrect}</p>
-          </div>
-          <div className="w-12 h-12 rounded-xl bg-emerald-900/20 flex items-center justify-center">
-            <CheckCircle2 className="w-6 h-6 text-emerald-500" />
-          </div>
-        </div>
-
-        {/* Incorrect */}
-        <div className="bg-stone-900/60 border border-amber-900/20 rounded-3xl p-6 flex items-start justify-between hover:border-amber-700/40 transition-colors shadow-lg">
-          <div>
-            <p className="text-stone-400 text-sm font-medium mb-1">Incorrect</p>
-            <p className="text-3xl font-bold text-rose-500">{incorrect}</p>
-          </div>
-          <div className="w-12 h-12 rounded-xl bg-rose-900/20 flex items-center justify-center">
-            <XCircle className="w-6 h-6 text-rose-500" />
-          </div>
-        </div>
-
-        {/* Accuracy */}
-        <div className="bg-stone-900/60 border border-amber-900/20 rounded-3xl p-6 flex items-start justify-between hover:border-amber-700/40 transition-colors shadow-lg">
-          <div>
-            <p className="text-stone-400 text-sm font-medium mb-1">Accuracy</p>
-            <p className="text-3xl font-bold text-[#c19a6b]">{dashboardData.overallAccuracy}%</p>
-          </div>
-          <div className="w-12 h-12 rounded-xl bg-[#8b5e3c]/20 flex items-center justify-center">
-            <Target className="w-6 h-6 text-[#c19a6b]" />
-          </div>
-        </div>
-
-      </div>
-
-      {/* Analytics Charts & Weaknesses Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-12">
-        
-        {/* Performance Graph */}
-        <div className="lg:col-span-2 bg-stone-900/40 border border-white/5 rounded-3xl p-6 sm:p-8 shadow-xl backdrop-blur-sm shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
-           <div className="flex justify-between items-center mb-6">
-             <div className="flex items-center gap-3">
-               <div className="bg-amber-900/30 p-2 rounded-lg">
-                 <BarChart3 className="w-5 h-5 text-amber-500" />
-               </div>
-               <h2 className="text-xl font-bold text-orange-50 tracking-tight">Performance Trajectory</h2>
-             </div>
-           </div>
-           
-           <div className="h-64 w-full mt-4">
-             <ResponsiveContainer width="100%" height="100%">
-               <AreaChart data={historyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                 <defs>
-                   <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                     <stop offset="5%" stopColor="#8b5e3c" stopOpacity={0.6}/>
-                     <stop offset="95%" stopColor="#8b5e3c" stopOpacity={0}/>
-                   </linearGradient>
-                 </defs>
-                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" vertical={false} />
-                 <XAxis dataKey="name" stroke="#57534e" tick={{fill: '#a8a29e', fontSize: 12}} axisLine={false} tickLine={false} dy={10} />
-                 <YAxis stroke="#57534e" tick={{fill: '#a8a29e', fontSize: 12}} axisLine={false} tickLine={false} domain={[0, 100]} />
-                 <Tooltip 
-                   cursor={{ stroke: '#ffffff10', strokeWidth: 2 }}
-                   contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #3f3f46', borderRadius: '16px', color: '#fff', padding: '12px' }} 
-                   itemStyle={{ color: '#fbbf24', fontWeight: 'bold' }} 
-                 />
-                 <Area type="monotone" dataKey="score" name="Accuracy Score" stroke="#fbbf24" strokeWidth={4} fillOpacity={1} fill="url(#colorScore)" />
-               </AreaChart>
-             </ResponsiveContainer>
-           </div>
-        </div>
-
-        {/* Weakness Analyzer Box */}
-        <div className="lg:col-span-1 bg-stone-900/40 border border-white/5 rounded-3xl p-6 sm:p-8 shadow-xl backdrop-blur-sm flex flex-col items-start shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
-           <div className="flex items-center gap-3 mb-6">
-             <div className="bg-rose-900/30 p-2 rounded-lg">
-               <TrendingDown className="w-5 h-5 text-rose-500" />
-             </div>
-             <h2 className="text-xl font-bold text-orange-50 tracking-tight">Weak Topics</h2>
-           </div>
-
-           <div className="flex-grow w-full space-y-4">
-              {!hasData || weakTopics.length === 0 ? (
-                 <div className="h-full flex flex-col items-center justify-center text-center px-4 opacity-60">
-                    <BookOpen className="w-8 h-8 text-stone-500 mb-3" />
-                    <p className="text-sm text-stone-400">Complete more tests to generate weakness insights.</p>
-                 </div>
-              ) : (
-                 weakTopics.map((item, i) => (
-                    <div key={i} className="flex flex-col gap-1.5 p-3 rounded-xl bg-stone-950/50 border border-rose-900/20">
-                      <div className="flex justify-between items-center w-full">
-                         <span className="text-orange-50 font-semibold text-sm truncate pr-2">{item.topic}</span>
-                         <span className="text-rose-400 font-bold text-sm bg-rose-950/50 px-2 py-0.5 rounded-md">{item.accuracy}%</span>
+            {/* AI Insights (Col-span-1) */}
+            <div className="lg:col-span-1 flex flex-col gap-4">
+                <div className="bg-[#121212] border border-white/5 rounded-3xl p-6 md:p-8 flex-1 flex flex-col">
+                   <div className="flex items-center gap-3 mb-8">
+                      <div className="p-2bg-transparent">
+                          <BrainCircuit className="w-6 h-6 text-indigo-400" />
                       </div>
-                      <div className="w-full bg-stone-800 rounded-full h-1.5 overflow-hidden">
-                         <div className="bg-gradient-to-r from-rose-600 to-rose-400 h-1.5 rounded-full" style={{ width: `${item.accuracy}%` }}></div>
+                      <h2 className="text-lg font-semibold text-white">AI Analysis</h2>
+                   </div>
+                   
+                   <div className="space-y-8 flex-grow">
+                      <div>
+                         <div className="flex items-center gap-2 mb-3">
+                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                             <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wider">Top Strength</h4>
+                         </div>
+                         <p className="text-[15px] text-stone-300 leading-relaxed">
+                            {aiReport?.strength || "Awaiting sufficient data to establish your technical strengths."}
+                         </p>
                       </div>
-                    </div>
-                 ))
-              )}
-           </div>
+
+                      <div>
+                         <div className="flex items-center gap-2 mb-3">
+                             <div className="w-1.5 h-1.5 rounded-full bg-rose-500"></div>
+                             <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wider">Focus Area</h4>
+                         </div>
+                         <p className="text-[15px] text-stone-300 leading-relaxed">
+                            {aiReport?.objective || "Complete more practice modules to receive targeted improvement goals."}
+                         </p>
+                      </div>
+                   </div>
+                   
+                   <Link href="/exam/start" className="mt-8 w-full py-3.5 bg-white text-black hover:bg-stone-200 text-sm font-semibold rounded-xl transition-colors text-center shadow-lg shadow-white/5">
+                       Start Practice Session
+                   </Link>
+                </div>
+            </div>
         </div>
 
-        {/* Answer Ratio (Pie Chart) */}
-        <div className="lg:col-span-1 bg-stone-900/40 border border-white/5 rounded-3xl p-6 sm:p-8 shadow-xl backdrop-blur-sm flex flex-col items-center shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
-           <div className="flex items-center gap-3 mb-2 w-full justify-start">
-             <div className="bg-amber-900/30 p-2 rounded-lg">
-               <PieChartIcon className="w-5 h-5 text-amber-500" />
-             </div>
-             <h2 className="text-xl font-bold text-orange-50 tracking-tight">Ratio</h2>
-           </div>
-           
-           {!hasData && <p className="text-xs text-stone-500 mt-2 text-center">Solve questions to generate insights.</p>}
-           
-           <div className="h-56 w-full flex-grow flex items-center justify-center relative mt-4">
-             <ResponsiveContainer width="100%" height="100%">
-               <PieChart>
-                 <Pie
-                   data={pieData}
-                   cx="50%"
-                   cy="50%"
-                   innerRadius={65}
-                   outerRadius={85}
-                   paddingAngle={8}
-                   dataKey="value"
-                   stroke="none"
-                   cornerRadius={6}
-                 >
-                   {pieData.map((entry, index) => (
-                     <Cell key={`cell-${index}`} fill={!hasData && index === 0 ? '#292524' : entry.color} />
-                   ))}
-                 </Pie>
-                 {hasData && (
-                   <Tooltip 
-                     contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #3f3f46', borderRadius: '12px', color: '#fff' }} 
-                     formatter={(value, name) => [`${value} Answers`, name]}
-                   />
-                 )}
-               </PieChart>
-             </ResponsiveContainer>
-             
-             {/* Center display text for Pie chart */}
-             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-3xl font-bold text-white">{hasData ? dashboardData.totalAttempts : 0}</span>
-                <span className="text-[10px] text-stone-400 font-semibold uppercase tracking-widest mt-1">Total</span>
-             </div>
-           </div>
-
-           {/* Custom Legend */}
-           <div className="flex justify-center gap-4 mt-6 w-full">
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
-                <span className="text-xs text-stone-300 font-medium tracking-wide">Correct</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-rose-500"></div>
-                <span className="text-xs text-stone-300 font-medium tracking-wide">Incorrect</span>
-              </div>
-           </div>
+        {/* Categories Section */}
+        <div className="bg-[#121212] border border-white/5 rounded-3xl p-6 md:p-8 mb-8">
+            <div className="mb-8">
+                 <h2 className="text-xl font-semibold text-white">Practice Categories</h2>
+                 <p className="text-stone-400 text-sm mt-1">Select a topic to improve your skills</p>
+            </div>
+            <CategoryGrid categories={categories} />
         </div>
 
       </div>
-
-      {/* Start Full Test Banner */}
-      <div className="mb-12 relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-900/30 via-[#2a1b12] to-stone-900 border border-amber-900/40 p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl">
-        <div className="absolute right-0 top-0 w-64 h-64 bg-amber-500/10 blur-[80px] rounded-full pointer-events-none"></div>
-        <div className="relative z-10 text-center md:text-left">
-          <div className="inline-block px-3 py-1 bg-amber-950/50 border border-amber-900 text-amber-500 text-xs font-bold uppercase tracking-widest rounded-full mb-4">
-            A.I. Recommendation Engine
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-orange-50 mb-3 tracking-tight">Challenge Your Weaknesses</h2>
-          <p className="text-stone-400 max-w-xl text-lg">Our system has evaluated your history. Start a targeted test tailored to force improvement precisely where you need it most.</p>
-        </div>
-        <Link href="/exam/start" className="relative z-10 shrink-0 bg-gradient-to-br from-[#8b5e3c] to-[#6a462c] hover:from-[#7a5234] hover:to-[#5a361c] text-orange-50 px-8 py-4 rounded-2xl font-bold transition-all flex items-center gap-3 group shadow-[0_0_30px_rgba(139,94,60,0.4)] transform hover:-translate-y-1">
-          <PlayCircle className="w-6 h-6 group-hover:scale-110 transition-transform" />
-          Targeted Practice
-        </Link>
-      </div>
-
-      {/* Categories */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-orange-50 mb-2 tracking-tight">Practice by Subject</h2>
-        <p className="text-stone-400 mb-8 text-lg">Focus your preparation on specific technologies directly.</p>
-        <CategoryGrid categories={categories} />
-      </div>
-
     </div>
   );
 }

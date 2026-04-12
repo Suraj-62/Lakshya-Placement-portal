@@ -1,9 +1,1 @@
-{
-  "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
-  "/_document": "pages/_document.js",
-  "/dashboard": "pages/dashboard.js",
-  "/exam/[id]": "pages/exam/[id].js",
-  "/exam/[id]/result": "pages/exam/[id]/result.js",
-  "/leaderboard": "pages/leaderboard.js"
-}
+{"/_app":"pages/_app.js","/admin/categories/[id]":"pages/admin/categories/[id].html","/admin/dashboard":"pages/admin/dashboard.html","/admin/categories/new":"pages/admin/categories/new.html","/admin":"pages/admin.html","/admin/questions/[id]":"pages/admin/questions/[id].html","/admin/questions/new":"pages/admin/questions/new.html","/admin/users":"pages/admin/users.html","/auth/forgot":"pages/auth/forgot.html","/auth/login":"pages/auth/login.html","/auth/reset/%5Btoken%5D":"pages/auth/reset/%5Btoken%5D.html","/auth/register":"pages/auth/register.html","/auth/reset/[token]":"pages/auth/reset/[token].html","/_error":"pages/_error.js","/dashboard":"pages/dashboard.html","/exam/start":"pages/exam/start.html","/exam/[id]/result":"pages/exam/[id]/result.html","/exam/[id]":"pages/exam/[id].html","/":"pages/index.html","/leaderboard":"pages/leaderboard.html","/practice/[category]":"pages/practice/[category].html","/practice":"pages/practice.html","/practice/coding/[id]":"pages/practice/coding/[id].html","/profile":"pages/profile.html","/_document":"pages/_document.js","/404":"pages/404.html"}

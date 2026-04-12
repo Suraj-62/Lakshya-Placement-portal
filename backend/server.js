@@ -1,5 +1,6 @@
-import express from 'express';
 import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -16,8 +17,8 @@ import examRoutes from './routes/exam.js';
 import userRoutes from './routes/user.js';
 import bookmarkRoutes from './routes/bookmark.js';
 import leaderboardRoutes from './routes/leaderboard.js';
+import executionRoutes from './routes/execution.js';
 
-dotenv.config();
 connectDB();
 
 const app = express();
@@ -33,13 +34,6 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
 });
 app.use('/api/auth', limiter);
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true, // 🔥 MUST
-  })
-);
-
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/questions', questionRoutes);
@@ -49,6 +43,7 @@ app.use('/api/exam', examRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/bookmarks', bookmarkRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/execution', executionRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use(notFound);
 app.use(errorHandler);

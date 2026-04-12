@@ -11,7 +11,7 @@ function MyApp({ Component, pageProps }) {
     ((page) => <Layout>{page}</Layout>);
 
   return (
-    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID"}>
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
       <AuthProvider>
         {getLayout(<Component {...pageProps} />)}
       <Toaster 

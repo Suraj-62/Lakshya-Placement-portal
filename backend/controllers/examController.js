@@ -5,29 +5,28 @@ import User from '../models/User.js';
 import Category from '../models/Category.js';
 import { GoogleGenAI } from '@google/genai';
 
-// ✅ START EXAM
+// ✅ START EXAM (Unified Smart Assessment)
 export const startExam = async (req, res, next) => {
   try {
-    const { category, difficulty, count = 12, duration = 30 } = req.body;
+    const { category, difficulty, count = 10, duration = 30 } = req.body;
 
-    const filter = {};
-
+    const filter = { type: { $ne: 'code' } }; // Only fetch MCQs for practice sessions
     if (category && mongoose.Types.ObjectId.isValid(category)) {
       filter.category = new mongoose.Types.ObjectId(category);
     }
-
     if (difficulty) {
       filter.difficulty = difficulty;
     }
 
-    const allQuestions = await Question.find(filter);
+    const questions = await Question.find(filter);
 
-    if (allQuestions.length === 0) {
-      return res.status(400).json({ message: 'No questions found' });
+    // Shuffle and pick
+    const shuffled = questions.sort(() => 0.5 - Math.random());
+    const selectedQuestions = shuffled.slice(0, Math.min(count, questions.length));
+
+    if (selectedQuestions.length === 0) {
+      return res.status(400).json({ message: 'No questions found for this configuration' });
     }
-
-    const shuffled = allQuestions.sort(() => 0.5 - Math.random());
-    const selectedQuestions = shuffled.slice(0, Math.min(count, allQuestions.length));
 
     const startTime = new Date();
     const endTime = new Date(startTime.getTime() + duration * 60000);
@@ -61,72 +60,95 @@ export const startExam = async (req, res, next) => {
   }
 };
 
-// ✅ START AI EXAM
+// ✅ START AI EXAM (Optimized with Caching and Refill)
 export const startAIExam = async (req, res, next) => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const { category, count = 7, duration = 30 } = req.body;
+    const { category, count = 10, duration = 30 } = req.body;
 
-    let categoryName = "General Computer Science";
-    let catId = null;
-
-    if (category && mongoose.Types.ObjectId.isValid(category)) {
-      catId = new mongoose.Types.ObjectId(category);
-      const catObj = await Category.findById(catId);
-      if (catObj) categoryName = catObj.name;
-    } else {
+    if (!category || !mongoose.Types.ObjectId.isValid(category)) {
       return res.status(400).json({ message: "Valid Category is required for AI generation." });
     }
 
-    const prompt = `
-Generate ${count} company-level placement questions (multiple choice) for the technical category: ${categoryName}. 
-The difficulty should be appropriate for FAANG and top tech companies interviews (mix of medium and hard).
-Output raw JSON ONLY. No markdown blocks, no formatting wrapper. It must be an array of objects perfectly stringifiable.
-JSON Array Format expected:
+    const catId = new mongoose.Types.ObjectId(category);
+    const catObj = await Category.findById(catId);
+    if (!catObj) return res.status(404).json({ message: "Category not found" });
+
+    // 1. Check existing AI pool size
+    const existingCount = await Question.countDocuments({ category: catId, isAIGenerated: true });
+    
+    // Threshold: If we have at least 25 questions, we can serve instantly.
+    // If not, we refill the pool to 50-100.
+    if (existingCount < 30) {
+      console.log(`Refilling AI pool for ${catObj.name}... Current count: ${existingCount}`);
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      
+      const prompt = `
+Generate 10 high-quality technical placement questions (MCQs) for the category: "${catObj.name}".
+Difficulty Distribution: 30% Easy, 40% Medium, 30% Hard.
+Focus: FAANG and top-tier tech company interview standards.
+
+OUTPUT RAW JSON ONLY. No markdown, no formatting.
+Format:
 [
   {
-    "questionText": "Question text here?",
-    "options": ["Option A", "Option B", "Option C", "Option D"],
-    "correctAnswer": "Option B",
-    "explanation": "Why this is correct.",
-    "difficulty": "medium",
-    "topic": "Specific sub-topic"
+    "questionText": "...",
+    "options": ["A", "B", "C", "D"],
+    "correctAnswer": "...",
+    "explanation": "...",
+    "difficulty": "easy/medium/hard",
+    "topic": "..."
   }
 ]
-    `;
+      `;
 
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-lite',
-      contents: prompt
-    });
+      try {
+        const result = await ai.models.generateContent({
+          model: 'gemini-2.5-flash',
+          contents: prompt
+        });
 
-    let rawText = result.text.trim();
-    // Use regex to robustly strip markdown formatting if the model returns any
-    rawText = rawText.replace(/^```(?:json)?/i, '').replace(/```$/i, '').trim();
+        const rawText = result.text.trim();
+        const jsonStart = rawText.indexOf('[');
+        const jsonEnd = rawText.lastIndexOf(']');
 
-    const questionsData = JSON.parse(rawText);
+        if (jsonStart !== -1 && jsonEnd !== -1) {
+          const cleanJson = rawText.substring(jsonStart, jsonEnd + 1);
+          const questionsData = JSON.parse(cleanJson);
 
-    if (!Array.isArray(questionsData) || questionsData.length === 0) {
-      throw new Error("Invalid AI raw shape generated");
+          if (Array.isArray(questionsData) && questionsData.length > 0) {
+            const docs = questionsData.map(q => ({
+              ...q,
+              category: catId,
+              type: 'mcq',
+              isAIGenerated: true
+            }));
+            await Question.insertMany(docs);
+            console.log(`Successfully added ${docs.length} AI questions to the pool.`);
+          }
+        }
+      } catch (aiErr) {
+        console.error("Refill Error:", aiErr);
+        if (existingCount === 0) throw aiErr;
+      }
     }
 
-    // Embed attributes and save
-    const docs = questionsData.map(q => ({
-      ...q,
-      category: catId,
-      type: 'mcq',
-      isAIGenerated: true
-    }));
+    // 2. Select questions from the pool (Randomly)
+    const examQuestions = await Question.aggregate([
+      { $match: { category: catId, isAIGenerated: true } },
+      { $sample: { size: Math.min(count, 100) } }
+    ]);
 
-    const savedQuestions = await Question.insertMany(docs);
-    const questionsIds = savedQuestions.map(q => q._id);
+    if (!examQuestions || examQuestions.length === 0) {
+      return res.status(500).json({ message: "AI Pool empty and generation failed. Try again." });
+    }
 
+    // 3. Create Exam
     const startTime = new Date();
     const endTime = new Date(startTime.getTime() + duration * 60000);
 
     const exam = await Exam.create({
       user: req.user._id,
-      questions: questionsIds,
+      questions: examQuestions.map(q => q._id),
       duration,
       startTime,
       endTime,
@@ -145,11 +167,12 @@ JSON Array Format expected:
       questions: populatedExam.questions,
       endTime: exam.endTime,
       duration: exam.duration,
+      isInstant: existingCount >= 30 // Tell frontend if it was from cache
     });
 
   } catch (error) {
-    console.log("AI Generation Error:", error);
-    res.status(500).json({ message: "Failed to generate AI questions. Please try again." });
+    console.log("AI Exam Start Error:", error);
+    res.status(500).json({ message: "Failed to initialize AI Exam." });
   }
 };
 

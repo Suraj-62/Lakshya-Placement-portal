@@ -1,6 +1,7 @@
 import Question from '../models/Question.js';
 import User from '../models/User.js';
 import Exam from '../models/Exam.js';
+import Submission from '../models/Submission.js';
 
 export const getRandomQuestion = async (req, res, next) => {
   try {
@@ -76,3 +77,54 @@ export const getRecommendedQuestions = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getCodingQuestions = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select('solvedCodingQuestions');
+    const questions = await Question.find({ type: 'code' }).populate('category').lean();
+    
+    // Check if each question is solved by the user
+    const solvedIds = user?.solvedCodingQuestions?.map(id => id.toString()) || [];
+    
+    const questionsWithStatus = questions.map(q => ({
+      ...q,
+      isSolved: solvedIds.includes(q._id.toString())
+    }));
+
+    res.json(questionsWithStatus);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export const getQuestionById = async (req, res, next) => {
+  try {
+    const question = await Question.findById(req.params.id).populate('category').lean();
+    if (!question) {
+      return res.status(404).json({ message: "Question not found" });
+    }
+
+    // Fetch the user's latest submission for this question safely
+    if (req.user) {
+      const latestSubmission = await Submission.findOne({
+        user: req.user._id,
+        question: req.params.id
+      }).sort({ createdAt: -1 });
+
+      if (latestSubmission && latestSubmission.code && question.starterCode) {
+        question.starterCode[latestSubmission.language] = latestSubmission.code;
+        question.savedLanguage = latestSubmission.language;
+      } else if (latestSubmission && latestSubmission.code) {
+        question.starterCode = {
+          [latestSubmission.language]: latestSubmission.code
+        };
+        question.savedLanguage = latestSubmission.language;
+      }
+    }
+    res.json(question);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};

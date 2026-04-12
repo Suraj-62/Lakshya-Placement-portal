@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Code, Brain, LineChart } from "lucide-react";
+import { ArrowRight, Code, Brain, LineChart, BookOpen } from "lucide-react";
 
 export default function Home() {
   return (
@@ -35,34 +35,38 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-        {/* Abstract Background Elements */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#8b5e3c]/10 blur-[120px] rounded-full pointer-events-none"></div>
+      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden flex flex-col items-center justify-center min-h-[90vh]">
+        {/* Subtle Grid Background */}
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] mix-blend-overlay z-0"></div>
+        
+        {/* Futuristic Glowing Orbs */}
+        <div className="absolute top-[20%] left-1/2 -translate-x-[80%] w-[500px] h-[500px] bg-amber-600/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
+        <div className="absolute top-[30%] right-1/2 translate-x-[80%] w-[400px] h-[400px] bg-blue-600/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
 
-        <div className="max-w-7xl mx-auto px-6 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-900/10 border border-amber-700/20 text-amber-500 text-sm mb-8 font-medium">
-            <span className="flex h-2 w-2 rounded-full bg-amber-500"></span>
-            Human-centric placement preparation
+        <div className="max-w-7xl mx-auto px-6 text-center relative z-10 flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-stone-900/80 border border-white/5 text-stone-300 text-xs font-bold tracking-widest uppercase mb-8 backdrop-blur-xl shadow-2xl hover:border-white/10 transition-colors cursor-default">
+            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Elevate Your Career
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-orange-50 mb-6 max-w-4xl mx-auto leading-tight">
-            Master the code. <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-400">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-6 leading-none drop-shadow-2xl text-center">
+            Master the code. <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500">
               Ace the interview.
             </span>
           </h1>
           
-          <p className="text-lg md:text-xl text-stone-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-            AI-powered coding practice, structured mock interviews, and real-time performance analytics designed to feel natural and encouraging.
+          <p className="text-lg md:text-xl text-stone-400 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
+            A premium, distraction-free environment for algorithmic practice. Curated challenges, live compilation, and deep analytics to prepare you for top-tier tech placements.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/auth/register" className="w-full sm:w-auto px-8 py-4 bg-orange-50 text-stone-900 rounded-xl font-semibold hover:bg-orange-100 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-amber-900/10">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+            <Link href="/auth/register" className="w-full sm:w-auto px-8 py-4 bg-white text-black rounded-2xl font-bold hover:bg-stone-200 transition-all flex items-center justify-center gap-2 group shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_60px_rgba(255,255,255,0.2)] hover:-translate-y-1">
               Start Practicing Now
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <Link href="#features" className="w-full sm:w-auto px-8 py-4 bg-stone-900 border border-amber-900/30 text-amber-50 rounded-xl font-semibold hover:bg-stone-800 transition-all">
-              View Curriculum
+            <Link href="#features" className="w-full sm:w-auto px-8 py-4 bg-stone-900/50 backdrop-blur-xl border border-white/10 text-white rounded-2xl font-bold hover:bg-stone-800 transition-all hover:-translate-y-1">
+              View Capabilities
             </Link>
           </div>
         </div>
@@ -119,33 +123,34 @@ export default function Home() {
           </div>
           
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="p-8 rounded-2xl bg-stone-900/50 border border-amber-900/20 hover:border-amber-700/40 transition-colors">
-              <div className="w-12 h-12 rounded-xl bg-amber-900/20 flex items-center justify-center mb-6">
-                <Brain className="w-6 h-6 text-amber-500" />
+            <div className="p-8 rounded-3xl bg-stone-900/40 border border-white/5 hover:border-white/10 hover:bg-stone-900/60 transition-all group backdrop-blur-xl">
+              <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <BookOpen className="w-6 h-6 text-amber-500" />
               </div>
-              <h3 className="text-xl font-semibold text-orange-50 mb-3">AI Mock Interviews</h3>
-              <p className="text-stone-400 leading-relaxed">
-                Experience realistic interview scenarios with our advanced AI. Get instant feedback on your problem-solving approach.
+              <h3 className="text-2xl font-bold text-white mb-3">Curated Data Bank</h3>
+              <p className="text-stone-400 leading-relaxed font-medium">
+                Access a highly curated list of challenges asked in product-based companies. Filter by difficulty, topic, and company.
               </p>
             </div>
 
-            <div className="p-8 rounded-2xl bg-stone-900/50 border border-amber-900/20 hover:border-amber-700/40 transition-colors overflow-hidden group">
-              <div className="w-12 h-12 rounded-xl bg-orange-900/20 flex items-center justify-center mb-6 relative z-10">
-                <Code className="w-6 h-6 text-orange-400" />
+            <div className="p-8 rounded-3xl bg-stone-900/40 border border-white/5 hover:border-white/10 hover:bg-stone-900/60 transition-all group backdrop-blur-xl relative overflow-hidden">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6 relative z-10 group-hover:scale-110 transition-transform">
+                <Code className="w-6 h-6 text-emerald-400" />
               </div>
-              <h3 className="text-xl font-semibold text-orange-50 mb-3 relative z-10">Live Coding Environment</h3>
-              <p className="text-stone-400 leading-relaxed relative z-10">
-                Write, compile, and run code in multiple languages directly in your browser with an intuitive, distraction-free editor.
+              <h3 className="text-2xl font-bold text-white mb-3 relative z-10">Live Coding Environment</h3>
+              <p className="text-stone-400 leading-relaxed font-medium relative z-10">
+                Write, compile, and run code in multiple languages directly in your browser with an intuitive, distraction-free IDE interface.
               </p>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-3xl rounded-full pointer-events-none group-hover:bg-emerald-500/10 transition-colors"></div>
             </div>
 
-            <div className="p-8 rounded-2xl bg-stone-900/50 border border-amber-900/20 hover:border-amber-700/40 transition-colors">
-              <div className="w-12 h-12 rounded-xl bg-[#8b5e3c]/20 flex items-center justify-center mb-6">
-                <LineChart className="w-6 h-6 text-[#c19a6b]" />
+            <div className="p-8 rounded-3xl bg-stone-900/40 border border-white/5 hover:border-white/10 hover:bg-stone-900/60 transition-all group backdrop-blur-xl">
+              <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <LineChart className="w-6 h-6 text-blue-400" />
               </div>
-              <h3 className="text-xl font-semibold text-orange-50 mb-3">Performance Analytics</h3>
-              <p className="text-stone-400 leading-relaxed">
-                Track your progress over time. Identify weak areas with detailed metrics on accuracy, speed, and topic proficiency.
+              <h3 className="text-2xl font-bold text-white mb-3">Performance Analytics</h3>
+              <p className="text-stone-400 leading-relaxed font-medium">
+                Track your progress over time. Identify weak areas with detailed metrics on accuracy, speed, and topic-wise mastery.
               </p>
             </div>
           </div>

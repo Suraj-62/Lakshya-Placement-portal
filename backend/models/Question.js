@@ -5,10 +5,29 @@ const questionSchema = new mongoose.Schema({
   topic: String,
   difficulty: { type: String, enum: ['easy', 'medium', 'hard'], required: true, index: true },
   questionText: { type: String, required: true },
-  options: [String],
-  correctAnswer: { type: String, required: true },
+  options: [String], // Still used for MCQs
+  correctAnswer: { type: String, required: function() { return this.type === 'mcq'; } },
   explanation: String,
   type: { type: String, enum: ['mcq', 'code', 'text'], default: 'mcq' },
+  testCases: [{
+    input: String,
+    output: String,
+    isHidden: { type: Boolean, default: false }
+  }],
+  starterCode: {
+    cpp: String,
+    java: String,
+    python: String,
+    javascript: String
+  },
+  functionName: String,
+  constraints: String,
+  drivers: {
+    cpp: String,
+    java: String,
+    python: String,
+    javascript: String
+  },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   isAIGenerated: { type: Boolean, default: false },
 }, { timestamps: true });

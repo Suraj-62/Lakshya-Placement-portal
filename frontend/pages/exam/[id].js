@@ -256,9 +256,9 @@ function Exam() {
                 </button>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-medium text-orange-50 mb-10 leading-relaxed font-mono relative z-10 whitespace-pre-wrap">
+              <div className="text-base sm:text-lg text-stone-200 mb-8 leading-relaxed font-mono relative z-10 whitespace-pre-wrap bg-black/40 p-6 rounded-2xl border border-white/5 shadow-inner">
                 {currentQ.questionText}
-              </h2>
+              </div>
 
               <div className="space-y-4 relative z-10">
                 {currentQ.options.map((opt, i) => {

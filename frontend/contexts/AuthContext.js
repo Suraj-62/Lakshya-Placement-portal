@@ -107,11 +107,18 @@ export const AuthProvider = ({ children }) => {
     window.location.href = '/';
   };
 
+  // ✅ UPDATE USER (profile update ke bad)
+  const updateAuthUser = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user,
         setUser,
+        updateAuthUser, // 🔥 ADDED
         loading,
         login,
         register,
