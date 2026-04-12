@@ -11,7 +11,7 @@ const generateToken = (res, userId) => {
     httpOnly: true,
 
     // 🔥 IMPORTANT FIX
-    sameSite: 'lax', // 'strict' ❌ → 'lax' ✅
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'strict' ❌ → 'lax' ✅
 
     secure: process.env.NODE_ENV === 'production', // prod me true
 
