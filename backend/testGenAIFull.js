@@ -26,7 +26,7 @@ JSON Array Format expected:
     `;
 
     const result = await ai.models.generateContent({
-      model: 'gemini-pro-latest',
+      model: 'gemini-2.5-flash-lite',
       contents: prompt
     });
 

@@ -17,7 +17,8 @@ import {
   Calendar,
   Lock,
   Unlock,
-  ShieldAlert
+  ShieldAlert,
+  Trash2
 } from 'lucide-react';
 
 function UserManagement() {
@@ -52,6 +53,18 @@ function UserManagement() {
           fetchUsers(); // Refresh data
       } catch (error) {
           toast.error(error.response?.data?.message || `Failed to ${action} user`);
+      }
+  };
+
+  const deleteUser = async (id) => {
+      if (!confirm(`Are you sure you want to permanently delete this user? This action cannot be undone.`)) return;
+      
+      try {
+          await api.delete(`/admin/users/${id}`);
+          toast.success(`User deleted successfully`);
+          fetchUsers(); // Refresh data
+      } catch (error) {
+          toast.error(error.response?.data?.message || `Failed to delete user`);
       }
   };
 
@@ -211,20 +224,30 @@ function UserManagement() {
                                   </div>
                               </td>
                               <td className="p-6 text-right">
-                                  <button 
-                                    onClick={() => toggleBlock(user._id, user.isBlocked)}
-                                    className={`p-2.5 rounded-xl border transition-all flex items-center gap-2 ml-auto ${
-                                        user.isBlocked 
-                                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/20' 
-                                        : 'bg-red-500/10 border-red-500/30 text-red-500 hover:bg-red-500/20'
-                                    }`}
-                                    title={user.isBlocked ? 'Unlock User' : 'Block User'}
-                                  >
-                                      {user.isBlocked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
-                                      <span className="text-xs font-bold uppercase tracking-wider hidden sm:inline">
-                                          {user.isBlocked ? 'Unblock' : 'Block'}
-                                      </span>
-                                  </button>
+                                  <div className="flex items-center justify-end gap-2">
+                                      <button 
+                                        onClick={() => toggleBlock(user._id, user.isBlocked)}
+                                        className={`p-2.5 rounded-xl border transition-all flex items-center gap-2 ${
+                                            user.isBlocked 
+                                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/20' 
+                                            : 'bg-orange-500/10 border-orange-500/30 text-amber-500 hover:bg-orange-500/20'
+                                        }`}
+                                        title={user.isBlocked ? 'Unlock User' : 'Block User'}
+                                      >
+                                          {user.isBlocked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+                                          <span className="text-xs font-bold uppercase tracking-wider hidden sm:inline">
+                                              {user.isBlocked ? 'Unblock' : 'Block'}
+                                          </span>
+                                      </button>
+                                      
+                                      <button 
+                                        onClick={() => deleteUser(user._id)}
+                                        className="p-2.5 rounded-xl border transition-all flex items-center gap-2 bg-red-500/10 border-red-500/30 text-red-500 hover:bg-red-500/20"
+                                        title="Delete User"
+                                      >
+                                          <Trash2 className="w-4 h-4" />
+                                      </button>
+                                  </div>
                               </td>
                           </tr>
                       ))}

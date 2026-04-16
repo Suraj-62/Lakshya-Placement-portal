@@ -36,8 +36,6 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
       localStorage.setItem('user', JSON.stringify(data));
 
-      toast.success('Logged in successfully ✅');
-
       return {
         success: true,
         user: data, // 🔥 VERY IMPORTANT (admin redirect ke liye)
@@ -61,8 +59,6 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
       localStorage.setItem('user', JSON.stringify(data));
 
-      toast.success('Registered successfully 🎉');
-
       window.location.href = '/dashboard';
 
     } catch (error) {
@@ -77,8 +73,6 @@ export const AuthProvider = ({ children }) => {
 
       setUser(data);
       localStorage.setItem('user', JSON.stringify(data));
-
-      toast.success('Google SignIn successful ✅');
 
       return {
         success: true,
@@ -101,8 +95,6 @@ export const AuthProvider = ({ children }) => {
 
     localStorage.removeItem('user');
     sessionStorage.clear();
-
-    toast.success('Logged out 👋');
 
     window.location.href = '/';
   };

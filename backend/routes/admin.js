@@ -11,6 +11,7 @@ import {
   getDashboardStats,
   getUsersAnalytics,
   toggleUserBlock,
+  deleteUser,
   seedCategoryWithAI,
 } from '../controllers/adminController.js';
 
@@ -30,5 +31,6 @@ router.delete('/questions/:id', deleteQuestion);
 router.get('/stats', getDashboardStats);
 router.get('/users', getUsersAnalytics);
 router.put('/users/:id/toggle-block', toggleUserBlock);
+router.delete('/users/:id', deleteUser);
 
 export default router;

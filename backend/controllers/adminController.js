@@ -213,6 +213,29 @@ export const toggleUserBlock = async (req, res, next) => {
   }
 };
 
+export const deleteUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Prevent deleting self
+    if (user._id.toString() === req.user._id.toString()) {
+      return res.status(400).json({ message: 'You cannot delete yourself' });
+    }
+
+    // Optional: Delete user's attempts
+    await Attempt.deleteMany({ user: user._id });
+
+    await user.deleteOne();
+
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const seedCategoryWithAI = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -242,7 +265,7 @@ Format:
 `;
 
     const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.5-flash-lite',
       contents: prompt
     });
 

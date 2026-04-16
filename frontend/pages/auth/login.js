@@ -204,11 +204,7 @@ function Login() {
                     Create an account
                   </Link>
                 </p>
-                <div>
-                  <Link href="/auth/login?role=admin" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-stone-900/50 border border-white/5 text-xs font-semibold text-stone-500 hover:text-stone-300 hover:bg-stone-900 transition-colors">
-                    <User className="w-3 h-3" /> Admin portal access
-                  </Link>
-                </div>
+
               </div>
             )}
           </div>
