@@ -9,14 +9,15 @@ import { OAuth2Client } from 'google-auth-library';
 export const registerUser = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
+    const normalizedEmail = email.toLowerCase();
 
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
 
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const user = await User.create({ name, email, password });
+    const user = await User.create({ name, email: normalizedEmail, password });
 
     generateToken(res, user._id);
 
@@ -36,8 +37,9 @@ export const registerUser = async (req, res, next) => {
 export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    const normalizedEmail = email.toLowerCase();
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
 
     if (user && (await user.matchPassword(password))) {
 
@@ -116,8 +118,9 @@ export const getUserProfile = async (req, res, next) => {
 // ✅ FORGOT PASSWORD (EMAIL)
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
+  const normalizedEmail = email.toLowerCase();
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
 
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
@@ -187,15 +190,20 @@ export const googleLogin = async (req, res, next) => {
     });
 
     const { email, name, picture } = ticket.getPayload();
+    const normalizedEmail = email.toLowerCase();
 
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
+
+    if (user && user.isBlocked) {
+      return res.status(403).json({ message: 'Your account has been blocked. Please contact support.' });
+    }
 
     if (!user) {
       // Generate a secure random password for Google-authenticated users
       const generatedPassword = crypto.randomBytes(16).toString('hex');
       user = await User.create({
-        name,
-        email,
+        name: name || email.split('@')[0], // Fallback name
+        email: normalizedEmail,
         password: generatedPassword,
         avatar: picture,
       });
@@ -233,7 +241,11 @@ export const googleLogin = async (req, res, next) => {
     });
 
   } catch (error) {
-    console.error("Google Auth Error:", error);
-    res.status(401).json({ message: 'Invalid Google Token' });
+    console.error("Google Auth Detailed Error:", {
+      message: error.message,
+      stack: error.stack,
+      body: req.body
+    });
+    res.status(401).json({ message: 'Google authentication failed. Please try again.' });
   }
 };

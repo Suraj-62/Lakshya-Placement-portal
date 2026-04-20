@@ -39,8 +39,12 @@ const userSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-// 🔐 HASH PASSWORD
+// 🔐 HASH PASSWORD & NORMALIZE EMAIL
 userSchema.pre('save', async function(next) {
+  if (this.isModified('email')) {
+    this.email = this.email.toLowerCase();
+  }
+
   if (!this.isModified('password')) return next();
 
   const salt = await bcrypt.genSalt(12);
