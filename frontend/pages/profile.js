@@ -65,10 +65,17 @@ function Profile() {
       let errorMsg = 'Update failed. Please try again.';
       if (error.response?.data?.message) {
         errorMsg = error.response.data.message;
+      } else if (error.response?.data?.error) {
+        errorMsg = `Server Error: ${error.response.data.error}`;
       } else if (error.message === 'Network Error') {
         errorMsg = 'Network error. Please check your connection.';
       } else if (error.message) {
         errorMsg = `Error: ${error.message}`;
+      }
+
+      // If we have details (stack trace) and we're debugging
+      if (error.response?.data?.details) {
+        console.error('Server Stack Trace:', error.response.data.details);
       }
 
       setStatus({ 
