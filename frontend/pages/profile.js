@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
-import toast from 'react-hot-toast';
-import { Camera, User, Mail, Save } from 'lucide-react';
+import { Camera, User, Mail, Save, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import withAuth from '../components/withAuth';
 
 function Profile() {
@@ -19,6 +18,18 @@ function Profile() {
   );
 
   const [imageError, setImageError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState({ type: '', message: '' });
+
+  // Auto-hide status message after 4 seconds
+  useEffect(() => {
+    if (status.message) {
+      const timer = setTimeout(() => {
+        setStatus({ type: '', message: '' });
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
 
   // image preview
   const handleImageChange = (e) => {
@@ -32,23 +43,29 @@ function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setStatus({ type: '', message: '' });
+
     try {
       const formData = new FormData();
       formData.append('name', name);
       formData.append('email', email);
       if (image) formData.append('avatar', image);
 
-      const res = await api.put('/users/profile', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      // axios automatically sets 'Content-Type': 'multipart/form-data' with boundary
+      const res = await api.put('/users/profile', formData);
 
       updateAuthUser(res.data);
-      toast.success('Profile updated successfully');
+      setStatus({ type: 'success', message: 'Profile updated successfully!' });
 
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Update failed');
+      console.error('Update Error:', error);
+      setStatus({ 
+        type: 'error', 
+        message: error.response?.data?.message || 'Update failed. Please try again.' 
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -128,9 +145,32 @@ function Profile() {
             </div>
 
             {/* ACTIONS */}
-            <div className="pt-8 flex items-center justify-end border-t border-white/5">
-               <button type="submit" className="bg-amber-600 hover:bg-amber-500 text-white px-8 py-3.5 rounded-xl font-semibold transition-all flex items-center gap-2 shadow-lg shadow-amber-900/20 active:scale-95">
-                  <Save className="w-4 h-4" /> Save Changes
+            <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/5">
+               <div className="flex-1">
+                 {status.message && (
+                   <div className={`flex items-center gap-2 text-sm font-medium animate-in fade-in slide-in-from-left-4 duration-300 ${status.type === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                     {status.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                     {status.message}
+                   </div>
+                 )}
+               </div>
+               
+               <button 
+                type="submit" 
+                disabled={loading}
+                className="w-full sm:w-auto bg-amber-600 hover:bg-amber-500 disabled:bg-stone-800 disabled:text-stone-500 text-white px-8 py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-amber-900/20 active:scale-95 min-w-[160px]"
+               >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      Save Changes
+                    </>
+                  )}
                </button>
             </div>
 
