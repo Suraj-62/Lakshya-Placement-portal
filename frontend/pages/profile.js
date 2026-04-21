@@ -59,10 +59,24 @@ function Profile() {
       setStatus({ type: 'success', message: 'Profile updated successfully!' });
 
     } catch (error) {
-      console.error('Update Error:', error);
+      console.error('Update Error Detail:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      
+      let errorMsg = 'Update failed. Please try again.';
+      if (error.response?.data?.message) {
+        errorMsg = error.response.data.message;
+      } else if (error.message === 'Network Error') {
+        errorMsg = 'Network error. Please check your connection.';
+      } else if (error.message) {
+        errorMsg = `Error: ${error.message}`;
+      }
+
       setStatus({ 
         type: 'error', 
-        message: error.response?.data?.message || 'Update failed. Please try again.' 
+        message: errorMsg 
       });
     } finally {
       setLoading(false);
