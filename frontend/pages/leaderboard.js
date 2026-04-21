@@ -5,14 +5,20 @@ import { Trophy, Medal, Flame, Target, Award, Crown } from 'lucide-react';
 
 function Leaderboard() {
   const [leaders, setLeaders] = useState([]);
+  const [totalStudents, setTotalStudents] = useState(0);
+  const [userRank, setUserRank] = useState(0);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
         const { data } = await api.get('/leaderboard');
-        setLeaders(data);
+        setLeaders(data.leaderboard || []);
+        setTotalStudents(data.totalStudents || 0);
+        setUserRank(data.userRank || 0);
       } catch (err) {
+
         console.error(err);
       } finally {
         setLoading(false);
@@ -39,10 +45,21 @@ function Leaderboard() {
           <h1 className="text-4xl md:text-5xl font-black text-orange-50 tracking-tight mb-4">
              Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">Leaderboard</span>
           </h1>
-          <p className="text-stone-400 max-w-2xl text-lg">
-             See how you stack up against top performers across the platform. Rank is purely determined by the total number of correct answers and active points.
+          <p className="text-stone-400 max-w-2xl text-lg mb-6">
+             See how you stack up against top performers across the platform. Rank is determined by correct answers and active points.
           </p>
+
+          {/* User Rank Summary */}
+          {userRank > 0 && (
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-amber-900/10 border border-amber-900/30 rounded-2xl">
+               <span className="text-stone-400 font-medium">Your Current Rank:</span>
+               <span className="text-2xl font-black text-amber-500">
+                  {userRank} <span className="text-sm text-stone-600 font-bold italic">/ {totalStudents}</span>
+               </span>
+            </div>
+          )}
        </div>
+
 
        <div className="bg-[#120F0D] border border-amber-900/30 rounded-3xl overflow-hidden shadow-2xl relative">
           
@@ -76,8 +93,13 @@ function Leaderboard() {
                       {/* User Info & Badges */}
                       <div className="col-span-5 flex items-center gap-4">
                          {user.avatar ? (
-                            <img src={`http://localhost:5000${user.avatar}`} alt={user.name} className={`w-12 h-12 rounded-full object-cover border-[2px] ${isTop3 ? 'border-amber-500/50' : 'border-stone-800'}`} />
+                            <img 
+                               src={user.avatar.startsWith('http') ? user.avatar : `${process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL.replace('/api', '') : 'http://localhost:5000'}${user.avatar}`} 
+                               alt={user.name} 
+                               className={`w-12 h-12 rounded-full object-cover border-[2px] ${isTop3 ? 'border-amber-500/50' : 'border-stone-800'}`} 
+                            />
                          ) : (
+
                             <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg border-[2px] ${isTop3 ? 'border-amber-500/50 text-amber-500 bg-amber-900/20' : 'border-stone-800 bg-stone-900 text-stone-500'}`}>
                                {user.name.charAt(0).toUpperCase()}
                             </div>

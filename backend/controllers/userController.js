@@ -17,12 +17,13 @@ export const updateProfile = async (req, res) => {
 
     // ✅ image update
     if (req.file) {
-      user.avatar = `/uploads/${req.file.filename}`;
+      console.log("Saving Cloudinary URL:", req.file.path);
+      user.avatar = req.file.path; // Cloudinary returns the full URL in path
     }
+
 
     await user.save();
 
-    // 🔥 IMPORTANT: clean response send karo
     res.json({
       _id: user._id,
       name: user.name,
@@ -32,7 +33,10 @@ export const updateProfile = async (req, res) => {
     });
 
   } catch (error) {
-    console.log("ERROR:", error);
-    res.status(500).json({ message: 'Profile update failed' });
+    console.error("Profile Update Error:", error);
+    res.status(500).json({ 
+      message: 'Profile update failed',
+      error: error.message 
+    });
   }
-};
+};

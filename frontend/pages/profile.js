@@ -14,9 +14,10 @@ function Profile() {
   const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL.replace('/api', '') : 'http://localhost:5000';
   const [preview, setPreview] = useState(
     user?.avatar
-      ? `${BACKEND_URL}${user.avatar}?t=${new Date().getTime()}`
+      ? (user.avatar.startsWith('http') ? user.avatar : `${BACKEND_URL}${user.avatar}?t=${new Date().getTime()}`)
       : ''
   );
+
   const [imageError, setImageError] = useState(false);
 
   // image preview
