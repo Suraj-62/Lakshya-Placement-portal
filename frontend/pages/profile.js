@@ -59,11 +59,8 @@ function Profile() {
       setStatus({ type: 'success', message: 'Profile updated successfully!' });
 
     } catch (error) {
-      console.error('Update Error Detail:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
+      console.error('Update Error Full Object:', error);
+      console.dir(error);
       
       let errorMsg = 'Update failed. Please try again.';
       if (error.response?.data?.message) {
