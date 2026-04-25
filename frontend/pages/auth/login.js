@@ -42,6 +42,7 @@ function Login() {
     }
   };
 
+  return (
     <div className="min-h-screen flex font-sans bg-[#0c0a09] selection:bg-amber-700/30">
       <Head>
         <title>{isAdmin ? "Admin Login" : "Login"} | Lakshya</title>
