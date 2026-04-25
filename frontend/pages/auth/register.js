@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Eye, EyeOff, Sparkles, ArrowRight } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
 import toast from 'react-hot-toast';
+import Head from 'next/head';
 
 function Register() {
   const { register, continueWithGoogle } = useAuth();
@@ -29,8 +30,11 @@ function Register() {
     }
   };
 
-  return (
     <div className="min-h-screen flex font-sans bg-[#0c0a09] selection:bg-amber-700/30">
+      <Head>
+        <title>Create Account | Lakshya</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+      </Head>
 
       {/* LEFT - PRESENTATION (WOW FACTOR) */}
       <div className="hidden lg:flex w-1/2 relative flex-col justify-center bg-black overflow-hidden p-16 border-r border-white/5">
@@ -77,7 +81,7 @@ function Register() {
       </div>
 
       {/* RIGHT - AUTH FORM */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 xl:p-24 bg-[#0a0a0a] relative">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 xl:p-24 bg-[#0a0a0a] relative">
 
         <div className="w-full max-w-sm relative z-10 animate-in slide-in-from-right-8 duration-700 fade-in">
           

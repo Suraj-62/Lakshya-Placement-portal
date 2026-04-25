@@ -6,7 +6,7 @@ import withAuth from '../components/withAuth';
 import Link from 'next/link';
 import { 
   Target, CheckCircle2, Flame, Trophy, BrainCircuit, 
-  Settings, TrendingUp, Code
+  Settings, TrendingUp, Code, ExternalLink
 } from 'lucide-react';
 import { 
   ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Bar, Cell 
@@ -255,9 +255,19 @@ function Dashboard() {
                       </div>
                    </div>
                    
-                   <Link href="/exam/start" className="mt-8 w-full py-3.5 bg-white text-black hover:bg-stone-200 text-sm font-semibold rounded-xl transition-colors text-center shadow-lg shadow-white/5">
-                       Start Practice Session
-                   </Link>
+                   <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                      <Link href="/exam/start" className="flex-1 py-3.5 bg-white text-black hover:bg-stone-200 text-sm font-semibold rounded-xl transition-colors text-center shadow-lg shadow-white/5">
+                          Start Practice Session
+                      </Link>
+                      <a 
+                        href="https://samvaad-ten.vercel.app" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="flex-1 py-3.5 bg-[#1a1a1a] text-white border border-white/10 hover:bg-stone-800 text-sm font-semibold rounded-xl transition-colors text-center flex items-center justify-center gap-2"
+                      >
+                          Samvaad <ExternalLink className="w-4 h-4" />
+                      </a>
+                   </div>
                 </div>
             </div>
         </div>

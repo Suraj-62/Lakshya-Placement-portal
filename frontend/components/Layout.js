@@ -9,7 +9,8 @@ import {
   User as UserIcon, 
   LogOut, 
   ChevronDown,
-  Activity
+  Activity,
+  ExternalLink
 } from 'lucide-react';
 
 import Head from 'next/head';
@@ -42,6 +43,7 @@ export default function Layout({ children, title = 'Lakshya Placement Portal', n
     <>
       <Head>
         <title>{title}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
       <div className="min-h-screen bg-[#0c0a09] font-sans selection:bg-amber-500/30 selection:text-amber-200">
         {/* Dynamic Background Effects */}
@@ -74,6 +76,14 @@ export default function Layout({ children, title = 'Lakshya Placement Portal', n
                     <>
                       <Link href="/dashboard" className="text-sm font-medium text-stone-400 hover:text-orange-50 transition-colors">Dashboard</Link>
                       <Link href="/practice" className="text-sm font-medium text-stone-400 hover:text-orange-50 transition-colors">Practice</Link>
+                      <a 
+                        href="https://samvaad-ten.vercel.app" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-sm font-medium text-stone-400 hover:text-orange-50 transition-colors flex items-center gap-1"
+                      >
+                        Samvaad <ExternalLink className="w-3 h-3" />
+                      </a>
                       <Link href="/leaderboard" className="text-sm font-medium text-stone-400 hover:text-orange-50 transition-colors">Leaderboard</Link>
                     </>
                   )}
@@ -109,6 +119,14 @@ export default function Layout({ children, title = 'Lakshya Placement Portal', n
                             <button onClick={() => { setOpen(false); router.push('/practice'); }} className="w-full px-4 py-2 text-left text-sm text-stone-300 hover:bg-white/5 hover:text-orange-50 flex items-center gap-2 transition-colors">
                               <Code className="w-4 h-4" /> Practice Arena
                             </button>
+                            <a 
+                              href="https://samvaad-ten.vercel.app" 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="w-full px-4 py-2 text-left text-sm text-stone-300 hover:bg-white/5 hover:text-orange-50 flex items-center gap-2 transition-colors"
+                            >
+                              <ExternalLink className="w-4 h-4" /> Samvaad
+                            </a>
                             <button onClick={() => { setOpen(false); router.push('/leaderboard'); }} className="w-full px-4 py-2 text-left text-sm text-stone-300 hover:bg-white/5 hover:text-orange-50 flex items-center gap-2 transition-colors">
                               <Trophy className="w-4 h-4" /> Leaderboard
                             </button>
