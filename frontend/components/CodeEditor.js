@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
+import SplitPane from 'react-split-pane';
 import { Play, Send, ChevronDown, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import api from '../lib/api';
 import toast from 'react-hot-toast';
@@ -110,8 +111,17 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
                 </div>
             </div>
 
-            {/* Editor */}
-            <div className="flex-grow min-h-[400px]">
+            {/* Main content with resizable output */}
+            <div className="flex-grow relative h-full">
+                <SplitPane
+                    split="horizontal"
+                    defaultSize={results ? "60%" : "100%"}
+                    minSize={200}
+                    maxSize={-100}
+                    className="code-editor-split-pane"
+                >
+                    {/* Editor */}
+                    <div className="h-full w-full">
                 <Editor
                     height="100%"
                     language={language === 'cpp' ? 'cpp' : language}
@@ -137,11 +147,11 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
                         hideCursorInOverviewRuler: true,
                     }}
                 />
-            </div>
+                    </div>
 
-            {/* Results Panel */}
-            {results && (
-                <div className="h-1/3 bg-stone-900 border-t border-white/10 overflow-y-auto p-4 custom-scrollbar">
+                    {/* Results Panel */}
+                    {results ? (
+                        <div className="h-full bg-stone-900 border-t border-white/10 overflow-y-auto p-4 custom-scrollbar">
                     <div className="flex items-center justify-between mb-4">
                         <h4 className="text-orange-50 font-bold text-sm tracking-tight flex items-center gap-2">
                             Output
@@ -192,7 +202,21 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
                         ))}
                     </div>
                 </div>
-            )}
+                    )}
+                </SplitPane>
+            </div>
+            <style jsx global>{`
+                .code-editor-split-pane .Resizer {
+                    background: rgba(255, 255, 255, 0.05);
+                    height: 6px;
+                    cursor: row-resize;
+                    z-index: 10;
+                    transition: background 0.2s;
+                }
+                .code-editor-split-pane .Resizer:hover {
+                    background: #fb923c;
+                }
+            `}</style>
         </div>
     );
 };

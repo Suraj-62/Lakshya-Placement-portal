@@ -2,6 +2,7 @@ import { spawn, execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { generateCppDriver, generateJavaDriver } from './dynamicDrivers.js';
 
 const TEMP_DIR = path.join(process.cwd(), 'temp');
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR);
@@ -72,113 +73,8 @@ except Exception as e:
     sys.exit(1)
 `;
         case 'cpp':
-            return `
-#include <iostream>
-#include <vector>
-#include <string>
-#include <sstream>
-#include <algorithm>
-
-using namespace std;
-
-// Basic helper to parse simple vectors like [1,2,3]
-template<typename T>
-vector<T> parseVector(string s) {
-    vector<T> res;
-    s.erase(remove(s.begin(), s.end(), '['), s.end());
-    s.erase(remove(s.begin(), s.end(), ']'), s.end());
-    s.erase(remove(s.begin(), s.end(), '"'), s.end());
-    stringstream ss(s);
-    string item;
-    while (getline(ss, item, ',')) {
-        stringstream converter(item);
-        T val;
-        converter >> val;
-        res.push_back(val);
-    }
-    return res;
-}
-
-// Specialization for vector<char> to handle ["h","e"]
-vector<char> parseCharVector(string s) {
-    vector<char> res;
-    for(int i=0; i<s.length(); ++i) {
-        if(s[i] != '[' && s[i] != ']' && s[i] != ',' && s[i] != '\"' && !isspace(s[i])) {
-            res.push_back(s[i]);
-        }
-    }
-    return res;
-}
-
-int main() {
-    string line1, line2;
-    if (!getline(cin, line1)) return 0;
-    
-    // Heuristic for Two Sum (vector<int>, int)
-    if (getline(cin, line2)) {
-        vector<int> nums = parseVector<int>(line1);
-        int target = stoi(line2);
-        vector<int> res = twoSum(nums, target);
-        cout << "[";
-        for(int i=0; i<res.size(); ++i) cout << res[i] << (i==res.size()-1 ? "" : ",");
-        cout << "]";
-    } 
-    // Heuristic for Reverse String (vector<char>)
-    else {
-        vector<char> s = parseCharVector(line1);
-        reverseString(s);
-        cout << "[";
-        for(int i=0; i<s.size(); ++i) cout << "\\\"" << s[i] << "\\\"" << (i==s.size()-1 ? "" : ",");
-        cout << "]";
-    }
-    return 0;
-}
-`;
         case 'java':
-            return `
-import java.util.*;
-import java.io.*;
-
-class SolutionRunner {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        if (!sc.hasNextLine()) return;
-        String line1 = sc.nextLine();
-        
-        Solution sol = new Solution();
-        
-        if (sc.hasNextLine()) {
-            String line2 = sc.nextLine();
-            int[] nums = parseArray(line1);
-            int target = Integer.parseInt(line2.trim());
-            int[] res = sol.twoSum(nums, target);
-            System.out.println(Arrays.toString(res).replace(" ", ""));
-        } else {
-            char[] s = parseCharArray(line1);
-            sol.reverseString(s);
-            System.out.print("[");
-            for(int i=0; i<s.length; i++) {
-                System.out.print("\\\"" + s[i] + "\\\"" + (i == s.length - 1 ? "" : ","));
-            }
-            System.out.println("]");
-        }
-    }
-    
-    private static int[] parseArray(String s) {
-        s = s.replace("[", "").replace("]", "").replace(" ", "");
-        if (s.isEmpty()) return new int[0];
-        String[] parts = s.split(",");
-        int[] res = new int[parts.length];
-        for(int i=0; i<parts.length; i++) res[i] = Integer.parseInt(parts[i]);
-        return res;
-    }
-    
-    private static char[] parseCharArray(String s) {
-        s = s.replace("[", "").replace("]", "").replace("\\\"", "").replace(" ", "").replace(",", "");
-        return s.toCharArray();
-    }
-}
-`;
+            return '';
         default:
             return '';
     }
@@ -223,14 +119,21 @@ export const runAgainstTestCases = async (code, language, testCases, functionNam
     const results = [];
     
     // Choose the driver: Question-specific driver first, then generic fallback
-    let driverTemplate = drivers?.[language] || getDriver(language, functionName);
+    let driverTemplate = drivers?.[language];
+    let isGenericDriver = !driverTemplate;
+    if (!driverTemplate) {
+        driverTemplate = getDriver(language, functionName);
+    }
     
-    let wrappedCode;
-    if (driverTemplate && driverTemplate.includes('{{user_code}}')) {
-        wrappedCode = driverTemplate.replace('{{user_code}}', code);
+    let baseWrappedCode;
+    if (driverTemplate) {
+        if (driverTemplate.includes('{{user_code}}')) {
+            baseWrappedCode = driverTemplate.replace('{{user_code}}', code);
+        } else {
+            baseWrappedCode = `${code}\n\n${driverTemplate}`;
+        }
     } else {
-        // Fallback: Append driver to code (current behavior for JS/Python)
-        wrappedCode = `${code}\n\n${driverTemplate}`;
+        baseWrappedCode = code;
     }
     
     const runId = crypto.randomUUID();
@@ -249,7 +152,16 @@ export const runAgainstTestCases = async (code, language, testCases, functionNam
 
     for (const tc of testCases) {
         let runResult;
-        const filePath = path.join(TEMP_DIR, `solution_${runId}`);
+        let wrappedCode = baseWrappedCode;
+        if (isGenericDriver) {
+            if (language === 'cpp') {
+                wrappedCode = generateCppDriver(code, functionName, tc);
+            } else if (language === 'java') {
+                wrappedCode = generateJavaDriver(code, functionName, tc);
+            }
+        }
+        
+        const filePath = path.join(TEMP_DIR, `solution_${runId}_${crypto.randomUUID()}`);
 
         try {
             if (language === 'javascript') {
@@ -286,7 +198,7 @@ export const runAgainstTestCases = async (code, language, testCases, functionNam
                 // Java needs the class name to match the file name. 
                 // We'll wrap the user code if needed or assume they provide a class 'Solution'
                 // For simplicity, we'll name the file Solution.java in a unique subfolder
-                const javaTaskDir = path.join(TEMP_DIR, runId);
+                const javaTaskDir = path.join(TEMP_DIR, `${runId}_${crypto.randomUUID()}`);
                 if (!fs.existsSync(javaTaskDir)) fs.mkdirSync(javaTaskDir);
                 
                 const javaFile = path.join(javaTaskDir, 'Solution.java');
@@ -298,7 +210,7 @@ export const runAgainstTestCases = async (code, language, testCases, functionNam
                     runResult = { ...compileResult, status: 'error', errorType: 'Compile Error' };
                 } else {
                     // Run (must run from the directory containing the classes)
-                    runResult = await executeCommand('java', ['-cp', javaTaskDir, 'SolutionRunner'], tc.input);
+                    runResult = await executeCommand('java', ['-cp', javaTaskDir, 'SolutionRunner'], null);
                 }
                 
                 // Cleanup
