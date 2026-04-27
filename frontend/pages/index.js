@@ -69,6 +69,21 @@ export default function Home() {
               View Capabilities
             </Link>
           </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 w-full max-w-4xl border-t border-white/5 pt-12">
+            {[
+              { label: "Practice Questions", value: "1,500+" },
+              { label: "Success Rate", value: "94%" },
+              { label: "Mock Assessments", value: "200+" },
+              { label: "Active Learners", value: "10k+" }
+            ].map((stat, i) => (
+              <div key={i} className="text-center">
+                <p className="text-2xl md:text-3xl font-black text-white mb-1">{stat.value}</p>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-stone-500">{stat.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -110,6 +125,35 @@ export default function Home() {
                 </div>
              ))}
 
+          </div>
+        </div>
+      </section>
+
+      {/* How it Works Section */}
+      <section className="py-24 bg-[#070504]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="mb-20 text-center">
+             <h2 className="text-3xl font-bold text-orange-50 mb-4">Your Path to Placement</h2>
+             <p className="text-stone-400">Three simple steps to transform your technical interview performance.</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-12 relative">
+             {/* Connector Line (Hidden on mobile) */}
+             <div className="absolute top-1/2 left-0 w-full h-[2px] bg-amber-900/10 hidden md:block z-0"></div>
+
+             {[
+               { step: "01", title: "Select Module", desc: "Choose from DSA, System Design, or Language-specific practice banks." },
+               { step: "02", title: "Practice Hard", desc: "Solve challenges in our live IDE with real-time feedback and hidden test cases." },
+               { step: "03", title: "Get Hired", desc: "Use our AI-driven reports to target your weaknesses and walk in with confidence." }
+             ].map((item, i) => (
+               <div key={i} className="relative z-10 flex flex-col items-center text-center">
+                  <div className="w-16 h-16 rounded-full bg-stone-900 border-2 border-amber-900/30 flex items-center justify-center text-xl font-black text-amber-500 mb-6 shadow-xl shadow-black">
+                    {item.step}
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
+                  <p className="text-stone-500 text-sm leading-relaxed max-w-[200px]">{item.desc}</p>
+               </div>
+             ))}
           </div>
         </div>
       </section>
@@ -186,14 +230,33 @@ export default function Home() {
           
           <div id="contact" className="md:justify-self-end">
             <h3 className="text-xl font-semibold text-orange-50 mb-6">Get in Touch</h3>
-            <ul className="space-y-3">
-              <li className="flex items-center gap-3 text-stone-400">
-                 <span className="text-amber-500">Email:</span>
-                 <a href="mailto:mishrasuraj6299@gmail.com" className="hover:text-amber-400 transition-colors">mishrasuraj6299@gmail.com</a>
+            <ul className="space-y-4">
+              <li className="flex items-center gap-4 text-stone-400 group">
+                 <div className="w-10 h-10 rounded-xl bg-stone-800 flex items-center justify-center group-hover:bg-amber-600 transition-all">
+                   <svg className="w-5 h-5 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                 </div>
+                 <div>
+                   <p className="text-[10px] font-black uppercase text-stone-600 tracking-widest">Email</p>
+                   <a href="mailto:mishrasuraj6299@gmail.com" className="text-stone-300 hover:text-amber-400 transition-colors">mishrasuraj6299@gmail.com</a>
+                 </div>
               </li>
-              <li className="flex items-center gap-3 text-stone-400">
-                 <span className="text-amber-500">Phone:</span>
-                 <span className="text-stone-300">6299323274</span>
+              <li className="flex items-center gap-4 text-stone-400 group">
+                 <div className="w-10 h-10 rounded-xl bg-stone-800 flex items-center justify-center group-hover:bg-emerald-600 transition-all">
+                    <svg className="w-5 h-5 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                 </div>
+                 <div>
+                   <p className="text-[10px] font-black uppercase text-stone-600 tracking-widest">Phone</p>
+                   <span className="text-stone-300">6299323274</span>
+                 </div>
+              </li>
+              <li className="flex items-center gap-4 text-stone-400 group">
+                 <div className="w-10 h-10 rounded-xl bg-stone-800 flex items-center justify-center group-hover:bg-blue-600 transition-all">
+                    <svg className="w-5 h-5 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                 </div>
+                 <div>
+                   <p className="text-[10px] font-black uppercase text-stone-600 tracking-widest">LinkedIn</p>
+                   <a href="https://www.linkedin.com/in/suraj-kumar-mishra-30112527b" target="_blank" rel="noopener noreferrer" className="text-stone-300 hover:text-amber-400 transition-colors">Suraj Kumar Mishra</a>
+                 </div>
               </li>
             </ul>
           </div>

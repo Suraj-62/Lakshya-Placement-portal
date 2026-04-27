@@ -4,6 +4,8 @@ A premium, AI-powered platform tailored for engineering graduates and students t
 
 ![Lakshya Banner](https://via.placeholder.com/800x200/0a0a0a/ffffff?text=Lakshya+Placement+Portal)
 
+### 🔗 [Live Demo](https://lakshya-placement-portal.vercel.app/)
+
 ## 🚀 Core Features
 
 - **Live Coding Workspace:** Distraction-free IDE environment powered by Monaco Editor. Write, execute, and evaluate code in multiple programming languages natively.
