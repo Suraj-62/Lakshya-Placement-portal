@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import api from '../../lib/api';
 import toast from 'react-hot-toast';
 import withAuth from '../../components/withAuth';
-import { AlertCircle, Clock, ChevronRight, CheckCircle2, ChevronLeft, Flag, Bookmark, Play, Pause } from 'lucide-react';
+import { AlertCircle, Clock, ChevronRight, CheckCircle2, ChevronLeft, Flag, Bookmark, Play, Pause, BookOpen } from 'lucide-react';
 
 function Exam() {
   const router = useRouter();
