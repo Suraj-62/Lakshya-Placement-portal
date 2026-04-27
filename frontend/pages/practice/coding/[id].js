@@ -30,6 +30,26 @@ const CodingQuestionPage = () => {
         fetchQuestion();
     }, [id]);
 
+    const [timeElapsed, setTimeElapsed] = useState(0);
+    const [isTimerRunning, setIsTimerRunning] = useState(false);
+    const timerRef = React.useRef(null);
+
+    useEffect(() => {
+        if (!isTimerRunning) return;
+
+        timerRef.current = setInterval(() => {
+            setTimeElapsed(prev => prev + 1);
+        }, 1000);
+
+        return () => clearInterval(timerRef.current);
+    }, [isTimerRunning]);
+
+    const formatTime = (sec) => {
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return `${m}:${s.toString().padStart(2, '0')}`;
+    };
+
     if (loading) {
         return (
             <Layout title="Loading... | Lakshya">
@@ -88,9 +108,21 @@ const CodingQuestionPage = () => {
                             }`}>{question.difficulty}</p>
                         </div>
                         <div className="h-8 w-[1px] bg-white/5"></div>
-                        <div className="text-right">
-                            <p className="text-[9px] uppercase font-black text-stone-600 tracking-wider">Estimated Time</p>
-                            <p className="text-xs font-black text-orange-50">25 Mins</p>
+                        <div className="flex items-center gap-4">
+                            <div className="text-right w-12">
+                                <p className="text-[9px] uppercase font-black text-stone-600 tracking-wider">Timer</p>
+                                <p className="text-xs font-black text-orange-50 font-mono tracking-widest">{formatTime(timeElapsed)}</p>
+                            </div>
+                            <button 
+                                onClick={() => setIsTimerRunning(!isTimerRunning)}
+                                className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all border ${
+                                    isTimerRunning 
+                                        ? 'bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500 hover:text-white' 
+                                        : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500 hover:text-white'
+                                }`}
+                            >
+                                {isTimerRunning ? 'Pause' : (timeElapsed === 0 ? 'Start Timer' : 'Resume')}
+                            </button>
                         </div>
                     </div>
                     <Link href="/dashboard">
