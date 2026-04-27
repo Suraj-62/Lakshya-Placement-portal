@@ -178,3 +178,80 @@ class SolutionRunner {
 `;
     return `${driverIncludes}\n${code}\n${driverMain}`;
 };
+
+export const generateJavascriptDriver = (code, functionName, testCase) => {
+    const inputLines = testCase.input.trim().split('\n');
+    const parsedArgs = inputLines.map(line => {
+        try { return JSON.parse(line.trim()); } catch (e) { return line.trim(); }
+    });
+
+    const argDeclarations = parsedArgs.map((arg, i) => `const arg${i} = ${JSON.stringify(arg)};`).join('\n');
+    const callArgs = parsedArgs.map((_, i) => `arg${i}`).join(', ');
+
+    // If functionName is not provided, try to extract it from the code
+    let targetFunc = functionName;
+    if (!targetFunc) {
+        const match = code.match(/var\s+([a-zA-Z0-9_]+)\s*=\s*function/);
+        if (match) targetFunc = match[1];
+        else {
+            const match2 = code.match(/function\s+([a-zA-Z0-9_]+)/);
+            if (match2) targetFunc = match2[1];
+        }
+    }
+
+    const driverMain = `
+// --- Driver ---
+${argDeclarations}
+let result;
+try {
+    result = ${targetFunc}(${callArgs});
+    if (result === undefined && typeof arg0 !== 'undefined') {
+        console.log(JSON.stringify(arg0));
+    } else {
+        console.log(JSON.stringify(result));
+    }
+} catch(err) {
+    console.error(err);
+}
+`;
+    return `${code}\n${driverMain}`;
+};
+
+export const generatePythonDriver = (code, functionName, testCase) => {
+    const inputLines = testCase.input.trim().split('\n');
+    const parsedArgs = inputLines.map(line => {
+        try { return JSON.parse(line.trim()); } catch (e) { return line.trim(); }
+    });
+
+    const argDeclarations = parsedArgs.map((arg, i) => `arg${i} = json.loads('${JSON.stringify(arg)}')`).join('\n');
+    const callArgs = parsedArgs.map((_, i) => `arg${i}`).join(', ');
+
+    let targetFunc = functionName;
+    if (!targetFunc) {
+        const match = code.match(/def\s+([a-zA-Z0-9_]+)\s*\(/);
+        if (match) targetFunc = match[1];
+    }
+
+    let initAndCall = '';
+    if (code.includes('class Solution')) {
+        initAndCall = `sol = Solution()\nresult = sol.${targetFunc}(${callArgs})`;
+    } else {
+        initAndCall = `result = ${targetFunc}(${callArgs})`;
+    }
+
+    const driverMain = `
+# --- Driver ---
+import json
+
+${argDeclarations}
+try:
+    ${initAndCall}
+    if result is None:
+        print(json.dumps(arg0, separators=(',', ':')))
+    else:
+        print(json.dumps(result, separators=(',', ':')))
+except Exception as e:
+    print(str(e))
+`;
+    return `${code}\n${driverMain}`;
+};

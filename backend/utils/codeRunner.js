@@ -2,7 +2,12 @@ import { spawn, execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import { generateCppDriver, generateJavaDriver } from './dynamicDrivers.js';
+import { 
+    generateCppDriver, 
+    generateJavaDriver, 
+    generateJavascriptDriver, 
+    generatePythonDriver 
+} from './dynamicDrivers.js';
 
 const TEMP_DIR = path.join(process.cwd(), 'temp');
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR);
@@ -158,6 +163,10 @@ export const runAgainstTestCases = async (code, language, testCases, functionNam
                 wrappedCode = generateCppDriver(code, functionName, tc);
             } else if (language === 'java') {
                 wrappedCode = generateJavaDriver(code, functionName, tc);
+            } else if (language === 'javascript') {
+                wrappedCode = generateJavascriptDriver(code, functionName, tc);
+            } else if (language === 'python') {
+                wrappedCode = generatePythonDriver(code, functionName, tc);
             }
         }
         
