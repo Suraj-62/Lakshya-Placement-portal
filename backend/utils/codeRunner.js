@@ -197,10 +197,10 @@ const executeCommand = (command, args, input, timeout = 3000) => {
             resolve({ code: null, stdout, stderr: stderr + '\nExecution Timed Out', signal: 'SIGTERM' });
         }, timeout);
 
-        if (input) {
-            child.stdin.write(input);
-            child.stdin.end();
+        if (input !== undefined && input !== null) {
+            child.stdin.write(String(input));
         }
+        child.stdin.end();
 
         child.stdout.on('data', (data) => { stdout += data.toString(); });
         child.stderr.on('data', (data) => { stderr += data.toString(); });
