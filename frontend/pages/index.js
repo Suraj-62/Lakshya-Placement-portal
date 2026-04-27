@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Code, Brain, LineChart, BookOpen } from "lucide-react";
+import { ArrowRight, Code, Brain, LineChart, BookOpen, Video, Mic, Globe, Users, MessageSquare } from "lucide-react";
 
 export default function Home() {
   return (
@@ -158,6 +158,93 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Samvaad Integrated Section */}
+      <section className="py-24 border-t border-amber-900/10 bg-[#0c0a09] relative overflow-hidden">
+        {/* Glow effect */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/5 blur-[120px] rounded-full pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            <div className="w-full lg:w-1/2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-widest mb-6">
+                <Globe className="w-3 h-3" /> Integrated Platform
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight leading-tight">
+                Beyond Practice: <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
+                  Live Mock Interviews
+                </span>
+              </h2>
+              <p className="text-stone-400 text-lg mb-8 leading-relaxed font-medium">
+                Take your preparation to the next level with <span className="text-indigo-400 font-bold">Samvaad</span>, our dedicated peer-to-peer interview platform. Practice live coding, system design, and behavioral rounds with fellow aspirants in a professional environment.
+              </p>
+              
+              <div className="space-y-4 mb-10">
+                {[
+                  { icon: <Video className="w-4 h-4" />, text: "HD Video & Audio connectivity" },
+                  { icon: <Code className="w-4 h-4" />, text: "Collaborative Real-time Code Editor" },
+                  { icon: <Users className="w-4 h-4" />, text: "Group Discussion (GD) Rooms" },
+                  { icon: <Mic className="w-4 h-4" />, text: "Peer-to-peer Feedback & Rating System" }
+                ].map((feature, i) => (
+                  <div key={i} className="flex items-center gap-3 text-stone-300">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                      {feature.icon}
+                    </div>
+                    <span className="text-sm font-semibold">{feature.text}</span>
+                  </div>
+                ))}
+              </div>
+
+              <a 
+                href="https://samvaad-ten.vercel.app" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="inline-flex items-center gap-3 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold transition-all shadow-xl shadow-indigo-900/20 hover:shadow-indigo-900/40 hover:-translate-y-1"
+              >
+                Launch Samvaad <ArrowRight className="w-5 h-5" />
+              </a>
+            </div>
+
+            <div className="w-full lg:w-1/2">
+              <div className="relative">
+                {/* Mockup Frame */}
+                <div className="bg-stone-900 rounded-3xl p-3 border border-white/10 shadow-2xl overflow-hidden relative group">
+                  <div className="aspect-video bg-black rounded-2xl overflow-hidden relative">
+                    {/* Placeholder image representation for Samvaad */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/40 to-black flex items-center justify-center">
+                       <div className="text-center">
+                          <div className="w-20 h-20 rounded-full bg-indigo-500/20 flex items-center justify-center mx-auto mb-4 border border-indigo-500/30">
+                            <Video className="w-10 h-10 text-indigo-400" />
+                          </div>
+                          <p className="text-indigo-400 font-black tracking-widest uppercase text-xs">Live Interview in Progress</p>
+                       </div>
+                    </div>
+                    {/* Floating UI elements for mockup feel */}
+                    <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+                       <div className="flex gap-2">
+                          <div className="w-8 h-8 rounded-full bg-red-500/80"></div>
+                          <div className="w-8 h-8 rounded-full bg-stone-800/80"></div>
+                       </div>
+                       <div className="px-3 py-1 bg-indigo-600 rounded-lg text-[10px] font-bold text-white uppercase tracking-tighter">
+                          Interviewer: Suraj Mishra
+                       </div>
+                    </div>
+                  </div>
+                </div>
+                {/* Floating Card */}
+                <div className="absolute -bottom-6 -left-6 bg-stone-900 border border-white/10 p-4 rounded-2xl shadow-2xl max-w-[180px] animate-bounce-slow">
+                   <div className="flex items-center gap-3 mb-2">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                      <p className="text-[10px] font-bold text-stone-300 uppercase tracking-widest">Live Now</p>
+                   </div>
+                   <p className="text-xs font-medium text-stone-400">120+ Active interview sessions</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Grid */}
       <section id="features" className="py-24 border-t border-amber-900/20 bg-[#0c0a09]">
         <div className="max-w-7xl mx-auto px-6">
@@ -166,13 +253,13 @@ export default function Home() {
             <p className="text-stone-400 max-w-2xl mx-auto">Our platform provides comprehensive tools to bridge the gap between learning and landing your dream job.</p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="p-8 rounded-3xl bg-stone-900/40 border border-white/5 hover:border-white/10 hover:bg-stone-900/60 transition-all group backdrop-blur-xl">
               <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <BookOpen className="w-6 h-6 text-amber-500" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3">Curated Data Bank</h3>
-              <p className="text-stone-400 leading-relaxed font-medium">
+              <h3 className="text-xl font-bold text-white mb-3">Curated Data Bank</h3>
+              <p className="text-stone-400 leading-relaxed text-sm font-medium">
                 Access a highly curated list of challenges asked in product-based companies. Filter by difficulty, topic, and company.
               </p>
             </div>
@@ -181,20 +268,29 @@ export default function Home() {
               <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6 relative z-10 group-hover:scale-110 transition-transform">
                 <Code className="w-6 h-6 text-emerald-400" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3 relative z-10">Live Coding Environment</h3>
-              <p className="text-stone-400 leading-relaxed font-medium relative z-10">
-                Write, compile, and run code in multiple languages directly in your browser with an intuitive, distraction-free IDE interface.
+              <h3 className="text-xl font-bold text-white mb-3 relative z-10">Live Code IDE</h3>
+              <p className="text-stone-400 leading-relaxed text-sm font-medium relative z-10">
+                Write, compile, and run code in multiple languages directly in your browser with a distraction-free IDE interface.
               </p>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-3xl rounded-full pointer-events-none group-hover:bg-emerald-500/10 transition-colors"></div>
             </div>
 
             <div className="p-8 rounded-3xl bg-stone-900/40 border border-white/5 hover:border-white/10 hover:bg-stone-900/60 transition-all group backdrop-blur-xl">
               <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <LineChart className="w-6 h-6 text-blue-400" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3">Performance Analytics</h3>
-              <p className="text-stone-400 leading-relaxed font-medium">
-                Track your progress over time. Identify weak areas with detailed metrics on accuracy, speed, and topic-wise mastery.
+              <h3 className="text-xl font-bold text-white mb-3">Performance Analytics</h3>
+              <p className="text-stone-400 leading-relaxed text-sm font-medium">
+                Track your progress with detailed metrics on accuracy, speed, and topic-wise mastery to identify weak areas.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-3xl bg-stone-900/40 border border-white/5 hover:border-white/10 hover:bg-stone-900/60 transition-all group backdrop-blur-xl">
+              <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <MessageSquare className="w-6 h-6 text-rose-400" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">GD Preparation</h3>
+              <p className="text-stone-400 leading-relaxed text-sm font-medium">
+                Master Group Discussions with curated topics, tips, and common pitfalls. Prepare for the most crucial round of placements.
               </p>
             </div>
           </div>
