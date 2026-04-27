@@ -14,7 +14,7 @@ function Exam() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState('');
   const [answersMap, setAnswersMap] = useState({});
-  const [timeRemaining, setTimeRemaining] = useState(null);
+  const [timeElapsed, setTimeElapsed] = useState(null);
   const [bookmarks, setBookmarks] = useState([]);
   const [isTimerRunning, setIsTimerRunning] = useState(true);
 
@@ -37,10 +37,12 @@ function Exam() {
 
         setAnswersMap(map);
 
-        if (data.endTime) {
-          const end = new Date(data.endTime).getTime();
+        if (data.startTime) {
+          const start = new Date(data.startTime).getTime();
           const now = new Date().getTime();
-          setTimeRemaining(Math.max(0, Math.floor((end - now) / 1000)));
+          setTimeElapsed(Math.max(0, Math.floor((now - start) / 1000)));
+        } else {
+          setTimeElapsed(0);
         }
       } catch (error) {
         toast.error('Failed to load exam');
@@ -63,25 +65,14 @@ function Exam() {
 
   // TIMER
   useEffect(() => {
-    if (timeRemaining === null || !isTimerRunning) return;
-    if (timeRemaining <= 0) {
-      handleCompleteExam();
-      return;
-    }
+    if (timeElapsed === null || !isTimerRunning) return;
 
     timerRef.current = setInterval(() => {
-      setTimeRemaining(prev => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current);
-          handleCompleteExam();
-          return 0;
-        }
-        return prev - 1;
-      });
+      setTimeElapsed(prev => prev + 1);
     }, 1000);
 
     return () => clearInterval(timerRef.current);
-  }, [timeRemaining, isTimerRunning]);
+  }, [timeElapsed, isTimerRunning]);
 
   // ANTI-CHEAT: TAB SWITCH
   useEffect(() => {
@@ -214,7 +205,7 @@ function Exam() {
             <div className="flex items-center gap-2">
               <div className="bg-stone-950/80 border border-white/5 px-5 py-3 rounded-2xl flex items-center gap-3 text-amber-500 font-bold font-mono text-xl shadow-inner">
                 <Clock className={`w-6 h-6 text-amber-600 ${isTimerRunning ? 'animate-pulse' : ''}`} />
-                {formatTime(timeRemaining)}
+                {formatTime(timeElapsed)}
               </div>
               <button
                 onClick={() => setIsTimerRunning(!isTimerRunning)}
