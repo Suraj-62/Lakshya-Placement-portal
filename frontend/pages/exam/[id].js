@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import api from '../../lib/api';
 import toast from 'react-hot-toast';
 import withAuth from '../../components/withAuth';
-import { AlertCircle, Clock, ChevronRight, CheckCircle2, ChevronLeft, Flag, Bookmark } from 'lucide-react';
+import { AlertCircle, Clock, ChevronRight, CheckCircle2, ChevronLeft, Flag, Bookmark, Play, Pause } from 'lucide-react';
 
 function Exam() {
   const router = useRouter();
@@ -16,6 +16,7 @@ function Exam() {
   const [answersMap, setAnswersMap] = useState({});
   const [timeRemaining, setTimeRemaining] = useState(null);
   const [bookmarks, setBookmarks] = useState([]);
+  const [isTimerRunning, setIsTimerRunning] = useState(true);
 
   const timerRef = useRef(null);
 
@@ -62,7 +63,7 @@ function Exam() {
 
   // TIMER
   useEffect(() => {
-    if (timeRemaining === null) return;
+    if (timeRemaining === null || !isTimerRunning) return;
     if (timeRemaining <= 0) {
       handleCompleteExam();
       return;
@@ -80,7 +81,7 @@ function Exam() {
     }, 1000);
 
     return () => clearInterval(timerRef.current);
-  }, [timeRemaining]);
+  }, [timeRemaining, isTimerRunning]);
 
   // ANTI-CHEAT: TAB SWITCH
   useEffect(() => {
@@ -210,9 +211,18 @@ function Exam() {
           </div>
           
           <div className="flex items-center gap-4 sm:gap-6">
-            <div className="bg-stone-950/80 border border-white/5 px-5 py-3 rounded-2xl flex items-center gap-3 text-amber-500 font-bold font-mono text-xl shadow-inner">
-              <Clock className="w-6 h-6 text-amber-600 animate-pulse" />
-              {formatTime(timeRemaining)}
+            <div className="flex items-center gap-2">
+              <div className="bg-stone-950/80 border border-white/5 px-5 py-3 rounded-2xl flex items-center gap-3 text-amber-500 font-bold font-mono text-xl shadow-inner">
+                <Clock className={`w-6 h-6 text-amber-600 ${isTimerRunning ? 'animate-pulse' : ''}`} />
+                {formatTime(timeRemaining)}
+              </div>
+              <button
+                onClick={() => setIsTimerRunning(!isTimerRunning)}
+                className="p-3 bg-stone-950/80 border border-white/5 rounded-2xl text-amber-500 hover:bg-amber-500/10 transition-colors"
+                title={isTimerRunning ? "Pause Timer" : "Resume Timer"}
+              >
+                {isTimerRunning ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+              </button>
             </div>
             <button
               onClick={handleCompleteExam}

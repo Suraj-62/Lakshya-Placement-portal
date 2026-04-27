@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
-import SplitPane from 'react-split-pane';
+import { SplitPane, Pane } from 'react-split-pane';
 import { Play, Send, ChevronDown, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import api from '../lib/api';
 import toast from 'react-hot-toast';
@@ -121,7 +121,7 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
                     className="code-editor-split-pane"
                 >
                     {/* Editor */}
-                    <div className="h-full w-full">
+                    <Pane className="h-full w-full">
                 <Editor
                     height="100%"
                     language={language === 'cpp' ? 'cpp' : language}
@@ -147,11 +147,11 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
                         hideCursorInOverviewRuler: true,
                     }}
                 />
-                    </div>
+                    </Pane>
 
                     {/* Results Panel */}
                     {results ? (
-                        <div className="h-full bg-stone-900 border-t border-white/10 overflow-y-auto p-4 custom-scrollbar">
+                        <Pane className="h-full bg-stone-900 border-t border-white/10 overflow-y-auto p-4 custom-scrollbar">
                     <div className="flex items-center justify-between mb-4">
                         <h4 className="text-orange-50 font-bold text-sm tracking-tight flex items-center gap-2">
                             Output
@@ -201,9 +201,9 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
                             </div>
                         ))}
                     </div>
-                </div>
+                </Pane>
                     ) : (
-                        <div />
+                        <Pane />
                     )}
                 </SplitPane>
             </div>
