@@ -72,10 +72,31 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
         }
     };
 
+    const [outputHeight, setOutputHeight] = useState(350);
+    const [isDragging, setIsDragging] = useState(false);
+
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            if (!isDragging) return;
+            const newHeight = window.innerHeight - e.clientY - 40; // Approx offset
+            setOutputHeight(Math.max(100, Math.min(newHeight, window.innerHeight * 0.8)));
+        };
+        const handleMouseUp = () => setIsDragging(false);
+
+        if (isDragging) {
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+        }
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isDragging]);
+
     return (
-        <div className="flex flex-col h-full bg-stone-950 rounded-none overflow-hidden border-l border-white/5">
+        <div className="flex flex-col h-full bg-stone-950 rounded-none overflow-hidden border-l border-white/5 relative">
             {/* Toolbar */}
-            <div className="flex items-center justify-between p-4 bg-stone-900 border-b border-white/5">
+            <div className="flex items-center justify-between p-4 bg-stone-900 border-b border-white/5 shrink-0">
                 <div className="flex items-center gap-4">
                     <div className="relative group">
                         <select 
@@ -103,7 +124,7 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
                     <button 
                         onClick={handleSubmitCode}
                         disabled={isRunning || isSubmitting}
-                        className="flex items-center gap-2 px-5 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-500 shadow-lg shadow-emerald-900/20 transition-all active:scale-95 disabled:opacity-50"
+                        className="flex items-center gap-2 px-6 py-2 rounded-xl bg-amber-600 text-stone-900 font-bold text-xs hover:bg-amber-500 transition-all disabled:opacity-50 shadow-lg shadow-amber-900/20"
                     >
                         {isSubmitting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
                         Submit
@@ -112,113 +133,99 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
             </div>
 
             {/* Main content with resizable output */}
-            <div className="flex-grow relative h-full">
-                <SplitPane
-                    split="horizontal"
-                    defaultSize={results ? "60%" : "100%"}
-                    minSize={200}
-                    maxSize={-100}
-                    className="code-editor-split-pane"
-                >
-                    {/* Editor */}
-                    <Pane className="h-full w-full">
-                <Editor
-                    height="100%"
-                    language={language === 'cpp' ? 'cpp' : language}
-                    theme="vs-dark"
-                    value={code}
-                    onChange={(value) => setCode(value)}
-                    onMount={(editor) => {
-                        // Optional: Add custom keybindings or settings
-                    }}
-                    options={{
-                        minimap: { enabled: false },
-                        fontSize: 14,
-                        fontFamily: "'Fira Code', 'Cascadia Code', Consolas, monospace",
-                        padding: { top: 16 },
-                        smoothScrolling: true,
-                        cursorBlinking: 'smooth',
-                        cursorSmoothCaretAnimation: 'on',
-                        automaticLayout: true,
-                        scrollBeyondLastLine: false,
-                        lineNumbers: 'on',
-                        renderLineHighlight: 'all',
-                        overviewRulerBorder: false,
-                        hideCursorInOverviewRuler: true,
-                    }}
-                />
-                    </Pane>
+            <div className="flex flex-col flex-grow relative min-h-0">
+                {/* Editor */}
+                <div className="w-full flex-grow relative min-h-0">
+                    <Editor
+                        height="100%"
+                        language={language === 'cpp' ? 'cpp' : language}
+                        theme="vs-dark"
+                        value={code}
+                        onChange={(value) => setCode(value)}
+                        options={{
+                            minimap: { enabled: false },
+                            fontSize: 14,
+                            fontFamily: "'Fira Code', 'Cascadia Code', Consolas, monospace",
+                            padding: { top: 16 },
+                            smoothScrolling: true,
+                            cursorBlinking: 'smooth',
+                            cursorSmoothCaretAnimation: 'on',
+                            automaticLayout: true,
+                            scrollBeyondLastLine: false,
+                            lineNumbers: 'on',
+                            renderLineHighlight: 'all',
+                            overviewRulerBorder: false,
+                            hideCursorInOverviewRuler: true,
+                        }}
+                    />
+                </div>
 
-                    {/* Results Panel */}
-                    {results ? (
-                        <Pane className="h-full bg-stone-900 border-t border-white/10 overflow-y-auto p-4 custom-scrollbar">
-                    <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-orange-50 font-bold text-sm tracking-tight flex items-center gap-2">
-                            Output
-                        </h4>
-                        <button onClick={() => setResults(null)} className="text-stone-500 hover:text-orange-50 text-xs font-bold">Clear</button>
-                    </div>
-                    <div className="space-y-3">
-                        {results.map((res, i) => (
-                            <div key={i} className={`p-3 rounded-lg border ${res.passed ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-red-500/5 border-red-500/10'}`}>
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-stone-600">Test Case {i + 1}</span>
-                                    {res.passed ? (
-                                        <div className="flex items-center gap-1.5 text-emerald-500 font-bold text-xs">
-                                            <CheckCircle className="w-3 h-3" /> Accepted
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-1.5 text-red-500 font-bold text-xs">
-                                            <XCircle className="w-3 h-3" /> Failed
-                                        </div>
-                                    )}
-                                </div>
-                                
-                                {res.status === 'error' ? (
-                                    <pre className="bg-stone-950 p-3 rounded text-[11px] font-mono text-red-400 overflow-x-auto whitespace-pre-wrap">
-                                        {res.actualOutput || res.error}
-                                    </pre>
-                                ) : (
-                                    <div className="space-y-2">
-                                        <div>
-                                            <p className="text-[9px] uppercase font-bold text-stone-600 mb-1">Input</p>
-                                            <pre className="bg-stone-950 p-2 rounded text-[11px] font-mono text-stone-400 overflow-x-auto">{res.input || 'None'}</pre>
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <div>
-                                                <p className="text-[9px] uppercase font-bold text-stone-600 mb-1">Expected</p>
-                                                <pre className="bg-stone-950 p-2 rounded text-[11px] font-mono text-stone-500 overflow-x-auto">{res.expectedOutput}</pre>
-                                            </div>
-                                            <div>
-                                                <p className="text-[9px] uppercase font-bold text-stone-600 mb-1">Actual</p>
-                                                <pre className={`bg-stone-950 p-2 rounded text-[11px] font-mono overflow-x-auto ${res.passed ? 'text-emerald-400' : 'text-red-400'}`}>
-                                                    {res.actualOutput || 'No output'}
-                                                </pre>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
+                {/* Results Panel */}
+                {results && (
+                    <div 
+                        style={{ height: `${outputHeight}px` }}
+                        className="flex flex-col shrink-0 bg-stone-900 border-t border-white/10 relative"
+                    >
+                        {/* Resizer Handle */}
+                        <div 
+                            className="absolute top-0 left-0 right-0 h-1.5 -mt-[3px] cursor-row-resize z-50 hover:bg-amber-500 transition-colors"
+                            onMouseDown={() => setIsDragging(true)}
+                        />
+                        
+                        <div className="flex-grow overflow-y-auto p-4 custom-scrollbar">
+                            <div className="flex items-center justify-between mb-4">
+                                <h4 className="text-orange-50 font-bold text-sm tracking-tight flex items-center gap-2">
+                                    Output
+                                </h4>
+                                <button onClick={() => setResults(null)} className="text-stone-500 hover:text-orange-50 text-xs font-bold">Clear</button>
                             </div>
-                        ))}
+                            <div className="space-y-3">
+                                {results.map((res, i) => (
+                                    <div key={i} className={`p-3 rounded-lg border ${res.passed ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-red-500/5 border-red-500/10'}`}>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-[10px] font-bold uppercase tracking-wider text-stone-600">Test Case {i + 1}</span>
+                                            {res.passed ? (
+                                                <div className="flex items-center gap-1.5 text-emerald-500 font-bold text-xs">
+                                                    <CheckCircle className="w-3 h-3" /> Accepted
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-1.5 text-red-500 font-bold text-xs">
+                                                    <XCircle className="w-3 h-3" /> Failed
+                                                </div>
+                                            )}
+                                        </div>
+                                        
+                                        {res.status === 'error' ? (
+                                            <pre className="bg-stone-950 p-3 rounded text-[11px] font-mono text-red-400 overflow-x-auto whitespace-pre-wrap">
+                                                {res.actualOutput || res.error}
+                                            </pre>
+                                        ) : (
+                                            <div className="space-y-2">
+                                                <div>
+                                                    <p className="text-[9px] uppercase font-bold text-stone-600 mb-1">Input</p>
+                                                    <pre className="bg-stone-950 p-2 rounded text-[11px] font-mono text-stone-400 overflow-x-auto">{res.input || 'None'}</pre>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <div>
+                                                        <p className="text-[9px] uppercase font-bold text-stone-600 mb-1">Expected</p>
+                                                        <pre className="bg-stone-950 p-2 rounded text-[11px] font-mono text-stone-500 overflow-x-auto">{res.expectedOutput}</pre>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-[9px] uppercase font-bold text-stone-600 mb-1">Actual</p>
+                                                        <pre className={`bg-stone-950 p-2 rounded text-[11px] font-mono overflow-x-auto ${res.passed ? 'text-emerald-400' : 'text-red-400'}`}>
+                                                            {res.actualOutput || 'No output'}
+                                                        </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
-                </Pane>
-                    ) : (
-                        <Pane />
-                    )}
-                </SplitPane>
+                )}
             </div>
-            <style jsx global>{`
-                .code-editor-split-pane .Resizer {
-                    background: rgba(255, 255, 255, 0.05);
-                    height: 6px;
-                    cursor: row-resize;
-                    z-index: 10;
-                    transition: background 0.2s;
-                }
-                .code-editor-split-pane .Resizer:hover {
-                    background: #fb923c;
-                }
-            `}</style>
         </div>
     );
 };
