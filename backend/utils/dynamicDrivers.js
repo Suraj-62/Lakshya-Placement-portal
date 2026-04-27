@@ -1,3 +1,13 @@
+export const parseInputLine = (line) => {
+    let cleanedLine = line.trim();
+    const eqIndex = cleanedLine.indexOf('=');
+    if (eqIndex !== -1) {
+        const potentialJson = cleanedLine.substring(eqIndex + 1).trim();
+        try { return JSON.parse(potentialJson); } catch(e) {}
+    }
+    try { return JSON.parse(cleanedLine); } catch (e) { return cleanedLine; }
+};
+
 export const inferTypeAndGenerateCppLiteral = (val) => {
     if (typeof val === 'number') {
         return { type: val % 1 === 0 ? 'int' : 'double', literal: val.toString() };
@@ -48,9 +58,7 @@ export const inferTypeAndGenerateJavaLiteral = (val) => {
 
 export const generateCppDriver = (code, functionName, testCase) => {
     const inputLines = testCase.input.trim().split('\\n');
-    const parsedArgs = inputLines.map(line => {
-        try { return JSON.parse(line.trim()); } catch (e) { return line.trim(); }
-    });
+    const parsedArgs = inputLines.map(parseInputLine);
 
     const argLiterals = parsedArgs.map((val, i) => {
         const { type, literal } = inferTypeAndGenerateCppLiteral(val);
@@ -107,9 +115,7 @@ int main() {
 
 export const generateJavaDriver = (code, functionName, testCase) => {
     const inputLines = testCase.input.trim().split('\\n');
-    const parsedArgs = inputLines.map(line => {
-        try { return JSON.parse(line.trim()); } catch (e) { return line.trim(); }
-    });
+    const parsedArgs = inputLines.map(parseInputLine);
 
     const argLiterals = parsedArgs.map((val, i) => {
         const { type, literal } = inferTypeAndGenerateJavaLiteral(val);
@@ -181,9 +187,7 @@ class SolutionRunner {
 
 export const generateJavascriptDriver = (code, functionName, testCase) => {
     const inputLines = testCase.input.trim().split('\n');
-    const parsedArgs = inputLines.map(line => {
-        try { return JSON.parse(line.trim()); } catch (e) { return line.trim(); }
-    });
+    const parsedArgs = inputLines.map(parseInputLine);
 
     const argDeclarations = parsedArgs.map((arg, i) => `const arg${i} = ${JSON.stringify(arg)};`).join('\n');
     const callArgs = parsedArgs.map((_, i) => `arg${i}`).join(', ');
@@ -219,9 +223,7 @@ try {
 
 export const generatePythonDriver = (code, functionName, testCase) => {
     const inputLines = testCase.input.trim().split('\n');
-    const parsedArgs = inputLines.map(line => {
-        try { return JSON.parse(line.trim()); } catch (e) { return line.trim(); }
-    });
+    const parsedArgs = inputLines.map(parseInputLine);
 
     const argDeclarations = parsedArgs.map((arg, i) => `arg${i} = json.loads('${JSON.stringify(arg)}')`).join('\n');
     const callArgs = parsedArgs.map((_, i) => `arg${i}`).join(', ');
