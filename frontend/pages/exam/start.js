@@ -10,7 +10,7 @@ function StartExam() {
 
   const [category, setCategory] = useState('');
   const [categoryName, setCategoryName] = useState('');
-  const [count] = useState(10);
+  const [count, setCount] = useState(30);
   const [duration, setDuration] = useState(30);
   const [loading, setLoading] = useState(true);
   const [initializing, setInitializing] = useState(false);
@@ -23,6 +23,7 @@ function StartExam() {
 
     if (catId) {
       setCategory(catId);
+      setCount(25); // 25 questions for specific category tests
       const fetchCategory = async () => {
         try {
           const { data } = await api.get('/categories');
@@ -42,6 +43,7 @@ function StartExam() {
     } else {
       setCategory('');
       setCategoryName('Mixed (All Subjects)');
+      setCount(30); // 30 questions for mixed assessments
       setLoading(false);
     }
   }, [router.isReady, router.query.category]);

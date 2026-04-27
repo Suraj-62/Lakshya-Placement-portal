@@ -234,13 +234,21 @@ function Exam() {
               <div className="absolute top-0 right-0 w-64 h-64 bg-amber-900/5 blur-[80px] rounded-full pointer-events-none"></div>
 
               <div className="flex justify-between items-center mb-8 relative z-10 w-full">
-                <div className="flex items-center gap-3">
-                  <span className="bg-gradient-to-r from-[#8b5e3c] to-[#7a5234] text-orange-50 px-4 py-1.5 rounded-xl text-sm font-bold shadow-lg shadow-amber-900/20 tracking-wide">
-                    Question {currentIndex + 1}
-                  </span>
-                  <span className="text-stone-500 text-sm font-semibold tracking-wide">
-                    / {questions.length}
-                  </span>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="bg-gradient-to-r from-[#8b5e3c] to-[#7a5234] text-orange-50 px-4 py-1.5 rounded-xl text-sm font-bold shadow-lg shadow-amber-900/20 tracking-wide">
+                      Question {currentIndex + 1}
+                    </span>
+                    <span className="text-stone-500 text-sm font-semibold tracking-wide">
+                      / {questions.length}
+                    </span>
+                  </div>
+                  {currentQ.category && (
+                    <div className="flex items-center gap-2 text-stone-500 bg-stone-950/50 px-3 py-1.5 rounded-xl border border-white/5">
+                      <BookOpen className="w-3.5 h-3.5 text-amber-600/70" />
+                      <span className="text-[10px] font-black uppercase tracking-widest">{currentQ.category.name}</span>
+                    </div>
+                  )}
                 </div>
                 
                 <button 
