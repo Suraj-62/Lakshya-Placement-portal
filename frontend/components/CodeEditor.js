@@ -202,6 +202,8 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
                         ))}
                     </div>
                 </div>
+                    ) : (
+                        <div />
                     )}
                 </SplitPane>
             </div>
