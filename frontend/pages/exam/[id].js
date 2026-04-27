@@ -14,7 +14,7 @@ function Exam() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState('');
   const [answersMap, setAnswersMap] = useState({});
-  const [timeElapsed, setTimeElapsed] = useState(null);
+  const [timeRemaining, setTimeRemaining] = useState(null);
   const [bookmarks, setBookmarks] = useState([]);
   const [isTimerRunning, setIsTimerRunning] = useState(true);
 
@@ -37,12 +37,10 @@ function Exam() {
 
         setAnswersMap(map);
 
-        if (data.startTime) {
-          const start = new Date(data.startTime).getTime();
+        if (data.endTime) {
+          const end = new Date(data.endTime).getTime();
           const now = new Date().getTime();
-          setTimeElapsed(Math.max(0, Math.floor((now - start) / 1000)));
-        } else {
-          setTimeElapsed(0);
+          setTimeRemaining(Math.max(0, Math.floor((end - now) / 1000)));
         }
       } catch (error) {
         toast.error('Failed to load exam');
@@ -65,14 +63,25 @@ function Exam() {
 
   // TIMER
   useEffect(() => {
-    if (timeElapsed === null || !isTimerRunning) return;
+    if (timeRemaining === null || !isTimerRunning) return;
+    if (timeRemaining <= 0) {
+      handleCompleteExam();
+      return;
+    }
 
     timerRef.current = setInterval(() => {
-      setTimeElapsed(prev => prev + 1);
+      setTimeRemaining(prev => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          handleCompleteExam();
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(timerRef.current);
-  }, [timeElapsed, isTimerRunning]);
+  }, [timeRemaining, isTimerRunning]);
 
   // ANTI-CHEAT: TAB SWITCH
   useEffect(() => {
@@ -170,13 +179,24 @@ function Exam() {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  if (!exam || questions.length === 0) {
+  if (!exam) {
     return (
       <div className="flex items-center justify-center min-h-[60vh] text-stone-400">
         <div className="animate-spin w-6 h-6 border-2 border-[#8b5e3c] border-t-transparent rounded-full"></div>
         <span className="ml-3">Loading exam environment...</span>
       </div>
     );
+  }
+
+  if (questions.length === 0) {
+      return (
+          <div className="flex flex-col items-center justify-center min-h-[60vh] text-stone-400 gap-4">
+              <AlertCircle className="w-12 h-12 text-red-500" />
+              <p className="text-xl font-bold text-orange-50">No Questions Found</p>
+              <p>There are no questions available for this exam. Please go back.</p>
+              <button onClick={() => router.push('/dashboard')} className="mt-4 px-6 py-2 bg-amber-600 text-white font-bold rounded-xl hover:bg-amber-500 transition-all">Back to Dashboard</button>
+          </div>
+      );
   }
 
   const currentQ = questions[currentIndex];
@@ -205,7 +225,7 @@ function Exam() {
             <div className="flex items-center gap-2">
               <div className="bg-stone-950/80 border border-white/5 px-5 py-3 rounded-2xl flex items-center gap-3 text-amber-500 font-bold font-mono text-xl shadow-inner">
                 <Clock className={`w-6 h-6 text-amber-600 ${isTimerRunning ? 'animate-pulse' : ''}`} />
-                {formatTime(timeElapsed)}
+                {formatTime(timeRemaining)}
               </div>
               <button
                 onClick={() => setIsTimerRunning(!isTimerRunning)}
