@@ -28,7 +28,8 @@ function Exam() {
       try {
         const { data } = await api.get(`/exam/${id}`);
         setExam(data);
-        setQuestions(data.questions);
+        const validQuestions = (data.questions || []).filter(q => q !== null);
+        setQuestions(validQuestions);
 
         const map = {};
         data.answers.forEach(a => {
@@ -188,7 +189,7 @@ function Exam() {
     );
   }
 
-  if (questions.length === 0) {
+  if (!questions || questions.length === 0) {
       return (
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-stone-400 gap-4">
               <AlertCircle className="w-12 h-12 text-red-500" />
@@ -290,7 +291,7 @@ function Exam() {
               </div>
 
               <div className="space-y-4 relative z-10">
-                {currentQ.options.map((opt, i) => {
+                {currentQ?.options?.map((opt, i) => {
                   const isSelected = selected === opt;
                   return (
                     <label
