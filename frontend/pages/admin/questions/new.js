@@ -28,7 +28,7 @@ function NewQuestion() {
 
   // Coding Specific Fields
   const [functionName, setFunctionName] = useState('');
-  const [testCases, setTestCases] = useState([{ input: '', output: '', isHidden: false }]);
+  const [testCases, setTestCases] = useState([{ input: '', output: '', explanation: '', imageUrl: '', isHidden: false }]);
   const [starterCode, setStarterCode] = useState({
     cpp: '',
     java: '',
@@ -73,7 +73,7 @@ function NewQuestion() {
   const addOption = () => setOptions([...options, '']);
   const removeOption = (index) => setOptions(options.filter((_, i) => i !== index));
 
-  const addTestCase = () => setTestCases([...testCases, { input: '', output: '', isHidden: false }]);
+  const addTestCase = () => setTestCases([...testCases, { input: '', output: '', explanation: '', imageUrl: '', isHidden: false }]);
   const removeTestCase = (i) => setTestCases(testCases.filter((_, idx) => idx !== i));
   const updateTestCase = (i, field, value) => {
     const newTestCases = [...testCases];
@@ -279,36 +279,76 @@ function NewQuestion() {
                         
                         <div className="space-y-3">
                           {testCases.map((tc, i) => (
-                            <div key={i} className="p-4 bg-stone-950 border border-stone-800 rounded-2xl flex flex-col sm:flex-row gap-3 relative group/tc">
-                              <div className="flex-grow space-y-2">
-                                <input 
-                                  value={tc.input} 
-                                  onChange={e => updateTestCase(i, 'input', e.target.value)}
-                                  placeholder="Input" 
-                                  className="w-full bg-transparent border-none text-xs text-stone-400 focus:ring-0 p-0 font-mono"
-                                />
-                                <div className="h-[1px] bg-stone-800 w-full"></div>
-                                <input 
-                                  value={tc.output} 
-                                  onChange={e => updateTestCase(i, 'output', e.target.value)}
-                                  placeholder="Expected Output" 
-                                  className="w-full bg-transparent border-none text-xs text-amber-500 focus:ring-0 p-0 font-mono font-bold"
-                                />
-                              </div>
-                              <div className="flex items-center justify-between sm:justify-end sm:flex-col gap-2">
-                                <button 
-                                  type="button"
-                                  onClick={() => updateTestCase(i, 'isHidden', !tc.isHidden)}
-                                  className={`text-[8px] font-black px-2 py-0.5 rounded border transition-all uppercase tracking-tighter ${tc.isHidden ? 'bg-amber-900/20 border-amber-900/50 text-amber-500' : 'border-stone-800 text-stone-600'}`}
-                                >
-                                  {tc.isHidden ? 'Hidden' : 'Visible'}
-                                </button>
-                                {testCases.length > 1 && (
-                                  <button onClick={() => removeTestCase(i)} type="button" className="text-stone-800 hover:text-red-500 transition-colors">
-                                    <Trash2 className="w-4 h-4" />
+                            <div key={i} className="p-6 bg-stone-950 border border-stone-800 rounded-2xl flex flex-col gap-4 relative group/tc">
+                              <div className="flex flex-col sm:flex-row gap-4">
+                                <div className="flex-grow space-y-3">
+                                  <div>
+                                    <label className="text-[9px] font-bold text-stone-600 uppercase mb-1 block">Input</label>
+                                    <input 
+                                      value={tc.input} 
+                                      onChange={e => updateTestCase(i, 'input', e.target.value)}
+                                      placeholder="e.g. [1, 2, 3]" 
+                                      className="w-full bg-stone-900/50 border border-stone-800 rounded-lg px-3 py-2 text-xs text-stone-300 focus:ring-1 focus:ring-amber-500/50 font-mono"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="text-[9px] font-bold text-stone-600 uppercase mb-1 block">Expected Output</label>
+                                    <input 
+                                      value={tc.output} 
+                                      onChange={e => updateTestCase(i, 'output', e.target.value)}
+                                      placeholder="e.g. 6" 
+                                      className="w-full bg-stone-900/50 border border-stone-800 rounded-lg px-3 py-2 text-xs text-amber-500/80 focus:ring-1 focus:ring-amber-500/50 font-mono font-bold"
+                                    />
+                                  </div>
+                                </div>
+                                <div className="flex items-center justify-between sm:justify-start sm:flex-col gap-3 pt-4 sm:pt-0">
+                                  <button 
+                                    type="button"
+                                    onClick={() => updateTestCase(i, 'isHidden', !tc.isHidden)}
+                                    className={`text-[9px] font-black px-3 py-1.5 rounded-lg border transition-all uppercase tracking-wider ${tc.isHidden ? 'bg-amber-900/20 border-amber-900/50 text-amber-500' : 'border-stone-800 text-stone-600 hover:border-stone-700'}`}
+                                  >
+                                    {tc.isHidden ? 'Hidden Case' : 'Example Case'}
                                   </button>
-                                )}
+                                  {testCases.length > 1 && (
+                                    <button onClick={() => removeTestCase(i)} type="button" className="p-2 text-stone-800 hover:text-red-500 transition-colors">
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  )}
+                                </div>
                               </div>
+
+                              {/* Explanation & Image Fields */}
+                              {!tc.isHidden && (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-stone-900 mt-2 animate-in slide-in-from-top-2 duration-300">
+                                  <div className="space-y-2">
+                                    <label className="text-[9px] font-bold text-stone-500 uppercase flex items-center gap-1.5">
+                                      <HelpCircle className="w-3 h-3" /> Example Explanation
+                                    </label>
+                                    <textarea 
+                                      value={tc.explanation || ''} 
+                                      onChange={e => updateTestCase(i, 'explanation', e.target.value)}
+                                      placeholder="Explain the logic for this example..." 
+                                      className="w-full bg-stone-900/30 border border-stone-800/50 rounded-xl p-3 text-xs text-stone-400 focus:ring-1 focus:ring-amber-500/30 h-20 resize-none"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <label className="text-[9px] font-bold text-stone-500 uppercase flex items-center gap-1.5">
+                                      <BookOpen className="w-3 h-3" /> Image URL (Optional)
+                                    </label>
+                                    <input 
+                                      value={tc.imageUrl || ''} 
+                                      onChange={e => updateTestCase(i, 'imageUrl', e.target.value)}
+                                      placeholder="https://example.com/image.png" 
+                                      className="w-full bg-stone-900/30 border border-stone-800/50 rounded-xl p-3 text-xs text-stone-400 focus:ring-1 focus:ring-amber-500/30"
+                                    />
+                                    {tc.imageUrl && (
+                                      <div className="mt-2 rounded-lg overflow-hidden border border-stone-800 h-14 w-full bg-stone-900 flex items-center justify-center">
+                                        <img src={tc.imageUrl} alt="Preview" className="h-full object-contain" onError={(e) => e.target.style.display = 'none'} />
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>

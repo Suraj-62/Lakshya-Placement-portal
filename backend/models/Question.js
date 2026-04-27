@@ -12,6 +12,8 @@ const questionSchema = new mongoose.Schema({
   testCases: [{
     input: String,
     output: String,
+    explanation: String,
+    imageUrl: String,
     isHidden: { type: Boolean, default: false }
   }],
   starterCode: {

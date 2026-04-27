@@ -1,6 +1,6 @@
 import React from 'react';
 import { SplitPane, Pane } from 'react-split-pane';
-import { Award, BookOpen, Clock, Tag } from 'lucide-react';
+import { Award, BookOpen, Clock, Tag, Braces } from 'lucide-react';
 import CodeEditor from './CodeEditor';
 
 const CodingWorkspace = ({ question }) => {
@@ -42,25 +42,64 @@ const CodingWorkspace = ({ question }) => {
               </div>
 
               {/* Example Section */}
-              {question.testCases?.filter(tc => !tc.isHidden).slice(0, 2).map((tc, idx) => (
-                <div key={idx} className="mt-8">
-                  <h4 className="text-orange-50 font-bold mb-3">Example {idx + 1}:</h4>
-                  <div className="bg-stone-900/50 border border-white/5 rounded-xl p-4 font-mono text-sm">
-                    <p className="mb-2"><span className="text-stone-500">Input:</span> <span className="text-orange-50 font-bold">{tc.input}</span></p>
-                    <p><span className="text-stone-500">Output:</span> <span className="text-emerald-500 font-bold">{tc.output}</span></p>
+              <div className="space-y-10 mt-10">
+                {question.testCases?.filter(tc => !tc.isHidden).map((tc, idx) => (
+                  <div key={idx} className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+                    <h4 className="text-orange-50 font-bold mb-4 flex items-center gap-2">
+                      <span className="w-6 h-6 bg-amber-500/10 border border-amber-500/20 rounded-md flex items-center justify-center text-[10px] text-amber-500">
+                        {idx + 1}
+                      </span>
+                      Example {idx + 1}:
+                    </h4>
+                    
+                    <div className="bg-stone-900/40 border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
+                      {tc.imageUrl && (
+                        <div className="w-full bg-stone-950/50 p-4 border-b border-white/5">
+                          <img 
+                            src={tc.imageUrl} 
+                            alt={`Example ${idx + 1} visual`} 
+                            className="max-w-full h-auto rounded-lg mx-auto shadow-lg border border-white/5" 
+                            onError={(e) => e.target.parentElement.style.display = 'none'}
+                          />
+                        </div>
+                      )}
+                      
+                      <div className="p-5 font-mono text-xs space-y-3">
+                        <div className="flex gap-4">
+                          <span className="text-stone-500 w-16 shrink-0">Input:</span> 
+                          <span className="text-orange-50 font-bold break-all">{tc.input}</span>
+                        </div>
+                        <div className="flex gap-4">
+                          <span className="text-stone-500 w-16 shrink-0">Output:</span> 
+                          <span className="text-emerald-500 font-bold break-all">{tc.output}</span>
+                        </div>
+                        
+                        {tc.explanation && (
+                          <div className="pt-4 mt-4 border-t border-white/5 font-sans italic text-stone-400 leading-relaxed">
+                            <span className="text-stone-500 font-bold not-italic mr-2 block mb-1 uppercase text-[10px] tracking-widest">Explanation:</span>
+                            {tc.explanation}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
 
               {/* Constraints */}
-              <div className="mt-10 pt-10 border-t border-white/5">
-                  <h4 className="text-orange-50 font-bold mb-4">Constraints:</h4>
-                  <ul className="list-disc pl-5 text-stone-500 space-y-2 text-sm italic">
-                      <li>Optimal time complexity is expected.</li>
-                      <li>Space complexity should be minimized.</li>
-                      <li>Ensure all edge cases are handled.</li>
-                  </ul>
-              </div>
+              {question.constraints && (
+                <div className="mt-12 pt-10 border-t border-white/5">
+                    <h4 className="text-orange-50 font-bold mb-5 flex items-center gap-2">
+                      <Braces className="w-4 h-4 text-stone-500" />
+                      Constraints:
+                    </h4>
+                    <div className="bg-stone-950/50 border border-white/5 rounded-2xl p-6">
+                      <div className="text-stone-400 text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                        {question.constraints}
+                      </div>
+                    </div>
+                </div>
+              )}
             </div>
           </div>
         </Pane>
