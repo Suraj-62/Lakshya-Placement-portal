@@ -1,7 +1,4 @@
-import { spawn, execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
-import crypto from 'crypto';
+import axios from 'axios';
 import { 
     generateCppDriver, 
     generateJavaDriver, 
@@ -9,9 +6,15 @@ import {
     generatePythonDriver 
 } from './dynamicDrivers.js';
 
-const TEMP_DIR = path.join(process.cwd(), 'temp');
-if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR);
+// Language IDs for Judge0 CE
+const LANGUAGE_IDS = {
+    'javascript': 93, // Node.js 18.15.0 (Fallback to 63 if needed)
+    'python': 71,     // Python 3.11.2
+    'cpp': 54,        // GCC 9.2.0
+    'java': 62        // OpenJDK 13.0.1
+};
 
+// Use the old getDriver implementation since it's working for wrapping user code
 const getDriver = (language, functionName) => {
     switch (language) {
         case 'javascript':
@@ -85,45 +88,44 @@ except Exception as e:
     }
 };
 
-const executeCommand = (command, args, input, timeout = 3000) => {
-    return new Promise((resolve) => {
-        const child = spawn(command, args);
-        let stdout = '';
-        let stderr = '';
-        let killed = false;
+const executeOnJudge0 = async (sourceCode, languageId, stdin) => {
+    const apiUrl = process.env.JUDGE0_API_URL || 'https://ce.judge0.com';
+    const apiKey = process.env.JUDGE0_API_KEY;
 
-        const timer = setTimeout(() => {
-            child.kill();
-            killed = true;
-            resolve({ code: null, stdout, stderr: stderr + '\nExecution Timed Out', signal: 'SIGTERM' });
-        }, timeout);
+    const headers = {
+        'Content-Type': 'application/json',
+    };
 
-        if (input !== undefined && input !== null) {
-            child.stdin.write(String(input));
+    if (apiKey) {
+        if (apiUrl.includes('rapidapi')) {
+            headers['X-RapidAPI-Key'] = apiKey;
+            headers['X-RapidAPI-Host'] = new URL(apiUrl).hostname;
+        } else {
+            headers['X-Auth-Token'] = apiKey; 
         }
-        child.stdin.end();
+    }
 
-        child.stdout.on('data', (data) => { stdout += data.toString(); });
-        child.stderr.on('data', (data) => { stderr += data.toString(); });
+    try {
+        const response = await axios.post(`${apiUrl}/submissions?base64_encoded=true&wait=true`, {
+            source_code: Buffer.from(sourceCode).toString('base64'),
+            language_id: languageId,
+            stdin: stdin ? Buffer.from(String(stdin)).toString('base64') : null
+        }, { headers });
 
-        child.on('close', (code, signal) => {
-            if (killed) return;
-            clearTimeout(timer);
-            resolve({ code, stdout, stderr, signal });
-        });
+        const data = response.data;
+        if (data.stdout) data.stdout = Buffer.from(data.stdout, 'base64').toString('utf8');
+        if (data.stderr) data.stderr = Buffer.from(data.stderr, 'base64').toString('utf8');
+        if (data.compile_output) data.compile_output = Buffer.from(data.compile_output, 'base64').toString('utf8');
 
-        child.on('error', (err) => {
-            if (killed) return;
-            clearTimeout(timer);
-            resolve({ code: null, stdout, stderr: stderr + '\n' + err.message, signal: 'ERROR' });
-        });
-    });
+        return data;
+    } catch (error) {
+        console.error("Judge0 API Error:", error.response?.data || error.message);
+        throw new Error(error.response?.data?.error || "Judge0 execution failed.");
+    }
 };
 
 export const runAgainstTestCases = async (code, language, testCases, functionName, drivers = {}) => {
-    const results = [];
     
-    // Choose the driver: Question-specific driver first, then generic fallback
     let driverTemplate = drivers?.[language];
     let isGenericDriver = !driverTemplate;
     if (!driverTemplate) {
@@ -141,10 +143,8 @@ export const runAgainstTestCases = async (code, language, testCases, functionNam
         baseWrappedCode = code;
     }
     
-    const runId = crypto.randomUUID();
-
-    // Normalization helper
     const normalize = (str) => {
+        if (!str) return "";
         let trimmed = str.trim();
         try {
             let parsed = JSON.parse(trimmed);
@@ -155,8 +155,19 @@ export const runAgainstTestCases = async (code, language, testCases, functionNam
         }
     };
 
+    let languageId = LANGUAGE_IDS[language];
+    if (!languageId) {
+        return testCases.map(tc => ({
+            input: tc.input,
+            passed: false,
+            error: `Language ${language} not supported on Judge0 yet.`,
+            status: 'error'
+        }));
+    }
+
+    // Execute test cases sequentially to avoid rate-limiting on public Judge0 API
+    const finalResults = [];
     for (const tc of testCases) {
-        let runResult;
         let wrappedCode = baseWrappedCode;
         if (isGenericDriver) {
             if (language === 'cpp') {
@@ -169,96 +180,60 @@ export const runAgainstTestCases = async (code, language, testCases, functionNam
                 wrappedCode = generatePythonDriver(code, functionName, tc);
             }
         }
-        
-        const filePath = path.join(TEMP_DIR, `solution_${runId}_${crypto.randomUUID()}`);
 
         try {
-            if (language === 'javascript') {
-                const jsFile = `${filePath}.cjs`;
-                fs.writeFileSync(jsFile, wrappedCode);
-                runResult = await executeCommand('node', [jsFile], tc.input);
-                if (fs.existsSync(jsFile)) fs.unlinkSync(jsFile);
-            } 
-            else if (language === 'python') {
-                const pyFile = `${filePath}.py`;
-                fs.writeFileSync(pyFile, wrappedCode);
-                runResult = await executeCommand('python', [pyFile], tc.input);
-                if (fs.existsSync(pyFile)) fs.unlinkSync(pyFile);
-            }
-            else if (language === 'cpp') {
-                const cppFile = `${filePath}.cpp`;
-                const exeFile = `${filePath}.exe`;
-                fs.writeFileSync(cppFile, wrappedCode);
-                
-                // Compile
-                const compileResult = await executeCommand('g++', [cppFile, '-o', exeFile], null, 10000);
-                if (compileResult.code !== 0) {
-                    runResult = { ...compileResult, status: 'error', errorType: 'Compile Error' };
-                } else {
-                    // Run
-                    runResult = await executeCommand(exeFile, [], tc.input);
-                }
-                
-                // Cleanup
-                if (fs.existsSync(cppFile)) fs.unlinkSync(cppFile);
-                if (fs.existsSync(exeFile)) fs.unlinkSync(exeFile);
-            }
-            else if (language === 'java') {
-                // Java needs the class name to match the file name. 
-                // We'll wrap the user code if needed or assume they provide a class 'Solution'
-                // For simplicity, we'll name the file Solution.java in a unique subfolder
-                const javaTaskDir = path.join(TEMP_DIR, `${runId}_${crypto.randomUUID()}`);
-                if (!fs.existsSync(javaTaskDir)) fs.mkdirSync(javaTaskDir);
-                
-                const javaFile = path.join(javaTaskDir, 'Solution.java');
-                fs.writeFileSync(javaFile, wrappedCode);
-                
-                // Compile
-                const compileResult = await executeCommand('javac', [javaFile], null, 10000);
-                if (compileResult.code !== 0) {
-                    runResult = { ...compileResult, status: 'error', errorType: 'Compile Error' };
-                } else {
-                    // Run (must run from the directory containing the classes)
-                    runResult = await executeCommand('java', ['-cp', javaTaskDir, 'SolutionRunner'], null);
-                }
-                
-                // Cleanup
-                if (fs.existsSync(javaTaskDir)) fs.rmSync(javaTaskDir, { recursive: true, force: true });
-            }
-            else {
-                results.push({
-                    input: tc.input,
-                    passed: false,
-                    error: `Language ${language} not supported for local execution yet.`,
-                    status: 'error'
-                });
+            const judge0Result = await executeOnJudge0(wrappedCode, languageId, tc.input);
+            
+            // Handle fallback if Node.js 18 (93) is missing, Judge0 might return "Language not found"
+            if (judge0Result.error && judge0Result.error.includes("Language") && language === 'javascript' && languageId === 93) {
+                languageId = 63; // Fallback to 63
+                const retryResults = await runAgainstTestCases(code, language, [tc], functionName, drivers);
+                finalResults.push(retryResults[0]);
                 continue;
             }
+            
+            let actualOutput = "";
+            let errorMsg = null;
 
-            const actualOutput = runResult.stdout.trim();
+            if (judge0Result.status.id === 3) {
+                // Success
+                actualOutput = judge0Result.stdout || "";
+            } else if (judge0Result.status.id === 6) {
+                // Compile Error
+                errorMsg = judge0Result.compile_output || "Compile Error";
+            } else {
+                // Runtime / Time Limit / etc.
+                errorMsg = (judge0Result.stderr || judge0Result.compile_output || judge0Result.status.description || "Execution Error").trim();
+            }
+
             const expectedOutput = tc.output.trim();
-            const passed = runResult.code === 0 && !runResult.signal && normalize(actualOutput) === normalize(expectedOutput);
+            let passed = false;
 
-            results.push({
+            if (!errorMsg) {
+                passed = normalize(actualOutput) === normalize(expectedOutput);
+            }
+
+            finalResults.push({
                 input: tc.input,
                 expectedOutput: tc.output,
-                actualOutput: actualOutput || (runResult.stderr ? `Error: ${runResult.stderr}` : "No output"),
+                actualOutput: errorMsg ? `Error: ${errorMsg}` : (actualOutput.trim() || "No output"),
                 passed,
-                stdout: runResult.stdout,
-                stderr: runResult.stderr,
-                status: runResult.signal ? 'signal' : (runResult.code === 0 ? 'success' : 'failure'),
-                signal: runResult.signal
+                stdout: judge0Result.stdout,
+                stderr: judge0Result.stderr,
+                status: errorMsg ? 'error' : 'success',
+                signal: judge0Result.status.description
             });
 
         } catch (error) {
-            results.push({
+            finalResults.push({
                 input: tc.input,
+                expectedOutput: tc.output,
+                actualOutput: `Error: ${error.message}`,
                 passed: false,
-                error: error.message,
                 status: 'error'
             });
         }
     }
 
-    return results;
+    return finalResults;
 };

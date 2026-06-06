@@ -10,8 +10,11 @@ import {
   LogOut, 
   ChevronDown,
   Activity,
-  ExternalLink
+  ExternalLink,
+  Sun,
+  Moon
 } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
 import Head from 'next/head';
 
@@ -20,10 +23,14 @@ export default function Layout({ children, title = 'Lakshya Placement Portal', n
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
+  
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : '?';
 
   useEffect(() => {
+    setMounted(true);
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setOpen(false);
@@ -45,46 +52,55 @@ export default function Layout({ children, title = 'Lakshya Placement Portal', n
         <title>{title}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
-      <div className="min-h-screen bg-[#0c0a09] font-sans selection:bg-amber-500/30 selection:text-amber-200">
+      <div className="min-h-screen bg-stone-50 dark:bg-[#0c0a09] font-sans selection:bg-amber-500/30 selection:text-amber-200 transition-colors duration-300">
         {/* Dynamic Background Effects */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-900/10 blur-[120px] rounded-full animate-pulse transition-all duration-1000"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-950/10 blur-[120px] rounded-full animate-pulse delay-700 transition-all duration-1000"></div>
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-900/5 dark:bg-amber-900/10 blur-[120px] rounded-full animate-pulse transition-all duration-1000"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-900/5 dark:bg-orange-950/10 blur-[120px] rounded-full animate-pulse delay-700 transition-all duration-1000"></div>
         </div>
 
         {/* Navbar */}
         {!navHidden && (
-        <nav className="fixed top-0 w-full z-50 border-b border-amber-900/20 bg-[#0c0a09]/80 backdrop-blur-md">
+        <nav className="fixed top-0 w-full z-50 border-b border-stone-200 dark:border-amber-900/20 bg-white/80 dark:bg-[#0c0a09]/80 backdrop-blur-md transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           
           <div onClick={handleLogoClick} className="flex items-center gap-3 cursor-pointer">
-            <div className="w-8 h-8 rounded-lg bg-[#8b5e3c] flex items-center justify-center font-bold text-orange-50 shadow-inner shadow-orange-200/20">L</div>
-            <span className="text-xl font-bold text-orange-50 tracking-tight">Lakshya</span>
+            <img src="/logo.png" alt="Lakshya Logo" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(217,119,6,0.4)]" />
+            <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 tracking-tight">Lakshya</span>
           </div>
 
           <div className="flex items-center gap-6">
+            {mounted && (
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="p-2 rounded-full bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700 transition-all"
+                aria-label="Toggle Theme"
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
+            )}
             {user ? (
               <div className="flex items-center gap-6">
                 
                 {/* Desktop Links (Conditional for Admin) */}
                 <div className="hidden sm:flex items-center gap-6">
                   {user.role === 'admin' ? (
-                    <Link href="/admin" className="text-sm font-bold text-amber-500 hover:text-amber-400 transition-colors flex items-center gap-2">
+                    <Link href="/admin" className="text-sm font-bold text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 transition-colors flex items-center gap-2">
                        <Activity className="w-4 h-4" /> Admin Control Center
                     </Link>
                   ) : (
                     <>
-                      <Link href="/dashboard" className="text-sm font-medium text-stone-400 hover:text-orange-50 transition-colors">Dashboard</Link>
-                      <Link href="/practice" className="text-sm font-medium text-stone-400 hover:text-orange-50 transition-colors">Practice</Link>
+                      <Link href="/dashboard" className="text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-orange-50 transition-colors">Dashboard</Link>
+                      <Link href="/practice" className="text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-orange-50 transition-colors">Practice</Link>
                       <a 
                         href="https://samvaad-ten.vercel.app" 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="text-sm font-medium text-stone-400 hover:text-orange-50 transition-colors flex items-center gap-1"
+                        className="text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-orange-50 transition-colors flex items-center gap-1"
                       >
                         Samvaad <ExternalLink className="w-3 h-3" />
                       </a>
-                      <Link href="/leaderboard" className="text-sm font-medium text-stone-400 hover:text-orange-50 transition-colors">Leaderboard</Link>
+                      <Link href="/leaderboard" className="text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-orange-50 transition-colors">Leaderboard</Link>
                     </>
                   )}
                 </div>
@@ -99,47 +115,47 @@ export default function Layout({ children, title = 'Lakshya Placement Portal', n
                   </div>
 
                   {open && (
-                    <div className="absolute right-0 mt-3 w-52 py-2 bg-stone-900 border border-amber-900/30 rounded-xl shadow-2xl z-50 transform origin-top-right transition-all animate-in fade-in zoom-in duration-200">
-                      <div className="px-4 py-3 border-b border-amber-900/20">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-stone-500 mb-1">Signed in as</p>
-                          <p className="text-sm font-bold text-orange-50 truncate">{user.name}</p>
+                    <div className="absolute right-0 mt-3 w-52 py-2 bg-white dark:bg-stone-900 border border-stone-200 dark:border-amber-900/30 rounded-xl shadow-2xl z-50 transform origin-top-right transition-all animate-in fade-in zoom-in duration-200">
+                      <div className="px-4 py-3 border-b border-stone-100 dark:border-amber-900/20">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-stone-400 dark:text-stone-500 mb-1">Signed in as</p>
+                          <p className="text-sm font-bold text-stone-800 dark:text-orange-50 truncate">{user.name}</p>
                           <p className="text-[10px] text-stone-500 truncate">{user.email}</p>
                       </div>
                       
                       <div className="py-1">
                         {user.role === 'admin' ? (
-                          <button onClick={() => { setOpen(false); router.push('/admin'); }} className="w-full px-4 py-2.5 text-left text-sm text-amber-500 hover:bg-amber-500/10 flex items-center gap-2 transition-colors font-bold">
+                          <button onClick={() => { setOpen(false); router.push('/admin'); }} className="w-full px-4 py-2.5 text-left text-sm text-amber-600 dark:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 flex items-center gap-2 transition-colors font-bold">
                             <Activity className="w-4 h-4" /> Admin Control
                           </button>
                         ) : (
                           <>
-                            <button onClick={() => { setOpen(false); router.push('/dashboard'); }} className="w-full px-4 py-2 text-left text-sm text-stone-300 hover:bg-white/5 hover:text-orange-50 flex items-center gap-2 transition-colors">
+                            <button onClick={() => { setOpen(false); router.push('/dashboard'); }} className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-amber-600 dark:hover:text-orange-50 flex items-center gap-2 transition-colors">
                               <LayoutDashboard className="w-4 h-4" /> Dashboard
                             </button>
-                            <button onClick={() => { setOpen(false); router.push('/practice'); }} className="w-full px-4 py-2 text-left text-sm text-stone-300 hover:bg-white/5 hover:text-orange-50 flex items-center gap-2 transition-colors">
+                            <button onClick={() => { setOpen(false); router.push('/practice'); }} className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-amber-600 dark:hover:text-orange-50 flex items-center gap-2 transition-colors">
                               <Code className="w-4 h-4" /> Practice Arena
                             </button>
                             <a 
                               href="https://samvaad-ten.vercel.app" 
                               target="_blank" 
                               rel="noopener noreferrer" 
-                              className="w-full px-4 py-2 text-left text-sm text-stone-300 hover:bg-white/5 hover:text-orange-50 flex items-center gap-2 transition-colors"
+                              className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-amber-600 dark:hover:text-orange-50 flex items-center gap-2 transition-colors"
                             >
                               <ExternalLink className="w-4 h-4" /> Samvaad
                             </a>
-                            <button onClick={() => { setOpen(false); router.push('/leaderboard'); }} className="w-full px-4 py-2 text-left text-sm text-stone-300 hover:bg-white/5 hover:text-orange-50 flex items-center gap-2 transition-colors">
+                            <button onClick={() => { setOpen(false); router.push('/leaderboard'); }} className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-amber-600 dark:hover:text-orange-50 flex items-center gap-2 transition-colors">
                               <Trophy className="w-4 h-4" /> Leaderboard
                             </button>
                           </>
                         )}
                         
-                        <button onClick={() => { setOpen(false); router.push('/profile'); }} className="w-full px-4 py-2 text-left text-sm text-stone-300 hover:bg-white/5 hover:text-orange-50 flex items-center gap-2 transition-colors border-t border-stone-800 mt-1 pt-2">
+                        <button onClick={() => { setOpen(false); router.push('/profile'); }} className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-amber-600 dark:hover:text-orange-50 flex items-center gap-2 transition-colors border-t border-stone-100 dark:border-stone-800 mt-1 pt-2">
                           <UserIcon className="w-4 h-4" /> My Profile
                         </button>
                         
-                        <div className="my-1 border-t border-stone-800"></div>
+                        <div className="my-1 border-t border-stone-100 dark:border-stone-800"></div>
                         
-                        <button onClick={() => { setOpen(false); logout(); }} className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors">
+                        <button onClick={() => { setOpen(false); logout(); }} className="w-full px-4 py-2 text-left text-sm text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center gap-2 transition-colors">
                           <LogOut className="w-4 h-4" /> Logout
                         </button>
                       </div>

@@ -3,6 +3,7 @@ import { AuthProvider } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
 import { Toaster } from 'react-hot-toast';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { ThemeProvider } from 'next-themes';
 
 function MyApp({ Component, pageProps }) {
 
@@ -12,8 +13,9 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
-      <AuthProvider>
-        {getLayout(<Component {...pageProps} />)}
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <AuthProvider>
+          {getLayout(<Component {...pageProps} />)}
       <Toaster 
         position="bottom-right"
         toastOptions={{
@@ -47,8 +49,9 @@ function MyApp({ Component, pageProps }) {
             },
           },
         }}
-      />
-      </AuthProvider>
+        />
+        </AuthProvider>
+      </ThemeProvider>
     </GoogleOAuthProvider>
   );
 }
