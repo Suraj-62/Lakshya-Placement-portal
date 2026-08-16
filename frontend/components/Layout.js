@@ -52,16 +52,17 @@ export default function Layout({ children, title = 'Lakshya Placement Portal', n
         <title>{title}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
-      <div className="min-h-screen bg-stone-50 dark:bg-[#0c0a09] font-sans selection:bg-amber-500/30 selection:text-amber-200 transition-colors duration-300">
+      <div className="min-h-screen bg-stone-50 dark:bg-[#090706] font-sans selection:bg-amber-500/30 selection:text-amber-900 dark:selection:text-amber-200 transition-colors duration-500">
         {/* Dynamic Background Effects */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-900/5 dark:bg-amber-900/10 blur-[120px] rounded-full animate-pulse transition-all duration-1000"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-900/5 dark:bg-orange-950/10 blur-[120px] rounded-full animate-pulse delay-700 transition-all duration-1000"></div>
+          <div className="absolute top-[-15%] left-[-10%] w-[50%] h-[50%] bg-amber-500/10 dark:bg-amber-600/15 blur-[120px] rounded-full animate-blob transition-all duration-1000"></div>
+          <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-rose-500/10 dark:bg-rose-600/15 blur-[120px] rounded-full animate-blob animation-delay-2000 transition-all duration-1000"></div>
+          <div className="absolute bottom-[-10%] left-[20%] w-[40%] h-[40%] bg-orange-500/10 dark:bg-orange-600/15 blur-[120px] rounded-full animate-blob animation-delay-4000 transition-all duration-1000"></div>
         </div>
 
         {/* Navbar */}
         {!navHidden && (
-        <nav className="fixed top-0 w-full z-50 border-b border-stone-200 dark:border-amber-900/20 bg-white/80 dark:bg-[#0c0a09]/80 backdrop-blur-md transition-colors duration-300">
+        <nav className="fixed top-0 w-full z-50 border-b border-stone-200/50 dark:border-amber-900/20 bg-white/70 dark:bg-[#090706]/70 backdrop-blur-xl shadow-sm dark:shadow-glow/10 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           
           <div onClick={handleLogoClick} className="flex items-center gap-3 cursor-pointer">
@@ -115,7 +116,7 @@ export default function Layout({ children, title = 'Lakshya Placement Portal', n
                   </div>
 
                   {open && (
-                    <div className="absolute right-0 mt-3 w-52 py-2 bg-white dark:bg-stone-900 border border-stone-200 dark:border-amber-900/30 rounded-xl shadow-2xl z-50 transform origin-top-right transition-all animate-in fade-in zoom-in duration-200">
+                    <div className="absolute right-0 mt-3 w-52 py-2 glass-card rounded-2xl shadow-premium z-50 transform origin-top-right transition-all animate-in fade-in zoom-in duration-200">
                       <div className="px-4 py-3 border-b border-stone-100 dark:border-amber-900/20">
                           <p className="text-[10px] font-black uppercase tracking-widest text-stone-400 dark:text-stone-500 mb-1">Signed in as</p>
                           <p className="text-sm font-bold text-stone-800 dark:text-orange-50 truncate">{user.name}</p>
@@ -165,8 +166,8 @@ export default function Layout({ children, title = 'Lakshya Placement Portal', n
               </div>
             ) : (
               <div className="flex items-center gap-4 text-sm font-medium">
-                <Link href="/auth/login" className="hover:text-amber-400 transition-colors">Log in</Link>
-                <Link href="/auth/register" className="px-4 py-2 bg-[#8b5e3c] text-orange-50 rounded-lg hover:bg-[#7a5234] transition-colors shadow-md">Sign up</Link>
+                <Link href="/auth/login" className="text-stone-600 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Log in</Link>
+                <Link href="/auth/register" className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all shadow-glow hover:shadow-glow-lg hover:-translate-y-0.5 font-bold">Sign up</Link>
               </div>
             )}
           </div>

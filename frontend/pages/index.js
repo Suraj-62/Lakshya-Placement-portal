@@ -1,12 +1,22 @@
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   ArrowRight, Code, Brain, LineChart, BookOpen, Video, Mic, Globe, Users, MessageSquare, 
-  ChevronDown, ChevronUp, Star, Quote, Mail, MapPin, Phone 
+  ChevronDown, ChevronUp, Star, Quote, Mail, MapPin, Phone, Rocket 
 } from "lucide-react";
 
 export default function Home() {
   const [openFaq, setOpenFaq] = useState(null);
+  
+  const words = ["Software Engineer", "Data Scientist", "Product Manager", "SDE-1", "Tech Lead"];
+  const [currentWord, setCurrentWord] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentWord((prev) => (prev + 1) % words.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
   
   const faqs = [
     { question: "Is Lakshya suitable for beginners?", answer: "Absolutely. We have structured modules that start from fundamental concepts and gradually scale up to advanced competitive programming and system design." },
@@ -23,29 +33,31 @@ export default function Home() {
     }
   };
   return (
-    <div className="min-h-screen bg-stone-50 dark:bg-[#0c0a09] text-stone-800 dark:text-stone-300 font-sans selection:bg-amber-500/30 dark:selection:bg-amber-700/30 transition-colors duration-300">
+    <div className="min-h-screen bg-[#070504] text-stone-300 font-sans selection:bg-amber-500/30 selection:text-amber-200 transition-colors duration-500 relative">
+      {/* Global Background Pattern */}
+      <div className="fixed inset-0 z-0 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/connected.png')] opacity-[0.1] mix-blend-overlay"></div>
       
       {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 border-b border-stone-200 dark:border-amber-900/20 bg-white/80 dark:bg-[#0c0a09]/80 backdrop-blur-md transition-colors duration-300">
+      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#070504]/80 backdrop-blur-xl transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Lakshya Logo" className="w-10 h-10 object-contain drop-shadow-[0_0_15px_rgba(217,119,6,0.5)]" />
-            <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 tracking-tight">
+          <div className="flex items-center gap-3 w-1/4">
+            <img src="/logo.png" alt="Lakshya Logo" className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(217,119,6,0.8)]" />
+            <span className="text-xl font-bold text-amber-500 tracking-tight">
               Lakshya
             </span>
           </div>
           
-          <div className="hidden md:flex gap-8 text-sm font-medium">
-            <Link href="#features" className="text-stone-600 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Features</Link>
-            <Link href="#about" className="text-stone-600 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">About</Link>
-            <Link href="#contact" className="text-stone-600 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Contact</Link>
+          <div className="hidden md:flex flex-1 justify-center gap-8 text-sm font-medium">
+            <Link href="#features" className="text-stone-400 hover:text-white transition-colors">Features</Link>
+            <Link href="#about" className="text-stone-400 hover:text-white transition-colors">About</Link>
+            <Link href="#contact" className="text-stone-400 hover:text-white transition-colors">Contact</Link>
           </div>
 
-          <div className="flex items-center gap-4 text-sm font-medium">
-            <Link href="/auth/login" className="text-stone-600 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
+          <div className="flex justify-end items-center gap-6 text-sm font-medium w-1/4">
+            <Link href="/auth/login" className="text-stone-400 hover:text-white transition-colors">
               Log in
             </Link>
-            <Link href="/auth/register" className="px-4 py-2 bg-[#8b5e3c] text-orange-50 rounded-lg hover:bg-[#7a5234] transition-colors shadow-md">
+            <Link href="/auth/register" className="px-5 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-400 hover:to-orange-400 transition-all shadow-[0_0_20px_rgba(245,158,11,0.4)] font-bold">
               Sign up
             </Link>
           </div>
@@ -53,53 +65,60 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden flex flex-col items-center justify-center min-h-[90vh]">
-        {/* Subtle Grid Background */}
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] mix-blend-overlay z-0"></div>
+      <section className="relative pt-32 pb-20 md:pt-48 md:pb-24 overflow-hidden flex flex-col items-center justify-center min-h-[90vh]">
         
-        {/* Futuristic Glowing Orbs */}
-        <div className="absolute top-[20%] left-1/2 -translate-x-[80%] w-[500px] h-[500px] bg-amber-600/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
-        <div className="absolute top-[30%] right-1/2 translate-x-[80%] w-[400px] h-[400px] bg-blue-600/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
+        {/* Subtle glowing center */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
 
-        <div className="max-w-7xl mx-auto px-6 text-center relative z-10 flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-stone-900/80 border border-stone-200 dark:border-white/5 text-stone-700 dark:text-stone-300 text-xs font-bold tracking-widest uppercase mb-8 backdrop-blur-xl shadow-xl dark:shadow-2xl hover:border-stone-300 dark:hover:border-white/10 transition-colors cursor-default">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <div className="max-w-6xl mx-auto px-6 text-center relative z-10 flex flex-col items-center">
+          
+          {/* Main Headline */}
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-white mb-6 leading-tight">
+            Accelerate Your Tech <br/> Leadership Journey
+          </h1>
+          
+          {/* Subheadline */}
+          <p className="text-lg text-stone-400 mb-8 max-w-2xl mx-auto leading-relaxed">
+            Lakshya Placement Portal is your direct path to senior tech roles. Access curated resources, master technical interviews, and find your next lead role.
+          </p>
+
+          {/* Pill Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950/40 border border-emerald-900/50 text-emerald-500 text-[10px] font-bold tracking-widest uppercase mb-12 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
             Elevate Your Career
           </div>
           
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-stone-900 dark:text-white mb-6 leading-none drop-shadow-xl dark:drop-shadow-2xl text-center">
-            Your Dream Job <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 dark:from-amber-400 dark:via-orange-500 dark:to-rose-500">
-              Is Closer Than You Think.
-            </span>
-          </h1>
-          
-          <p className="text-lg md:text-xl text-stone-600 dark:text-stone-400 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
-            Build confidence, master coding interviews, and take the next step toward the software engineering career you've been working for.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
-            <Link href="/auth/register" className="w-full sm:w-auto px-8 py-4 bg-stone-900 dark:bg-white text-white dark:text-black rounded-2xl font-bold hover:bg-stone-800 dark:hover:bg-stone-200 transition-all flex items-center justify-center gap-2 group shadow-xl dark:shadow-[0_0_40px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_0_60px_rgba(255,255,255,0.2)] hover:-translate-y-1">
+          {/* Gradient Divider */}
+          <div className="w-full max-w-4xl h-[1px] bg-gradient-to-r from-transparent via-stone-500/30 to-transparent mb-10"></div>
+
+          {/* 4 Feature Cards Inline */}
+          <div className="flex flex-wrap justify-center gap-4 mb-12 w-full max-w-5xl">
+            {[
+              { icon: <Code className="w-6 h-6 mb-3 text-stone-300" />, title: "Coding Practice" },
+              { icon: <Mic className="w-6 h-6 mb-3 text-stone-300" />, title: "Mock Interviews" },
+              { icon: <Rocket className="w-6 h-6 mb-3 text-stone-300" />, title: "Role Matching" },
+              { icon: <Globe className="w-6 h-6 mb-3 text-stone-300" />, title: "Company Research" }
+            ].map((feature, idx) => (
+              <div key={idx} className="flex-1 min-w-[140px] max-w-[220px] p-6 rounded-2xl bg-[#110e0d] border border-white/5 hover:border-white/10 hover:bg-[#161211] transition-all flex flex-col items-center justify-center cursor-pointer group">
+                <div className="group-hover:-translate-y-1 transition-transform duration-300 flex flex-col items-center">
+                  {feature.icon}
+                  <h3 className="text-xs font-bold text-stone-300">{feature.title}</h3>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto mt-2">
+            <Link href="/auth/register" className="px-8 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-bold hover:from-amber-400 hover:to-orange-400 transition-all shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:shadow-[0_0_40px_rgba(245,158,11,0.5)] flex items-center justify-center gap-2 group w-full sm:w-auto">
               Start Practicing Now
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <Link href="#features" className="w-full sm:w-auto px-8 py-4 bg-white/50 dark:bg-stone-900/50 backdrop-blur-xl border border-stone-200 dark:border-white/10 text-stone-800 dark:text-white rounded-2xl font-bold hover:bg-stone-100 dark:hover:bg-stone-800 transition-all hover:-translate-y-1 shadow-sm">
+            <Link href="#features" className="px-8 py-3.5 bg-[#151211] text-stone-300 rounded-xl font-bold hover:bg-[#1f1a18] transition-all border border-white/5 w-full sm:w-auto flex justify-center">
               View Capabilities
             </Link>
           </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 gap-8 mt-20 w-full max-w-2xl border-t border-white/5 pt-12">
-            {[
-              { label: "Practice Questions", value: "1,500+" },
-              { label: "Success Rate", value: "94%" }
-            ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <p className="text-2xl md:text-3xl font-black text-stone-900 dark:text-white mb-1">{stat.value}</p>
-                <p className="text-[10px] uppercase font-bold tracking-widest text-stone-500">{stat.label}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -145,6 +164,111 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Platform Preview Section */}
+      <section className="py-24 bg-stone-50 dark:bg-[#090706] relative overflow-hidden transition-colors duration-300 border-b border-stone-200 dark:border-amber-900/10">
+        <div className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-amber-600/10 blur-[150px] rounded-full pointer-events-none z-0"></div>
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl font-bold text-stone-900 dark:text-orange-50 mb-4">Experience the Platform</h2>
+            <p className="text-stone-600 dark:text-stone-400 max-w-2xl mx-auto">A seamless, distraction-free environment built for focus.</p>
+          </div>
+          
+          <div className="w-full max-w-5xl mx-auto rounded-xl shadow-premium overflow-hidden border border-stone-200 dark:border-stone-800 bg-[#1e1e1e] flex flex-col group hover:-translate-y-2 transition-transform duration-500">
+            {/* Mac Window Header */}
+            <div className="h-10 bg-[#2d2d2d] flex items-center px-4 gap-2 border-b border-stone-800">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
+            
+            {/* Window Content */}
+            <div className="flex flex-col md:flex-row flex-1 text-left">
+              {/* Problem Sidebar */}
+              <div className="w-full md:w-1/3 bg-[#1e1e1e] p-6 border-r border-stone-800">
+                <h3 className="text-lg font-bold text-white mb-2">1. Two Sum</h3>
+                <div className="flex gap-2 mb-4">
+                  <span className="text-[10px] uppercase tracking-wider px-2 py-1 bg-green-500/20 text-green-400 rounded-md font-bold">Easy</span>
+                  <span className="text-[10px] uppercase tracking-wider px-2 py-1 bg-amber-500/20 text-amber-400 rounded-md font-bold">Array</span>
+                </div>
+                <p className="text-stone-400 text-sm leading-relaxed mb-4">
+                  Given an array of integers <code>nums</code> and an integer <code>target</code>, return indices of the two numbers such that they add up to <code>target</code>.
+                </p>
+                <div className="p-3 bg-[#2d2d2d] rounded-lg text-xs font-mono text-stone-300">
+                  <span className="text-stone-500">Input:</span> nums = [2,7,11,15], target = 9<br/>
+                  <span className="text-stone-500">Output:</span> [0,1]
+                </div>
+              </div>
+              
+              {/* Code Editor */}
+              <div className="w-full md:w-2/3 bg-[#151515] p-6 font-mono text-sm leading-relaxed text-stone-300 relative overflow-hidden">
+                <div className="absolute top-4 right-4 flex gap-2">
+                   <div className="px-3 py-1 bg-stone-800 rounded-md text-xs text-stone-400">Python 3</div>
+                   <div className="px-3 py-1 bg-amber-500/20 text-amber-400 rounded-md text-xs border border-amber-500/30 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Running</div>
+                </div>
+                <div className="mt-8">
+                  <div className="text-blue-400">class <span className="text-yellow-300">Solution</span>:</div>
+                  <div className="pl-4">
+                    <div className="text-blue-400">def <span className="text-yellow-300">twoSum</span>(self, nums: List[int], target: int) -&gt; List[int]:</div>
+                    <div className="pl-4 text-emerald-400"># Use a hash map for O(n) lookup</div>
+                    <div className="pl-4">seen = {'{}'}</div>
+                    <div className="pl-4"><span className="text-purple-400">for</span> i, num <span className="text-purple-400">in</span> enumerate(nums):</div>
+                    <div className="pl-8">complement = target - num</div>
+                    <div className="pl-8"><span className="text-purple-400">if</span> complement <span className="text-purple-400">in</span> seen:</div>
+                    <div className="pl-12"><span className="text-purple-400">return</span> [seen[complement], i]</div>
+                    <div className="pl-8">seen[num] = i</div>
+                    <div className="pl-4"><span className="text-purple-400">return</span> []</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us Section */}
+      <section className="py-24 bg-stone-100 dark:bg-[#070504] transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            
+            <div className="space-y-8">
+               <h2 className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-orange-50 tracking-tight leading-tight">
+                 The Interview Prep <br/><span className="text-amber-500">Broken System.</span>
+               </h2>
+               <p className="text-stone-600 dark:text-stone-400 leading-relaxed text-lg">
+                 Most platforms focus solely on solving algorithms in isolation. But real interviews are collaborative. They test how you communicate, handle pressure, and adapt to feedback.
+               </p>
+               
+               <div className="space-y-4">
+                 <div className="flex gap-4 p-5 rounded-2xl glass-card shadow-premium relative group hover:-translate-y-1 transition-all duration-300">
+                   <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-500 flex-shrink-0 shadow-glow">
+                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                   </div>
+                   <div>
+                     <h4 className="text-lg font-bold text-stone-900 dark:text-white mb-1">Lonely Grinding</h4>
+                     <p className="text-sm text-stone-500">Practicing alone doesn't build interview communication skills.</p>
+                   </div>
+                 </div>
+                 <div className="flex gap-4 p-5 rounded-2xl glass-card shadow-premium relative group hover:-translate-y-1 transition-all duration-300">
+                   <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-500 flex-shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                   </div>
+                   <div>
+                     <h4 className="text-lg font-bold text-stone-900 dark:text-white mb-1">The Lakshya Edge</h4>
+                     <p className="text-sm text-stone-500">Live mock interviews (Samvaad) simulate the real pressure.</p>
+                   </div>
+                 </div>
+               </div>
+            </div>
+            
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500 to-orange-600 rounded-[2.5rem] rotate-3 opacity-40 blur-2xl animate-pulse"></div>
+              <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" alt="Students collaborating" className="relative z-10 rounded-[2.5rem] shadow-premium object-cover aspect-[4/3] border border-white/10" />
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* How it Works Section */}
       <section className="py-24 bg-stone-50 dark:bg-[#070504] transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6">
@@ -177,7 +301,7 @@ export default function Home() {
       {/* Samvaad Integrated Section */}
       <section className="py-24 border-t border-stone-200 dark:border-amber-900/10 bg-white dark:bg-[#0c0a09] relative overflow-hidden transition-colors duration-300">
         {/* Glow effect */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-600/5 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-600/10 blur-[120px] rounded-full animate-blob pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-16">
@@ -266,8 +390,8 @@ export default function Home() {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-8 rounded-3xl bg-white dark:bg-stone-900/40 border border-stone-200 dark:border-white/5 hover:border-stone-300 dark:hover:border-white/10 hover:shadow-lg dark:hover:bg-stone-900/60 transition-all group backdrop-blur-xl">
-              <div className="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <div className="p-8 rounded-3xl glass-card relative group hover:-translate-y-2 transition-all duration-300">
+              <div className="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
                 <BookOpen className="w-6 h-6 text-amber-600 dark:text-amber-500" />
               </div>
               <h3 className="text-xl font-bold text-stone-900 dark:text-white mb-3">Curated Data Bank</h3>
@@ -276,8 +400,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="p-8 rounded-3xl bg-white dark:bg-stone-900/40 border border-stone-200 dark:border-white/5 hover:border-stone-300 dark:hover:border-white/10 hover:shadow-lg dark:hover:bg-stone-900/60 transition-all group backdrop-blur-xl relative overflow-hidden">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 flex items-center justify-center mb-6 relative z-10 group-hover:scale-110 transition-transform">
+            <div className="p-8 rounded-3xl glass-card relative overflow-hidden group hover:-translate-y-2 transition-all duration-300">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 flex items-center justify-center mb-6 relative z-10 group-hover:scale-110 transition-transform shadow-sm">
                 <Code className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
               </div>
               <h3 className="text-xl font-bold text-stone-900 dark:text-white mb-3 relative z-10">Live Code IDE</h3>
@@ -286,8 +410,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="p-8 rounded-3xl bg-white dark:bg-stone-900/40 border border-stone-200 dark:border-white/5 hover:border-stone-300 dark:hover:border-white/10 hover:shadow-lg dark:hover:bg-stone-900/60 transition-all group backdrop-blur-xl">
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <div className="p-8 rounded-3xl glass-card relative group hover:-translate-y-2 transition-all duration-300">
+              <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
                 <LineChart className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-xl font-bold text-stone-900 dark:text-white mb-3">Performance Analytics</h3>
@@ -296,8 +420,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="p-8 rounded-3xl bg-white dark:bg-stone-900/40 border border-stone-200 dark:border-white/5 hover:border-stone-300 dark:hover:border-white/10 hover:shadow-lg dark:hover:bg-stone-900/60 transition-all group backdrop-blur-xl">
-              <div className="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <div className="p-8 rounded-3xl glass-card relative group hover:-translate-y-2 transition-all duration-300">
+              <div className="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
                 <MessageSquare className="w-6 h-6 text-rose-600 dark:text-rose-400" />
               </div>
               <h3 className="text-xl font-bold text-stone-900 dark:text-white mb-3">GD Preparation</h3>
@@ -309,9 +433,47 @@ export default function Home() {
         </div>
       </section>
 
+      {/* About Section */}
+      <section id="about" className="py-24 border-t border-white/5 bg-[#0a0807] transition-colors duration-300 relative overflow-hidden">
+        <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-amber-600/10 blur-[120px] rounded-full pointer-events-none animate-blob"></div>
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-orange-600/20 rounded-[2rem] rotate-[-3deg] blur-xl"></div>
+              <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80" alt="About Lakshya Team" className="relative z-10 rounded-[2rem] shadow-premium object-cover aspect-square border border-white/10" />
+            </div>
+            
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-widest mb-2">
+                <Users className="w-3 h-3 fill-current" /> Our Mission
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
+                Empowering the Next Generation of <span className="text-amber-500">Tech Leaders.</span>
+              </h2>
+              <p className="text-stone-400 leading-relaxed text-lg">
+                Lakshya was born from a simple observation: there's a massive gap between learning to code and actually clearing a technical interview at a top-tier product company.
+              </p>
+              <p className="text-stone-400 leading-relaxed text-lg">
+                We've built a comprehensive ecosystem that combines curated, high-yield practice problems with real-time peer-to-peer mock interviews (Samvaad). Our goal is to simulate the exact pressure and environment of a real interview so you walk in with absolute confidence.
+              </p>
+              <div className="pt-4 flex gap-8">
+                <div>
+                  <h4 className="text-3xl font-black text-white mb-1">10K+</h4>
+                  <p className="text-stone-500 text-sm font-bold uppercase tracking-widest">Active Users</p>
+                </div>
+                <div>
+                  <h4 className="text-3xl font-black text-white mb-1">50+</h4>
+                  <p className="text-stone-500 text-sm font-bold uppercase tracking-widest">Partner Companies</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section id="testimonials" className="py-24 border-t border-stone-200 dark:border-amber-900/20 bg-white dark:bg-[#070504] relative overflow-hidden transition-colors duration-300">
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-amber-600/5 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-amber-600/10 blur-[120px] rounded-full animate-blob pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="mb-16 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-500 text-[10px] font-black uppercase tracking-widest mb-4">
@@ -327,10 +489,10 @@ export default function Home() {
               { name: "Anjali K.", role: "Software Engineer @ Google", quote: "Lakshya's analytics helped me identify my weak spots in Dynamic Programming. The distraction-free IDE made practicing a breeze." },
               { name: "Vikram P.", role: "Backend Developer @ Amazon", quote: "The GD preparation modules gave me the confidence I needed to clear the initial screening rounds. Highly recommend it to everyone." }
             ].map((testimonial, i) => (
-              <div key={i} className="p-8 rounded-3xl bg-stone-50 dark:bg-stone-900/40 border border-stone-200 dark:border-white/5 hover:border-stone-300 dark:hover:border-white/10 hover:shadow-lg transition-all backdrop-blur-xl relative group">
+              <div key={i} className="p-8 rounded-3xl glass-card relative group hover:-translate-y-2 transition-all duration-300">
                 <Quote className="absolute top-6 right-6 w-10 h-10 text-stone-200 dark:text-stone-800/50 group-hover:text-amber-500/20 transition-colors" />
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-glow">
                     {testimonial.name.charAt(0)}
                   </div>
                   <div>
@@ -341,6 +503,30 @@ export default function Home() {
                 <p className="text-stone-600 dark:text-stone-400 leading-relaxed text-sm italic">"{testimonial.quote}"</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section className="py-24 bg-stone-50 dark:bg-[#050403] relative overflow-hidden transition-colors duration-300">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-amber-500/10 dark:bg-amber-600/15 blur-[120px] rounded-full pointer-events-none z-0"></div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="p-12 md:p-16 rounded-[3rem] glass-card shadow-premium border border-amber-500/20 text-center relative overflow-hidden">
+             {/* Inner glowing element */}
+             <div className="absolute -top-24 -right-24 w-64 h-64 bg-rose-500/20 blur-[80px] rounded-full"></div>
+             <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-amber-500/20 blur-[80px] rounded-full"></div>
+             
+             <h2 className="text-4xl md:text-5xl font-black text-stone-900 dark:text-white mb-6 tracking-tight relative z-10">
+               Ready to Crack Your Next <br/>
+               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-rose-500">Tech Interview?</span>
+             </h2>
+             <p className="text-stone-600 dark:text-stone-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 relative z-10">
+               Join thousands of students who have already transformed their careers with Lakshya's premium curated content and live mock interviews.
+             </p>
+             <Link href="/auth/register" className="inline-flex px-10 py-5 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-2xl font-bold hover:from-amber-600 hover:to-orange-700 transition-all shadow-glow hover:shadow-glow-lg text-lg items-center gap-3 group relative z-10 hover:-translate-y-1">
+               Create Your Free Account
+               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+             </Link>
           </div>
         </div>
       </section>
@@ -372,6 +558,81 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-24 border-t border-stone-200 dark:border-amber-900/20 bg-stone-50 dark:bg-[#090706] transition-colors duration-300 relative overflow-hidden">
+        <div className="absolute top-[20%] right-[-10%] w-[500px] h-[500px] bg-rose-600/10 blur-[120px] rounded-full pointer-events-none animate-blob"></div>
+        
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl font-bold text-stone-900 dark:text-orange-50 mb-4">Get in Touch</h2>
+            <p className="text-stone-600 dark:text-stone-400 max-w-2xl mx-auto">Have questions? We're here to help you on your placement journey.</p>
+          </div>
+          
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
+            {/* Contact Info Cards */}
+            <div className="space-y-6">
+              <div className="p-8 rounded-3xl glass-card relative group hover:-translate-y-1 transition-all duration-300 flex items-center gap-6">
+                <div className="w-14 h-14 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 shadow-glow flex-shrink-0">
+                  <Mail className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-stone-900 dark:text-white mb-1">Email Us</h3>
+                  <p className="text-stone-600 dark:text-stone-400 text-sm font-medium">mishrasuraj6299@gmail.com</p>
+                </div>
+              </div>
+
+              <div className="p-8 rounded-3xl glass-card relative group hover:-translate-y-1 transition-all duration-300 flex items-center gap-6">
+                <div className="w-14 h-14 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)] flex-shrink-0">
+                  <Phone className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-stone-900 dark:text-white mb-1">Call Us</h3>
+                  <p className="text-stone-600 dark:text-stone-400 text-sm font-medium">+91 6299323274</p>
+                </div>
+              </div>
+              
+              <div className="p-8 rounded-3xl glass-card relative group hover:-translate-y-1 transition-all duration-300 flex items-center gap-6">
+                <div className="w-14 h-14 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.3)] flex-shrink-0">
+                  <MapPin className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-stone-900 dark:text-white mb-1">Location</h3>
+                  <p className="text-stone-600 dark:text-stone-400 text-sm font-medium">India</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Form */}
+            <div className="p-10 rounded-3xl glass-card relative shadow-premium">
+              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">First Name</label>
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-[#151211]/50 border border-stone-200 dark:border-stone-800 text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all placeholder-stone-400 dark:placeholder-stone-600" placeholder="John" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">Last Name</label>
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-[#151211]/50 border border-stone-200 dark:border-stone-800 text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all placeholder-stone-400 dark:placeholder-stone-600" placeholder="Doe" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">Email Address</label>
+                  <input type="email" className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-[#151211]/50 border border-stone-200 dark:border-stone-800 text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all placeholder-stone-400 dark:placeholder-stone-600" placeholder="john@example.com" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">Message</label>
+                  <textarea rows="4" className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-[#151211]/50 border border-stone-200 dark:border-stone-800 text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all placeholder-stone-400 dark:placeholder-stone-600 resize-none" placeholder="How can we help you?"></textarea>
+                </div>
+                <button type="submit" className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl font-bold hover:from-amber-600 hover:to-orange-700 transition-all shadow-glow hover:shadow-glow-lg flex items-center justify-center gap-2 group">
+                  Send Message
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </section>
