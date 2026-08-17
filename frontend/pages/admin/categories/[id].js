@@ -66,14 +66,14 @@ function EditCategory() {
     <div className="max-w-2xl mx-auto pb-20">
       
       {/* Navigation */}
-      <Link href="/admin" className="inline-flex items-center gap-2 text-stone-500 hover:text-orange-50 transition-colors mb-6 group">
+      <Link href="/admin" className="inline-flex items-center gap-2 text-stone-500 hover:text-teal-50 transition-colors mb-6 group">
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
       </Link>
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
         <div>
-            <h1 className="text-3xl font-bold text-orange-50 tracking-tight flex items-center gap-3">
-              <Layers className="text-amber-500" /> Edit Category
+            <h1 className="text-3xl font-bold text-teal-50 tracking-tight flex items-center gap-3">
+              <Layers className="text-emerald-500" /> Edit Category
             </h1>
             <p className="text-stone-400 mt-1">Update the name, description, or emoji for this category.</p>
         </div>
@@ -100,7 +100,7 @@ function EditCategory() {
                     value={name} 
                     onChange={e => setName(e.target.value)} 
                     placeholder="e.g. Operating Systems, DBMS"
-                    className="w-full bg-stone-950 border border-stone-800 rounded-2xl py-4 px-6 text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all placeholder:text-stone-700" 
+                    className="w-full bg-stone-950 border border-stone-800 rounded-2xl py-4 px-6 text-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all placeholder:text-stone-700" 
                     required 
                 />
             </div>
@@ -114,7 +114,7 @@ function EditCategory() {
                     value={description} 
                     onChange={e => setDescription(e.target.value)} 
                     placeholder="Briefly describe what this category covers..."
-                    className="w-full bg-stone-950 border border-stone-800 rounded-2xl py-4 px-6 text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all min-h-[120px] placeholder:text-stone-700" 
+                    className="w-full bg-stone-950 border border-stone-800 rounded-2xl py-4 px-6 text-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all min-h-[120px] placeholder:text-stone-700" 
                     rows="4" 
                 />
             </div>
@@ -129,7 +129,7 @@ function EditCategory() {
                     value={icon} 
                     onChange={e => setIcon(e.target.value)} 
                     placeholder="📚"
-                    className="w-full bg-stone-950 border border-stone-800 rounded-2xl py-4 px-6 text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all placeholder:text-stone-700" 
+                    className="w-full bg-stone-950 border border-stone-800 rounded-2xl py-4 px-6 text-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all placeholder:text-stone-700" 
                 />
             </div>
 
@@ -137,7 +137,7 @@ function EditCategory() {
             <div className="pt-4">
                 <button 
                     disabled={saving}
-                    className="w-full bg-amber-600 hover:bg-amber-500 disabled:opacity-50 disabled:cursor-not-allowed text-amber-50 font-bold py-4 rounded-2xl shadow-xl shadow-amber-900/30 transition-all flex items-center justify-center gap-2"
+                    className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-emerald-50 font-bold py-4 rounded-2xl shadow-xl shadow-emerald-900/30 transition-all flex items-center justify-center gap-2"
                 >
                     {saving ? 'Saving...' : (
                         <>

@@ -3,194 +3,360 @@ import Layout from '../../components/Layout';
 import withAuth from '../../components/withAuth';
 import api from '../../lib/api';
 import Link from 'next/link';
-import { BookOpen, ChevronRight, Award, Zap, Search, Filter, Code, Brain, CheckCircle } from 'lucide-react';
+import { 
+    BookOpen, ChevronRight, Award, Zap, Search, Code, 
+    Brain, CheckCircle, ChevronDown, Flame, Trophy, 
+    Calendar, LayoutTemplate, Database, Bot, Cpu, Sparkles,
+    Layers, Network, Code2, CheckCircle2, Star
+} from 'lucide-react';
 
 const PracticeDashboard = () => {
     const [questions, setQuestions] = useState([]);
+    const [dashboardData, setDashboardData] = useState({ streak: 0, points: 0 });
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
-    const [filterDifficulty, setFilterDifficulty] = useState('all');
-    const [activeTab, setActiveTab] = useState('all'); // 'all' or 'solved'
+    const [expandedTopics, setExpandedTopics] = useState({});
 
     useEffect(() => {
-        const fetchQuestions = async () => {
+        const fetchData = async () => {
             try {
-                const { data } = await api.get('/questions/coding');
-                setQuestions(data);
+                const [qRes, dRes] = await Promise.all([
+                    api.get('/questions/coding'),
+                    api.get('/progress/dashboard').catch(() => ({ data: { streak: 0, points: 0 } }))
+                ]);
+                setQuestions(qRes.data);
+                setDashboardData(dRes.data);
+                
+                // Expand first topic by default if questions exist
+                if (qRes.data.length > 0) {
+                    const firstTopic = qRes.data[0].topic || 'Fundamentals';
+                    setExpandedTopics({ [firstTopic]: true });
+                }
             } catch (error) {
-                console.error("Error fetching questions:", error);
+                console.error("Error fetching data:", error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchQuestions();
+        fetchData();
     }, []);
 
     const solvedCount = questions.filter(q => q.isSolved).length;
 
     const filteredQuestions = questions.filter(q => {
-        const matchesSearch = q.questionText.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                             q.topic?.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesDifficulty = filterDifficulty === 'all' || q.difficulty === filterDifficulty;
-        const matchesTab = activeTab === 'all' || (activeTab === 'solved' && q.isSolved);
-        return matchesSearch && matchesDifficulty && matchesTab;
+        return q.questionText.toLowerCase().includes(searchQuery.toLowerCase()) || 
+               q.topic?.toLowerCase().includes(searchQuery.toLowerCase());
     });
+
+    // Group questions by topic
+    const groupedQuestions = filteredQuestions.reduce((acc, q) => {
+        const topic = q.topic || 'Fundamentals';
+        if (!acc[topic]) acc[topic] = [];
+        acc[topic].push(q);
+        return acc;
+    }, {});
+
+    const toggleTopic = (topic) => {
+        setExpandedTopics(prev => ({ ...prev, [topic]: !prev[topic] }));
+    };
 
     return (
         <Layout title="Practice | Lakshya" fullWidth={true}>
-            <div className="w-full px-4 sm:px-8 lg:px-12 py-12">
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-                    <div>
-                        <div className="flex items-center gap-2 text-amber-500 font-bold text-sm tracking-widest uppercase mb-3">
-                            <Brain className="w-4 h-4" />
-                            Skill Up
-                        </div>
-                        <h1 className="text-5xl font-black text-orange-50 tracking-tight leading-none drop-shadow-md">
-                            Practice <span className="text-amber-500">Workspace</span>
-                        </h1>
-                        <p className="mt-4 text-stone-500 text-lg max-w-2xl font-medium">
-                            Master your coding skills with curated industrial-level challenges. Hand-picked questions to get you placed in top tech companies.
-                        </p>
-                    </div>
-
-                    <div className="flex items-center gap-4 bg-stone-900/50 p-2 rounded-2xl border border-white/5 backdrop-blur-xl">
-                        <div className="px-6 py-3 border-r border-white/5">
-                            <p className="text-[10px] uppercase font-black text-stone-600 tracking-wider mb-1">Solved</p>
-                            <p className="text-2xl font-black text-orange-50">{solvedCount} <span className="text-stone-700">/ {questions.length}</span></p>
-                        </div>
-                        <div className="px-6 py-3">
-                            <p className="text-[10px] uppercase font-black text-stone-600 tracking-wider mb-1">Success Rate</p>
-                            <p className="text-2xl font-black text-amber-500">{questions.length > 0 ? Math.round((solvedCount / questions.length) * 100) : 0}%</p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Filters Row */}
-                <div className="flex flex-col md:flex-row gap-4 mb-6">
-                    <div className="flex-grow relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-500" />
-                        <input 
-                            type="text" 
-                            placeholder="Search by topic or question..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-stone-900 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-orange-50 focus:outline-none focus:border-amber-600/50 transition-all placeholder:text-stone-600 font-medium"
-                        />
-                    </div>
+            <div className="w-full px-4 sm:px-6 lg:px-8 pt-4 pb-4">
+                
+                <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] xl:grid-cols-[280px_1fr_320px] gap-6 items-start">
                     
-                    <div className="flex items-center gap-2 bg-stone-900 border border-white/5 rounded-2xl p-1">
-                        {['all', 'easy', 'medium', 'hard'].map((d) => (
-                            <button
-                                key={d}
-                                onClick={() => setFilterDifficulty(d)}
-                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${
-                                    filterDifficulty === d 
-                                    ? 'bg-amber-600 text-white' 
-                                    : 'text-stone-500 hover:text-stone-300'
-                                }`}
-                            >
-                                {d}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                    {/* LEFT SIDEBAR: MENU */}
+                    <div className="hidden lg:block sticky top-20 bg-stone-900/40 border border-white/5 rounded-3xl p-4 shadow-sm backdrop-blur-md">
+                        <div className="flex items-center justify-between px-2 mb-6">
+                            <h3 className="text-sm font-bold text-teal-50 uppercase tracking-widest">Menu</h3>
+                            <LayoutTemplate className="w-4 h-4 text-stone-500" />
+                        </div>
 
-                {/* Tab Switcher */}
-                <div className="flex items-center gap-8 mb-8 border-b border-white/5 px-2">
-                    <button 
-                        onClick={() => setActiveTab('all')}
-                        className={`pb-4 text-sm font-black uppercase tracking-widest transition-all relative ${
-                            activeTab === 'all' ? 'text-orange-50' : 'text-stone-600 hover:text-stone-400'
-                        }`}
-                    >
-                        All Challenges
-                        {activeTab === 'all' && <div className="absolute bottom-0 left-0 w-full h-1 bg-amber-500 rounded-t-full"></div>}
-                    </button>
-                    <button 
-                        onClick={() => setActiveTab('solved')}
-                        className={`pb-4 text-sm font-black uppercase tracking-widest transition-all relative flex items-center gap-2 ${
-                            activeTab === 'solved' ? 'text-orange-50' : 'text-stone-600 hover:text-stone-400'
-                        }`}
-                    >
-                        Solved Challenges
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeTab === 'solved' ? 'bg-amber-500 text-black' : 'bg-stone-800 text-stone-500'}`}>
-                            {solvedCount}
-                        </span>
-                        {activeTab === 'solved' && <div className="absolute bottom-0 left-0 w-full h-1 bg-amber-500 rounded-t-full"></div>}
-                    </button>
-                </div>
-
-                {/* Question Grid */}
-                {loading ? (
-                    <div className="flex flex-col items-center justify-center py-20 gap-4">
-                        <div className="w-12 h-12 border-4 border-amber-600/20 border-t-amber-600 rounded-full animate-spin"></div>
-                        <p className="text-stone-500 font-bold animate-pulse">Loading challenges...</p>
-                    </div>
-                ) : filteredQuestions.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-4">
-                        {filteredQuestions.map((q) => (
-                            <Link key={q._id} href={`/practice/coding/${q._id}`}>
-                                <div className={`group bg-stone-900/30 border border-white/5 rounded-3xl p-6 hover:bg-stone-900/60 hover:border-amber-600/20 transition-all flex items-center justify-between shadow-sm hover:shadow-xl hover:shadow-amber-950/20 cursor-pointer ${q.isSolved && activeTab === 'all' ? 'opacity-80' : ''}`}>
-                                    <div className="flex items-center gap-6">
-                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
-                                            q.isSolved ? 'bg-emerald-500/20 text-emerald-500' :
-                                            q.difficulty === 'easy' ? 'bg-emerald-500/10 text-emerald-500' :
-                                            q.difficulty === 'medium' ? 'bg-amber-500/10 text-amber-500' :
-                                            'bg-red-500/10 text-red-500'
-                                        }`}>
-                                            {q.isSolved ? <CheckCircle className="w-6 h-6" /> : <Code className="w-6 h-6" />}
-                                        </div>
-                                        <div>
-                                            <div className="flex items-center gap-3 mb-1">
-                                                <h3 className={`text-xl font-black text-orange-50 group-hover:text-amber-500 transition-colors`}>
-                                                    {q.questionText.length > 60 ? q.questionText.substring(0, 60) + '...' : q.questionText}
-                                                </h3>
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-stone-600 px-2 py-1 bg-stone-950 rounded-lg">{q.topic}</span>
-                                            </div>
-                                            <div className="flex items-center gap-4 text-sm font-medium text-stone-500">
-                                                <div className="flex items-center gap-1.5">
-                                                    <Award className="w-4 h-4 text-amber-600/50" />
-                                                    {q.difficulty === 'easy' ? '10' : q.difficulty === 'medium' ? '20' : '30'} Points
-                                                </div>
-                                                <div className="flex items-center gap-1.5 text-stone-600">
-                                                    <BookOpen className="w-4 h-4" />
-                                                    {q.category?.name || 'DSA'}
-                                                </div>
-                                                {q.isSolved && (
-                                                    <div className="flex items-center gap-1.5 text-emerald-500">
-                                                        <CheckCircle className="w-4 h-4" />
-                                                        Completed
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
+                        <div className="space-y-1">
+                            {/* Coding Interviews (Active) */}
+                            <div className="bg-stone-800/50 rounded-2xl overflow-hidden border border-white/5">
+                                <div className="px-4 py-3 flex items-center justify-between cursor-pointer">
+                                    <div className="flex items-center gap-3">
+                                        <Code className="w-4 h-4 text-emerald-500" />
+                                        <span className="text-sm font-bold text-teal-50">Coding Interviews</span>
                                     </div>
+                                    <ChevronDown className="w-4 h-4 text-stone-400" />
+                                </div>
+                                <div className="pb-2">
+                                    <div className="px-4 py-2 mx-2 bg-stone-700/30 rounded-xl text-sm font-semibold text-emerald-400 cursor-pointer">Problems</div>
+                                    <div className="px-4 py-2 mx-2 text-sm font-medium text-stone-400 hover:text-stone-200 cursor-pointer transition-colors">Company Tagged</div>
+                                    <div className="px-4 py-2 mx-2 text-sm font-medium text-stone-400 hover:text-stone-200 cursor-pointer transition-colors">Cheatsheets</div>
+                                </div>
+                            </div>
 
-                                    <div className="flex items-center gap-4">
-                                        <div className={`hidden md:block px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter border ${
-                                            q.isSolved ? 'border-emerald-500/20 text-emerald-500' :
-                                            q.difficulty === 'easy' ? 'border-emerald-500/20 text-emerald-500' :
-                                            q.difficulty === 'medium' ? 'border-amber-500/20 text-amber-500' :
-                                            'border-red-500/20 text-red-500'
-                                        }`}>
-                                            {q.isSolved ? 'Solved' : q.difficulty}
-                                        </div>
-                                        <div className="w-10 h-10 rounded-full bg-stone-800 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-all">
-                                            <ChevronRight className="w-5 h-5" />
-                                        </div>
+                            {/* Other Menu Items */}
+                            <div className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-stone-800/30 rounded-xl transition-colors group mt-2">
+                                <div className="flex items-center gap-3">
+                                    <Sparkles className="w-4 h-4 text-stone-500 group-hover:text-stone-300" />
+                                    <span className="text-sm font-medium text-stone-400 group-hover:text-stone-200">AI Coding</span>
+                                </div>
+                                <span className="text-[9px] font-black uppercase tracking-wider text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md">Beta</span>
+                            </div>
+                            
+                            <div className="px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-stone-800/30 rounded-xl transition-colors group mt-1">
+                                <Cpu className="w-4 h-4 text-stone-500 group-hover:text-stone-300" />
+                                <span className="text-sm font-medium text-stone-400 group-hover:text-stone-200">System Design</span>
+                            </div>
+
+                            <div className="px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-stone-800/30 rounded-xl transition-colors group mt-1">
+                                <Bot className="w-4 h-4 text-stone-500 group-hover:text-stone-300" />
+                                <span className="text-sm font-medium text-stone-400 group-hover:text-stone-200">Machine Learning</span>
+                            </div>
+
+                            <div className="px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-stone-800/30 rounded-xl transition-colors group mt-1">
+                                <Database className="w-4 h-4 text-stone-500 group-hover:text-stone-300" />
+                                <span className="text-sm font-medium text-stone-400 group-hover:text-stone-200">Databases</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* MAIN CONTENT: ACCORDIONS */}
+                    <div className="flex flex-col gap-6 w-full">
+                        {/* HERO & TOP CARDS (NEW) */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {/* Card 1 */}
+                            <div className="bg-stone-900/40 border border-white/5 rounded-2xl p-4 flex items-center gap-3 hover:bg-white/[0.02] cursor-pointer transition-colors group">
+                                <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-500/20 transition-colors border border-purple-500/20">
+                                    <Layers className="w-5 h-5 text-purple-400" />
+                                </div>
+                                <span className="text-sm font-bold text-stone-300 group-hover:text-stone-100 transition-colors leading-tight">DSA for Beginners</span>
+                            </div>
+                            {/* Card 2 */}
+                            <div className="bg-stone-900/40 border border-white/5 rounded-2xl p-4 flex items-center gap-3 hover:bg-white/[0.02] cursor-pointer transition-colors group">
+                                <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-red-500/20 transition-colors border border-red-500/20">
+                                    <Network className="w-5 h-5 text-red-400" />
+                                </div>
+                                <span className="text-sm font-bold text-stone-300 group-hover:text-stone-100 transition-colors leading-tight">Advanced Algorithms</span>
+                            </div>
+                            {/* Card 3 */}
+                            <div className="bg-stone-900/40 border border-white/5 rounded-2xl p-4 flex items-center gap-3 hover:bg-white/[0.02] cursor-pointer transition-colors group">
+                                <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-500/20 transition-colors border border-amber-500/20">
+                                    <Code2 className="w-5 h-5 text-amber-400" />
+                                </div>
+                                <span className="text-sm font-bold text-stone-300 group-hover:text-stone-100 transition-colors leading-tight">Python for Interviews</span>
+                            </div>
+                        </div>
+
+                        <div className="bg-stone-900/40 border border-white/5 rounded-3xl p-6 relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+                            <div className="relative z-10 flex-1">
+                                <h1 className="text-3xl font-black text-white mb-2 tracking-tight">Lakshya <span className="text-emerald-500">150.</span></h1>
+                                <p className="text-stone-400 text-sm leading-relaxed max-w-md">
+                                    The ideal curated list of problems to master Data Structures & Algorithms and crack top tech companies.
+                                </p>
+                            </div>
+                            <div className="relative z-10 flex items-center gap-3 w-full md:w-auto">
+                                <div className="flex-1 md:flex-initial flex items-center gap-3 bg-stone-800/50 rounded-2xl px-5 py-3.5 border border-white/5 shadow-inner">
+                                    <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[9px] font-black text-stone-500 uppercase tracking-widest">Solved</p>
+                                        <p className="text-lg font-black text-white leading-none mt-1">{solvedCount}<span className="text-stone-500 text-xs font-bold">/{questions.length}</span></p>
                                     </div>
                                 </div>
-                            </Link>
-                        ))}
+                                <div className="flex-1 md:flex-initial flex items-center gap-3 bg-stone-800/50 rounded-2xl px-5 py-3.5 border border-white/5 shadow-inner">
+                                    <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center">
+                                        <Star className="w-4 h-4 text-amber-500" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[9px] font-black text-stone-500 uppercase tracking-widest">Starred</p>
+                                        <p className="text-lg font-black text-white leading-none mt-1">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Search Bar */}
+                        <div className="relative">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-500" />
+                            <input 
+                                type="text" 
+                                placeholder="Search problems or topics..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full bg-stone-900/60 border border-white/5 rounded-xl py-3 pl-11 pr-4 text-teal-50 focus:outline-none focus:border-emerald-600/50 transition-all placeholder:text-stone-600 text-sm font-medium shadow-sm backdrop-blur-md"
+                            />
+                        </div>
+
+                        {/* Accordion List */}
+                        {loading ? (
+                            <div className="flex flex-col items-center justify-center py-20 gap-4 bg-stone-900/20 border border-white/5 rounded-3xl">
+                                <div className="w-10 h-10 border-4 border-emerald-600/20 border-t-emerald-600 rounded-full animate-spin"></div>
+                                <p className="text-stone-500 font-bold animate-pulse">Loading roadmap...</p>
+                            </div>
+                        ) : filteredQuestions.length > 0 ? (
+                            <div className="flex flex-col gap-3">
+                                {Object.entries(groupedQuestions).map(([topic, topicQuestions]) => {
+                                    const topicSolved = topicQuestions.filter(q => q.isSolved).length;
+                                    const progress = Math.round((topicSolved / topicQuestions.length) * 100) || 0;
+                                    const isExpanded = !!expandedTopics[topic];
+                                    
+                                    return (
+                                        <div key={topic} className="bg-stone-900/40 border border-white/5 rounded-2xl overflow-hidden transition-all duration-300">
+                                            {/* Accordion Header */}
+                                            <div 
+                                                onClick={() => toggleTopic(topic)}
+                                                className="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-white/[0.02] transition-colors"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <ChevronRight className={`w-5 h-5 text-stone-500 transition-transform duration-300 ${isExpanded ? 'rotate-90 text-emerald-500' : ''}`} />
+                                                    <h2 className="text-lg font-bold text-teal-50">{topic}</h2>
+                                                </div>
+
+                                                <div className="flex items-center gap-6">
+                                                    {/* Progress Bar (NeetCode Style) */}
+                                                    <div className="hidden sm:flex items-center gap-3">
+                                                        <span className="text-xs font-bold text-stone-500">{topicSolved} / {topicQuestions.length}</span>
+                                                        <div className="w-24 h-1.5 bg-stone-800 rounded-full overflow-hidden">
+                                                            <div className="h-full bg-emerald-500 rounded-full transition-all duration-1000" style={{ width: `${progress}%` }}></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Accordion Body (Expanded State) */}
+                                            {isExpanded && (
+                                                <div className="px-5 pb-5 pt-2 border-t border-white/5 bg-black/20">
+                                                    {/* Read Concept Link inside Expanded area */}
+                                                    <div className="mb-4 mt-2 flex justify-end">
+                                                        <a 
+                                                            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(topic + ' data structure concept tutorial')}`} 
+                                                            target="_blank" 
+                                                            rel="noopener noreferrer" 
+                                                            className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/20 transition-all text-xs font-bold text-emerald-400 group"
+                                                        >
+                                                            <BookOpen className="w-3.5 h-3.5" />
+                                                            Learn Concept
+                                                        </a>
+                                                    </div>
+                                                    
+                                                    <div className="grid grid-cols-1 gap-2.5">
+                                                        {topicQuestions.map((q) => (
+                                                            <Link key={q._id} href={`/practice/coding/${q._id}`}>
+                                                                <div className={`group bg-stone-800/40 hover:bg-stone-700/50 border border-white/5 rounded-xl p-3 flex items-center justify-between cursor-pointer transition-all ${q.isSolved ? 'opacity-60 hover:opacity-100' : ''}`}>
+                                                                    <div className="flex items-center gap-4">
+                                                                        <div className="w-6 h-6 flex items-center justify-center">
+                                                                            {q.isSolved ? (
+                                                                                <CheckCircle className="w-5 h-5 text-emerald-500" />
+                                                                            ) : (
+                                                                                <div className="w-2 h-2 rounded-full bg-stone-600 group-hover:bg-emerald-500 transition-colors"></div>
+                                                                            )}
+                                                                        </div>
+                                                                        <h3 className={`text-sm font-semibold ${q.isSolved ? 'text-stone-400' : 'text-stone-200 group-hover:text-emerald-400'} transition-colors`}>
+                                                                            {q.title || (q.questionText.length > 80 ? q.questionText.substring(0, 80) + '...' : q.questionText)}
+                                                                        </h3>
+                                                                    </div>
+                                                                    
+                                                                    {/* Difficulty Badge */}
+                                                                    <div className={`px-2 py-1 rounded text-[10px] font-black uppercase tracking-wider ${
+                                                                        q.difficulty === 'easy' ? 'text-emerald-400' :
+                                                                        q.difficulty === 'medium' ? 'text-amber-400' :
+                                                                        'text-red-400'
+                                                                    }`}>
+                                                                        {q.difficulty}
+                                                                    </div>
+                                                                </div>
+                                                            </Link>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="text-center py-20 bg-stone-900/20 border border-white/5 rounded-3xl border-dashed">
+                                <Zap className="w-12 h-12 text-stone-700 mx-auto mb-4" />
+                                <h3 className="text-xl font-bold text-teal-50 mb-2">No Challenges Found</h3>
+                                <p className="text-stone-500">Try adjusting your search query.</p>
+                            </div>
+                        )}
                     </div>
-                ) : (
-                    <div className="text-center py-20 bg-stone-900/20 border border-white/5 rounded-3xl border-dashed">
-                        <Zap className="w-12 h-12 text-stone-700 mx-auto mb-4" />
-                        <h3 className="text-xl font-bold text-orange-50 mb-2">No Challenges Found</h3>
-                        <p className="text-stone-500">Try adjusting your filters or search query.</p>
+
+                    {/* RIGHT SIDEBAR: STATS & STREAK */}
+                    <div className="hidden xl:flex flex-col gap-4 sticky top-20">
+                        
+                        {/* Current Streak Card */}
+                        <div className="bg-stone-900/40 border border-white/5 rounded-3xl p-6 shadow-sm backdrop-blur-md">
+                            <div className="flex items-center justify-between mb-4">
+                                <div>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-stone-500 mb-1">Current Streak</p>
+                                    <div className="flex items-center gap-2">
+                                        <Flame className="w-6 h-6 text-amber-500" />
+                                        <span className="text-3xl font-black text-teal-50">{dashboardData.streak || 0} <span className="text-sm text-stone-500">days</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="w-full bg-stone-800 rounded-full h-1.5 mb-3">
+                                <div className="bg-amber-500 h-1.5 rounded-full w-1/3"></div>
+                            </div>
+                            <p className="text-xs font-medium text-stone-400 text-center">Solve one problem a day to keep your streak</p>
+                        </div>
+
+                        {/* Progress Chart (NeetCode Style) */}
+                        <div className="bg-stone-900/40 border border-white/5 rounded-3xl p-6 shadow-sm backdrop-blur-md relative overflow-hidden">
+                            <div className="flex items-center gap-2 mb-6">
+                                <LayoutTemplate className="w-4 h-4 text-amber-500" />
+                                <span className="text-sm font-bold text-teal-50">Lakshya 150</span>
+                            </div>
+                            
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-emerald-400 text-xs font-bold w-12">Easy</span>
+                                        <span className="text-stone-300 text-xs font-bold">{questions.filter(q => q.isSolved && q.difficulty === 'easy').length}/{questions.filter(q => q.difficulty === 'easy').length}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-amber-400 text-xs font-bold w-12">Medium</span>
+                                        <span className="text-stone-300 text-xs font-bold">{questions.filter(q => q.isSolved && q.difficulty === 'medium').length}/{questions.filter(q => q.difficulty === 'medium').length}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-red-400 text-xs font-bold w-12">Hard</span>
+                                        <span className="text-stone-300 text-xs font-bold">{questions.filter(q => q.isSolved && q.difficulty === 'hard').length}/{questions.filter(q => q.difficulty === 'hard').length}</span>
+                                    </div>
+                                </div>
+                                
+                                {/* CSS Circular Progress Ring */}
+                                <div className="relative w-24 h-24 flex items-center justify-center rounded-full border-4 border-stone-800">
+                                    <div className="absolute inset-0 rounded-full border-4 border-emerald-500 border-t-transparent border-l-transparent transform rotate-45"></div>
+                                    <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent border-r-transparent transform -rotate-45"></div>
+                                    <div className="text-center z-10">
+                                        <div className="text-2xl font-black text-white leading-none">{solvedCount}</div>
+                                        <div className="text-[10px] text-stone-500 font-bold">/{questions.length} Solved</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Mini Calendar Placeholder */}
+                        <div className="bg-stone-900/40 border border-white/5 rounded-3xl p-6 shadow-sm backdrop-blur-md">
+                            <div className="flex items-center justify-between mb-4">
+                                <span className="text-sm font-bold text-teal-50 flex items-center gap-2">
+                                    <Calendar className="w-4 h-4 text-stone-400" /> August 2026
+                                </span>
+                            </div>
+                            <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold text-stone-500 mb-2">
+                                <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+                            </div>
+                            <div className="grid grid-cols-7 gap-2 text-center text-xs font-medium text-stone-400">
+                                <div className="text-stone-700">26</div><div className="text-stone-700">27</div><div className="text-stone-700">28</div><div className="text-stone-700">29</div><div className="text-stone-700">30</div><div className="text-stone-700">31</div>
+                                <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
+                                <div>8</div><div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div>
+                                <div>15</div><div>16</div><div className="bg-emerald-500/20 text-emerald-400 rounded-full w-6 h-6 flex items-center justify-center mx-auto border border-emerald-500/30">17</div><div className="bg-amber-500 text-black rounded-full w-6 h-6 flex items-center justify-center mx-auto">18</div><div>19</div><div>20</div><div>21</div>
+                                <div>22</div><div>23</div><div>24</div><div>25</div><div>26</div><div>27</div><div>28</div>
+                            </div>
+                        </div>
+
                     </div>
-                )}
+                </div>
             </div>
         </Layout>
     );

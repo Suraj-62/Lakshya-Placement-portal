@@ -11,6 +11,7 @@ import {
 import { 
   ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Bar, Cell 
 } from 'recharts';
+import Layout from '../components/Layout';
 
 function Dashboard() {
   const { user } = useAuth();
@@ -89,8 +90,8 @@ function Dashboard() {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-3 rounded-lg shadow-xl">
-          <p className="text-stone-900 dark:text-orange-50 font-semibold">{`${payload[0].payload.subject}`}</p>
-          <p className="text-amber-600 dark:text-amber-500 text-sm mt-1">{`Mastery: ${parseFloat(payload[0].value).toFixed(1)}%`}</p>
+          <p className="text-stone-900 dark:text-teal-50 font-semibold">{`${payload[0].payload.subject}`}</p>
+          <p className="text-emerald-600 dark:text-emerald-500 text-sm mt-1">{`Mastery: ${parseFloat(payload[0].value).toFixed(1)}%`}</p>
         </div>
       );
     }
@@ -98,8 +99,9 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] text-stone-900 dark:text-stone-200 pb-20 animate-in fade-in duration-500 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+    <Layout title="Dashboard | Lakshya" fullWidth={false}>
+      <div className="pb-20 animate-in fade-in duration-500">
+        <div className="max-w-7xl mx-auto pt-8">
         
         {/* Header Segment */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
@@ -113,7 +115,7 @@ function Dashboard() {
                       onError={() => setImageError(true)} 
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 flex items-center justify-center text-2xl font-bold text-amber-600 dark:text-amber-500">
+                  <div className="w-16 h-16 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 flex items-center justify-center text-2xl font-bold text-emerald-600 dark:text-emerald-500">
                      {user?.name?.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -129,7 +131,7 @@ function Dashboard() {
            </div>
            
            <div className="flex items-center gap-3">
-              <Link href="/profile" className="p-2 bg-white dark:bg-[#121212] hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-200 dark:border-white/5 rounded-xl transition-colors text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white shadow-sm">
+              <Link href="/profile" className="p-2 bg-white dark:bg-slate-900/50 hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-200 dark:border-white/5 rounded-xl transition-colors text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white shadow-sm">
                  <Settings className="w-5 h-5" />
               </Link>
            </div>
@@ -137,15 +139,15 @@ function Dashboard() {
 
         {/* 5-Grid Stats */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-            <div className="bg-white dark:bg-[#121212] border border-stone-200 dark:border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-stone-300 dark:hover:border-white/10 transition-colors shadow-sm">
+            <div className="bg-white dark:bg-slate-900/50 border border-stone-200 dark:border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-stone-300 dark:hover:border-white/10 transition-colors shadow-sm">
                <div className="flex items-center gap-3 mb-4">
-                   <div className="p-2 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 rounded-lg"><Flame className="w-5 h-5" /></div>
+                   <div className="p-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 rounded-lg"><Flame className="w-5 h-5" /></div>
                    <span className="text-sm font-medium text-stone-600 dark:text-stone-400">Day Streak</span>
                </div>
                <div className="text-3xl font-bold text-stone-900 dark:text-white">{dashboardData.streak}</div>
             </div>
             
-            <div className="bg-white dark:bg-[#121212] border border-stone-200 dark:border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-stone-300 dark:hover:border-white/10 transition-colors shadow-sm">
+            <div className="bg-white dark:bg-slate-900/50 border border-stone-200 dark:border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-stone-300 dark:hover:border-white/10 transition-colors shadow-sm">
                <div className="flex items-center gap-3 mb-4">
                    <div className="p-2 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-500 rounded-lg"><Trophy className="w-5 h-5" /></div>
                    <span className="text-sm font-medium text-stone-600 dark:text-stone-400">Total Points</span>
@@ -153,7 +155,7 @@ function Dashboard() {
                <div className="text-3xl font-bold text-stone-900 dark:text-white">{dashboardData.points}</div>
             </div>
             
-            <div className="bg-white dark:bg-[#121212] border border-stone-200 dark:border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-stone-300 dark:hover:border-white/10 transition-colors shadow-sm">
+            <div className="bg-white dark:bg-slate-900/50 border border-stone-200 dark:border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-stone-300 dark:hover:border-white/10 transition-colors shadow-sm">
                <div className="flex items-center gap-3 mb-4">
                    <div className="p-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 rounded-lg"><CheckCircle2 className="w-5 h-5" /></div>
                    <span className="text-sm font-medium text-stone-600 dark:text-stone-400">MCQs Solved</span>
@@ -166,7 +168,7 @@ function Dashboard() {
                </div>
             </div>
 
-            <div className="bg-white dark:bg-[#121212] border border-stone-200 dark:border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-stone-300 dark:hover:border-white/10 transition-colors shadow-sm">
+            <div className="bg-white dark:bg-slate-900/50 border border-stone-200 dark:border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-stone-300 dark:hover:border-white/10 transition-colors shadow-sm">
                <div className="flex items-center gap-3 mb-4">
                    <div className="p-2 bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-500 rounded-lg"><Code className="w-5 h-5" /></div>
                    <span className="text-sm font-medium text-stone-600 dark:text-stone-400">Coding Solved</span>
@@ -179,7 +181,7 @@ function Dashboard() {
                </div>
             </div>
             
-            <div className="bg-white dark:bg-[#121212] border border-stone-200 dark:border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-stone-300 dark:hover:border-white/10 transition-colors shadow-sm col-span-2 md:col-span-1">
+            <div className="bg-white dark:bg-slate-900/50 border border-stone-200 dark:border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:border-stone-300 dark:hover:border-white/10 transition-colors shadow-sm col-span-2 md:col-span-1">
                <div className="flex items-center gap-3 mb-4">
                    <div className="p-2 bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-lg"><Target className="w-5 h-5" /></div>
                    <span className="text-sm font-medium text-stone-600 dark:text-stone-400">Avg Accuracy</span>
@@ -191,7 +193,7 @@ function Dashboard() {
         {/* Middle Section: Bar Chart & AI Report */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             {/* Proficiency Bar Chart (Col-span-2) */}
-            <div className="lg:col-span-2 bg-white dark:bg-[#121212] border border-stone-200 dark:border-white/5 rounded-3xl p-6 md:p-8 shadow-sm">
+            <div className="lg:col-span-2 bg-white dark:bg-slate-900/50 border border-stone-200 dark:border-white/5 rounded-3xl p-6 md:p-8 shadow-sm">
                 <div className="flex items-center justify-between mb-8">
                     <h2 className="text-lg font-semibold text-stone-900 dark:text-white">Topic Proficiency</h2>
                 </div>
@@ -225,7 +227,7 @@ function Dashboard() {
 
             {/* AI Insights (Col-span-1) */}
             <div className="lg:col-span-1 flex flex-col gap-4">
-                <div className="bg-white dark:bg-[#121212] border border-stone-200 dark:border-white/5 rounded-3xl p-6 md:p-8 flex-1 flex flex-col shadow-sm">
+                <div className="bg-white dark:bg-slate-900/50 border border-stone-200 dark:border-white/5 rounded-3xl p-6 md:p-8 flex-1 flex flex-col shadow-sm">
                    <div className="flex items-center gap-3 mb-8">
                       <div className="p-2 bg-indigo-50 dark:bg-transparent rounded-lg">
                           <BrainCircuit className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
@@ -263,7 +265,7 @@ function Dashboard() {
                         href="https://samvaad-ten.vercel.app" 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="flex-1 py-3.5 bg-white dark:bg-[#1a1a1a] text-stone-900 dark:text-white border border-stone-200 dark:border-white/10 hover:bg-stone-100 dark:hover:bg-stone-800 text-sm font-semibold rounded-xl transition-colors text-center flex items-center justify-center gap-2 shadow-sm"
+                        className="flex-1 py-3.5 bg-white dark:bg-slate-800 text-stone-900 dark:text-white border border-stone-200 dark:border-white/10 hover:bg-stone-100 dark:hover:bg-stone-800 text-sm font-semibold rounded-xl transition-colors text-center flex items-center justify-center gap-2 shadow-sm"
                       >
                           Samvaad <ExternalLink className="w-4 h-4" />
                       </a>
@@ -273,7 +275,7 @@ function Dashboard() {
         </div>
 
         {/* Categories Section */}
-        <div className="bg-white dark:bg-[#121212] border border-stone-200 dark:border-white/5 rounded-3xl p-6 md:p-8 mb-8 shadow-sm">
+        <div className="bg-white dark:bg-slate-900/50 border border-stone-200 dark:border-white/5 rounded-3xl p-6 md:p-8 mb-8 shadow-sm">
             <div className="mb-8">
                  <h2 className="text-xl font-semibold text-stone-900 dark:text-white">Practice Categories</h2>
                  <p className="text-stone-600 dark:text-stone-400 text-sm mt-1">Select a topic to improve your skills</p>
@@ -282,7 +284,8 @@ function Dashboard() {
         </div>
 
       </div>
-    </div>
+      </div>
+    </Layout>
   );
 }
 

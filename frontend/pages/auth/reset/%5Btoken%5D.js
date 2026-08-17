@@ -35,33 +35,33 @@ export default function ResetPassword() {
     <div className="min-h-screen bg-stone-950 flex items-center justify-center p-6 relative overflow-hidden">
       
       {/* Background Decor */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-600/5 blur-[120px] rounded-full -mr-64 -mt-64"></div>
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-600/5 blur-[120px] rounded-full -ml-64 -mb-64"></div>
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-600/5 blur-[120px] rounded-full -mr-64 -mt-64"></div>
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-600/5 blur-[120px] rounded-full -ml-64 -mb-64"></div>
 
       <div className="w-full max-w-md relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
         {/* Logo/Icon */}
         <div className="flex flex-col items-center mb-8">
             <div className="w-16 h-16 bg-stone-900 border border-stone-800 rounded-2xl flex items-center justify-center mb-4 shadow-2xl relative group">
-                <div className="absolute inset-0 bg-amber-600/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <Lock className="w-8 h-8 text-amber-500 relative z-10" />
+                <div className="absolute inset-0 bg-emerald-600/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <Lock className="w-8 h-8 text-emerald-500 relative z-10" />
             </div>
-            <h1 className="text-3xl font-black text-orange-50 tracking-tighter">New <span className="text-amber-500">Security</span></h1>
+            <h1 className="text-3xl font-black text-teal-50 tracking-tighter">New <span className="text-emerald-500">Security</span></h1>
             <p className="text-stone-500 text-[10px] font-black uppercase tracking-[0.2em] mt-2 opacity-60">System Protocol: Credential Update</p>
         </div>
 
         <div className="bg-[#0c0a09] border border-stone-800 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-600/20 to-transparent"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-600/20 to-transparent"></div>
             
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                     <label className="text-[10px] font-black text-stone-600 uppercase tracking-widest px-1">New Access Credential</label>
                     <div className="relative group/input">
-                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-700 group-focus-within/input:text-amber-500 transition-colors" />
+                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-700 group-focus-within/input:text-emerald-500 transition-colors" />
                         <input
                             type={showPassword ? "text" : "password"}
                             placeholder="Enter new password"
-                            className="w-full bg-stone-950 border border-stone-800 rounded-2xl py-4 pl-12 pr-12 text-orange-50 font-bold focus:outline-none focus:ring-2 focus:ring-amber-500/10 transition-all placeholder:text-stone-800"
+                            className="w-full bg-stone-950 border border-stone-800 rounded-2xl py-4 pl-12 pr-12 text-teal-50 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/10 transition-all placeholder:text-stone-800"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -79,7 +79,7 @@ export default function ResetPassword() {
                 <div className="pt-2">
                     <button
                         disabled={loading}
-                        className="w-full bg-amber-600 hover:bg-amber-500 text-amber-50 py-4 rounded-2xl font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-xl shadow-amber-900/20 disabled:opacity-50 group"
+                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-emerald-50 py-4 rounded-2xl font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-xl shadow-emerald-900/20 disabled:opacity-50 group"
                     >
                         {loading ? 'Updating...' : (
                             <>
@@ -91,7 +91,7 @@ export default function ResetPassword() {
             </form>
 
             <div className="mt-8 pt-6 border-t border-stone-900 flex flex-col items-center gap-4">
-                <Link href="/auth/login" className="flex items-center gap-2 text-[10px] font-black text-stone-500 hover:text-amber-500 uppercase tracking-widest transition-colors group">
+                <Link href="/auth/login" className="flex items-center gap-2 text-[10px] font-black text-stone-500 hover:text-emerald-500 uppercase tracking-widest transition-colors group">
                     <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> Back to Authorization
                 </Link>
             </div>

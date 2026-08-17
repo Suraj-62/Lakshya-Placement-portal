@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const questionSchema = new mongoose.Schema({
   category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true, index: true },
+  title: String,
   topic: String,
   difficulty: { type: String, enum: ['easy', 'medium', 'hard'], required: true, index: true },
   questionText: { type: String, required: true },

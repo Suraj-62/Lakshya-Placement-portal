@@ -21,8 +21,8 @@ function MyApp({ Component, pageProps }) {
         toastOptions={{
           style: {
             background: '#1c1917', // stone-900
-            color: '#fffbeb', // amber-50
-            border: '1px solid rgba(139, 94, 60, 0.4)', // amber-900 border
+            color: '#fffbeb', // emerald-50
+            border: '1px solid rgba(139, 94, 60, 0.4)', // emerald-900 border
             boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)',
             fontFamily: 'inherit',
             fontWeight: '500',

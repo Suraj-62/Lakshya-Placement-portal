@@ -6,12 +6,12 @@ import {
     generatePythonDriver 
 } from './dynamicDrivers.js';
 
-// Language IDs for Judge0 CE
-const LANGUAGE_IDS = {
-    'javascript': 93, // Node.js 18.15.0 (Fallback to 63 if needed)
-    'python': 71,     // Python 3.11.2
-    'cpp': 54,        // GCC 9.2.0
-    'java': 62        // OpenJDK 13.0.1
+// Piston API uses specific language versions
+const PISTON_LANGUAGES = {
+    'javascript': { language: 'javascript', version: '18.15.0' },
+    'python': { language: 'python', version: '3.10.0' },
+    'cpp': { language: 'c++', version: '10.2.0' },
+    'java': { language: 'java', version: '15.0.2' }
 };
 
 // Use the old getDriver implementation since it's working for wrapping user code
@@ -88,39 +88,42 @@ except Exception as e:
     }
 };
 
-const executeOnJudge0 = async (sourceCode, languageId, stdin) => {
-    const apiUrl = process.env.JUDGE0_API_URL || 'https://ce.judge0.com';
-    const apiKey = process.env.JUDGE0_API_KEY;
+const executeOnPiston = async (sourceCode, language, stdin) => {
+    const PISTON_API = 'https://emkc.org/api/v2/piston/execute';
+    
+    const targetLang = PISTON_LANGUAGES[language];
+    if (!targetLang) throw new Error("Unsupported language for Piston API");
 
-    const headers = {
-        'Content-Type': 'application/json',
+    const payload = {
+        language: targetLang.language,
+        version: targetLang.version,
+        files: [{ content: sourceCode }],
+        stdin: stdin ? String(stdin) : "",
     };
 
-    if (apiKey) {
-        if (apiUrl.includes('rapidapi')) {
-            headers['X-RapidAPI-Key'] = apiKey;
-            headers['X-RapidAPI-Host'] = new URL(apiUrl).hostname;
-        } else {
-            headers['X-Auth-Token'] = apiKey; 
-        }
-    }
-
     try {
-        const response = await axios.post(`${apiUrl}/submissions?base64_encoded=true&wait=true`, {
-            source_code: Buffer.from(sourceCode).toString('base64'),
-            language_id: languageId,
-            stdin: stdin ? Buffer.from(String(stdin)).toString('base64') : null
-        }, { headers });
-
+        const response = await axios.post(PISTON_API, payload);
         const data = response.data;
-        if (data.stdout) data.stdout = Buffer.from(data.stdout, 'base64').toString('utf8');
-        if (data.stderr) data.stderr = Buffer.from(data.stderr, 'base64').toString('utf8');
-        if (data.compile_output) data.compile_output = Buffer.from(data.compile_output, 'base64').toString('utf8');
+        
+        const compileCode = data.compile ? data.compile.code : 0;
+        const runCode = data.run ? data.run.code : 0;
+        
+        let statusId = 3; // Success
+        if (compileCode !== 0) {
+            statusId = 6; // Compile Error
+        } else if (runCode !== 0) {
+            statusId = 4; // Runtime Error
+        }
 
-        return data;
+        return {
+            stdout: data.run?.stdout || "",
+            stderr: data.run?.stderr || "",
+            compile_output: data.compile?.output || "",
+            status: { id: statusId, description: data.run?.signal || (statusId === 3 ? "Accepted" : "Error") }
+        };
     } catch (error) {
-        console.error("Judge0 API Error:", error.response?.data || error.message);
-        throw new Error(error.response?.data?.error || "Judge0 execution failed.");
+        console.error("Piston API Error:", error.response?.data || error.message);
+        throw new Error("Piston execution failed.");
     }
 };
 
@@ -155,17 +158,16 @@ export const runAgainstTestCases = async (code, language, testCases, functionNam
         }
     };
 
-    let languageId = LANGUAGE_IDS[language];
-    if (!languageId) {
+    if (!PISTON_LANGUAGES[language]) {
         return testCases.map(tc => ({
             input: tc.input,
             passed: false,
-            error: `Language ${language} not supported on Judge0 yet.`,
+            error: `Language ${language} not supported yet.`,
             status: 'error'
         }));
     }
 
-    // Execute test cases sequentially to avoid rate-limiting on public Judge0 API
+    // Execute test cases sequentially
     const finalResults = [];
     for (const tc of testCases) {
         let wrappedCode = baseWrappedCode;
@@ -182,28 +184,20 @@ export const runAgainstTestCases = async (code, language, testCases, functionNam
         }
 
         try {
-            const judge0Result = await executeOnJudge0(wrappedCode, languageId, tc.input);
-            
-            // Handle fallback if Node.js 18 (93) is missing, Judge0 might return "Language not found"
-            if (judge0Result.error && judge0Result.error.includes("Language") && language === 'javascript' && languageId === 93) {
-                languageId = 63; // Fallback to 63
-                const retryResults = await runAgainstTestCases(code, language, [tc], functionName, drivers);
-                finalResults.push(retryResults[0]);
-                continue;
-            }
+            const executionResult = await executeOnPiston(wrappedCode, language, tc.input);
             
             let actualOutput = "";
             let errorMsg = null;
 
-            if (judge0Result.status.id === 3) {
+            if (executionResult.status.id === 3) {
                 // Success
-                actualOutput = judge0Result.stdout || "";
-            } else if (judge0Result.status.id === 6) {
+                actualOutput = executionResult.stdout || "";
+            } else if (executionResult.status.id === 6) {
                 // Compile Error
-                errorMsg = judge0Result.compile_output || "Compile Error";
+                errorMsg = executionResult.compile_output || "Compile Error";
             } else {
                 // Runtime / Time Limit / etc.
-                errorMsg = (judge0Result.stderr || judge0Result.compile_output || judge0Result.status.description || "Execution Error").trim();
+                errorMsg = (executionResult.stderr || executionResult.compile_output || executionResult.status.description || "Execution Error").trim();
             }
 
             const expectedOutput = tc.output.trim();
@@ -218,10 +212,10 @@ export const runAgainstTestCases = async (code, language, testCases, functionNam
                 expectedOutput: tc.output,
                 actualOutput: errorMsg ? `Error: ${errorMsg}` : (actualOutput.trim() || "No output"),
                 passed,
-                stdout: judge0Result.stdout,
-                stderr: judge0Result.stderr,
+                stdout: executionResult.stdout,
+                stderr: executionResult.stderr,
                 status: errorMsg ? 'error' : 'success',
-                signal: judge0Result.status.description
+                signal: executionResult.status.description
             });
 
         } catch (error) {

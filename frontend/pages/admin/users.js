@@ -97,11 +97,11 @@ function UserManagement() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-            <Link href="/admin" className="inline-flex items-center gap-2 text-stone-500 hover:text-orange-50 transition-colors mb-4 group">
+            <Link href="/admin" className="inline-flex items-center gap-2 text-stone-500 hover:text-teal-50 transition-colors mb-4 group">
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Panel
             </Link>
-            <h1 className="text-4xl font-bold text-orange-50 tracking-tight flex items-center gap-3">
-                <Users className="w-10 h-10 text-amber-500" /> Student Analytics
+            <h1 className="text-4xl font-bold text-teal-50 tracking-tight flex items-center gap-3">
+                <Users className="w-10 h-10 text-emerald-500" /> Student Analytics
             </h1>
             <p className="text-stone-400 mt-2 text-lg">Monitor student engagement, preparation levels, and account status.</p>
         </div>
@@ -116,7 +116,7 @@ function UserManagement() {
                 placeholder="Search students by name or email..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-stone-900/80 border border-stone-800 rounded-2xl py-4 pl-12 pr-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all shadow-inner"
+                className="w-full bg-stone-900/80 border border-stone-800 rounded-2xl py-4 pl-12 pr-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all shadow-inner"
             />
         </div>
         <div className="flex gap-2">
@@ -172,7 +172,7 @@ function UserManagement() {
                           <tr key={user._id} className={`hover:bg-white/[0.02] transition-colors group ${user.isBlocked ? 'opacity-60 grayscale-[0.5]' : ''}`}>
                               <td className="p-6">
                                   <div className="flex items-center gap-4">
-                                      <div className={`w-10 h-10 rounded-full bg-stone-800 border ${user.isBlocked ? 'border-red-500/50' : 'border-stone-700'} flex items-center justify-center font-bold text-amber-500 shadow-sm transition-transform group-hover:scale-110`}>
+                                      <div className={`w-10 h-10 rounded-full bg-stone-800 border ${user.isBlocked ? 'border-red-500/50' : 'border-stone-700'} flex items-center justify-center font-bold text-emerald-500 shadow-sm transition-transform group-hover:scale-110`}>
                                           {user.name.charAt(0).toUpperCase()}
                                       </div>
                                       <div>
@@ -206,7 +206,7 @@ function UserManagement() {
                                           </div>
                                           <div className="w-px h-6 bg-stone-800"></div>
                                           <div className="text-center">
-                                              <p className={`text-sm font-bold ${user.stats.mcqAccuracy > 70 ? 'text-emerald-500' : user.stats.mcqAccuracy > 40 ? 'text-amber-500' : 'text-stone-500'}`}>
+                                              <p className={`text-sm font-bold ${user.stats.mcqAccuracy > 70 ? 'text-emerald-500' : user.stats.mcqAccuracy > 40 ? 'text-emerald-500' : 'text-stone-500'}`}>
                                                   {user.stats.mcqAccuracy}%
                                               </p>
                                               <p className="text-[9px] text-stone-500 uppercase tracking-tighter">Accuracy</p>
@@ -230,7 +230,7 @@ function UserManagement() {
                                         className={`p-2.5 rounded-xl border transition-all flex items-center gap-2 ${
                                             user.isBlocked 
                                             ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/20' 
-                                            : 'bg-orange-500/10 border-orange-500/30 text-amber-500 hover:bg-orange-500/20'
+                                            : 'bg-teal-500/10 border-teal-500/30 text-emerald-500 hover:bg-teal-500/20'
                                         }`}
                                         title={user.isBlocked ? 'Unlock User' : 'Block User'}
                                       >
@@ -274,7 +274,7 @@ function AnalyticsSummaryCard({ label, value, icon }) {
                 </div>
                 <div>
                     <p className="text-xs font-bold text-stone-500 uppercase tracking-widest">{label}</p>
-                    <p className="text-3xl font-black text-orange-50 mt-1">{value}</p>
+                    <p className="text-3xl font-black text-teal-50 mt-1">{value}</p>
                 </div>
             </div>
         </div>

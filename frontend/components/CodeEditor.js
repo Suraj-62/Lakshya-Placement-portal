@@ -102,13 +102,13 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
                         <select 
                             value={language}
                             onChange={(e) => setLanguage(e.target.value)}
-                            className="appearance-none bg-stone-800 text-orange-50 px-4 py-2 pr-10 rounded-xl text-xs font-bold border border-white/10 focus:outline-none focus:border-amber-500 transition-all cursor-pointer"
+                            className="appearance-none bg-stone-800 text-teal-50 px-4 py-2 pr-10 rounded-xl text-xs font-bold border border-white/10 focus:outline-none focus:border-emerald-500 transition-all cursor-pointer"
                         >
                             {languages.map(lang => (
                                 <option key={lang.id} value={lang.id}>{lang.name}</option>
                             ))}
                         </select>
-                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-500 pointer-events-none group-hover:text-amber-500" />
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-500 pointer-events-none group-hover:text-emerald-500" />
                     </div>
                 </div>
 
@@ -116,7 +116,7 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
                     <button 
                         onClick={handleRunCode}
                         disabled={isRunning || isSubmitting}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-stone-800 text-stone-300 font-bold text-xs hover:bg-stone-700 hover:text-orange-50 transition-all disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-stone-800 text-stone-300 font-bold text-xs hover:bg-stone-700 hover:text-teal-50 transition-all disabled:opacity-50"
                     >
                         {isRunning ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3 text-emerald-500" />}
                         Run
@@ -124,7 +124,7 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
                     <button 
                         onClick={handleSubmitCode}
                         disabled={isRunning || isSubmitting}
-                        className="flex items-center gap-2 px-6 py-2 rounded-xl bg-amber-600 text-stone-900 font-bold text-xs hover:bg-amber-500 transition-all disabled:opacity-50 shadow-lg shadow-amber-900/20"
+                        className="flex items-center gap-2 px-6 py-2 rounded-xl bg-emerald-600 text-stone-900 font-bold text-xs hover:bg-emerald-500 transition-all disabled:opacity-50 shadow-lg shadow-emerald-900/20"
                     >
                         {isSubmitting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
                         Submit
@@ -168,16 +168,16 @@ const CodeEditor = ({ questionId, initialCode, language: initialLanguage }) => {
                     >
                         {/* Resizer Handle */}
                         <div 
-                            className="absolute top-0 left-0 right-0 h-1.5 -mt-[3px] cursor-row-resize z-50 hover:bg-amber-500 transition-colors"
+                            className="absolute top-0 left-0 right-0 h-1.5 -mt-[3px] cursor-row-resize z-50 hover:bg-emerald-500 transition-colors"
                             onMouseDown={() => setIsDragging(true)}
                         />
                         
                         <div className="flex-grow overflow-y-auto p-4 custom-scrollbar">
                             <div className="flex items-center justify-between mb-4">
-                                <h4 className="text-orange-50 font-bold text-sm tracking-tight flex items-center gap-2">
+                                <h4 className="text-teal-50 font-bold text-sm tracking-tight flex items-center gap-2">
                                     Output
                                 </h4>
-                                <button onClick={() => setResults(null)} className="text-stone-500 hover:text-orange-50 text-xs font-bold">Clear</button>
+                                <button onClick={() => setResults(null)} className="text-stone-500 hover:text-teal-50 text-xs font-bold">Clear</button>
                             </div>
                             <div className="space-y-3">
                                 {results.map((res, i) => (

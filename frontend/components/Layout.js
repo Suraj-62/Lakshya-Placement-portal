@@ -12,7 +12,8 @@ import {
   Activity,
   ExternalLink,
   Sun,
-  Moon
+  Moon,
+  Target
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
@@ -52,64 +53,67 @@ export default function Layout({ children, title = 'Lakshya Placement Portal', n
         <title>{title}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
-      <div className="min-h-screen bg-stone-50 dark:bg-[#090706] font-sans selection:bg-amber-500/30 selection:text-amber-900 dark:selection:text-amber-200 transition-colors duration-500">
-        {/* Dynamic Background Effects */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-          <div className="absolute top-[-15%] left-[-10%] w-[50%] h-[50%] bg-amber-500/10 dark:bg-amber-600/15 blur-[120px] rounded-full animate-blob transition-all duration-1000"></div>
-          <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-rose-500/10 dark:bg-rose-600/15 blur-[120px] rounded-full animate-blob animation-delay-2000 transition-all duration-1000"></div>
-          <div className="absolute bottom-[-10%] left-[20%] w-[40%] h-[40%] bg-orange-500/10 dark:bg-orange-600/15 blur-[120px] rounded-full animate-blob animation-delay-4000 transition-all duration-1000"></div>
+      <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] font-sans selection:bg-emerald-500/30 selection:text-emerald-900 dark:selection:text-emerald-200 transition-colors duration-500 relative">
+        {/* Neetcode Style Background Grid */}
+        <div className="fixed inset-0 z-0 pointer-events-none hidden dark:block">
+          {/* Subtle glowing center */}
+          <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[60%] h-[60%] bg-emerald-500/5 blur-[120px] rounded-full"></div>
+          {/* Dot grid pattern */}
+          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+          {/* Gradient mask to fade out the grid at the edges */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a0a]/50 to-[#0a0a0a]"></div>
         </div>
 
         {/* Navbar */}
         {!navHidden && (
-        <nav className="fixed top-0 w-full z-50 border-b border-stone-200/50 dark:border-amber-900/20 bg-white/70 dark:bg-[#090706]/70 backdrop-blur-xl shadow-sm dark:shadow-glow/10 transition-colors duration-300">
+        <nav className="fixed top-0 w-full z-50 border-b border-stone-200/50 dark:border-white/5 bg-white/70 dark:bg-[#0a0a0a]/80 backdrop-blur-xl shadow-sm transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           
-          <div onClick={handleLogoClick} className="flex items-center gap-3 cursor-pointer">
-            <img src="/logo.png" alt="Lakshya Logo" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(217,119,6,0.4)]" />
-            <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 tracking-tight">Lakshya</span>
+          <div onClick={handleLogoClick} className="flex items-center gap-3 cursor-pointer group">
+            <Target className="w-8 h-8 text-emerald-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)] transition-transform duration-500 group-hover:rotate-90" />
+            <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500 tracking-tight">Lakshya</span>
           </div>
 
           <div className="flex items-center gap-6">
+            {/* Core Navigation Links - Visible to All */}
+            <div className="hidden md:flex items-center gap-8 mr-4">
+              <Link href="/practice" className="text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2">
+                <Code className="w-4 h-4" /> Practice
+              </Link>
+              <a 
+                href="https://samvaad-ten.vercel.app" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2"
+              >
+                Samvaad <ExternalLink className="w-3 h-3" />
+              </a>
+              <Link href="/dashboard" className="text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2">
+                <LayoutDashboard className="w-4 h-4" /> MCA
+              </Link>
+              {user?.role === 'admin' && (
+                <Link href="/admin" className="text-sm font-bold text-emerald-600 dark:text-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors flex items-center gap-2">
+                   <Activity className="w-4 h-4" /> Admin
+                </Link>
+              )}
+            </div>
+
             {mounted && (
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="p-2 rounded-full bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700 transition-all"
+                className="p-2 rounded-full bg-stone-200 dark:bg-stone-800/50 text-stone-600 dark:text-stone-400 hover:bg-stone-300 dark:hover:bg-stone-700 transition-all border border-transparent dark:border-white/5"
                 aria-label="Toggle Theme"
               >
                 {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
             )}
-            {user ? (
-              <div className="flex items-center gap-6">
-                
-                {/* Desktop Links (Conditional for Admin) */}
-                <div className="hidden sm:flex items-center gap-6">
-                  {user.role === 'admin' ? (
-                    <Link href="/admin" className="text-sm font-bold text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 transition-colors flex items-center gap-2">
-                       <Activity className="w-4 h-4" /> Admin Control Center
-                    </Link>
-                  ) : (
-                    <>
-                      <Link href="/dashboard" className="text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-orange-50 transition-colors">Dashboard</Link>
-                      <Link href="/practice" className="text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-orange-50 transition-colors">Practice</Link>
-                      <a 
-                        href="https://samvaad-ten.vercel.app" 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-orange-50 transition-colors flex items-center gap-1"
-                      >
-                        Samvaad <ExternalLink className="w-3 h-3" />
-                      </a>
-                      <Link href="/leaderboard" className="text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-orange-50 transition-colors">Leaderboard</Link>
-                    </>
-                  )}
-                </div>
 
+            {user ? (
+              <div className="flex items-center gap-4">
                 {/* Profile Dropdown */}
                 <div className="relative" ref={dropdownRef}>
                   <div onClick={() => setOpen(!open)} className="flex items-center gap-2 cursor-pointer group">
-                    <div className="w-9 h-9 rounded-full bg-amber-900/40 text-amber-500 border border-amber-700/30 flex items-center justify-center font-bold text-sm group-hover:bg-amber-900/60 transition-colors">
+                    <div className="w-9 h-9 rounded-full bg-emerald-900/40 text-emerald-500 border border-emerald-700/30 flex items-center justify-center font-bold text-sm group-hover:bg-emerald-900/60 transition-colors">
                       {userInitial}
                     </div>
                     <ChevronDown className={`w-4 h-4 text-stone-500 group-hover:text-stone-300 transition-all duration-300 ${open ? 'rotate-180' : ''}`} />
@@ -117,40 +121,40 @@ export default function Layout({ children, title = 'Lakshya Placement Portal', n
 
                   {open && (
                     <div className="absolute right-0 mt-3 w-52 py-2 glass-card rounded-2xl shadow-premium z-50 transform origin-top-right transition-all animate-in fade-in zoom-in duration-200">
-                      <div className="px-4 py-3 border-b border-stone-100 dark:border-amber-900/20">
+                      <div className="px-4 py-3 border-b border-stone-100 dark:border-emerald-900/20">
                           <p className="text-[10px] font-black uppercase tracking-widest text-stone-400 dark:text-stone-500 mb-1">Signed in as</p>
-                          <p className="text-sm font-bold text-stone-800 dark:text-orange-50 truncate">{user.name}</p>
+                          <p className="text-sm font-bold text-stone-800 dark:text-teal-50 truncate">{user.name}</p>
                           <p className="text-[10px] text-stone-500 truncate">{user.email}</p>
                       </div>
                       
                       <div className="py-1">
                         {user.role === 'admin' ? (
-                          <button onClick={() => { setOpen(false); router.push('/admin'); }} className="w-full px-4 py-2.5 text-left text-sm text-amber-600 dark:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 flex items-center gap-2 transition-colors font-bold">
+                          <button onClick={() => { setOpen(false); router.push('/admin'); }} className="w-full px-4 py-2.5 text-left text-sm text-emerald-600 dark:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 flex items-center gap-2 transition-colors font-bold">
                             <Activity className="w-4 h-4" /> Admin Control
                           </button>
                         ) : (
                           <>
-                            <button onClick={() => { setOpen(false); router.push('/dashboard'); }} className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-amber-600 dark:hover:text-orange-50 flex items-center gap-2 transition-colors">
+                            <button onClick={() => { setOpen(false); router.push('/dashboard'); }} className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-emerald-600 dark:hover:text-teal-50 flex items-center gap-2 transition-colors">
                               <LayoutDashboard className="w-4 h-4" /> Dashboard
                             </button>
-                            <button onClick={() => { setOpen(false); router.push('/practice'); }} className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-amber-600 dark:hover:text-orange-50 flex items-center gap-2 transition-colors">
+                            <button onClick={() => { setOpen(false); router.push('/practice'); }} className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-emerald-600 dark:hover:text-teal-50 flex items-center gap-2 transition-colors">
                               <Code className="w-4 h-4" /> Practice Arena
                             </button>
                             <a 
                               href="https://samvaad-ten.vercel.app" 
                               target="_blank" 
                               rel="noopener noreferrer" 
-                              className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-amber-600 dark:hover:text-orange-50 flex items-center gap-2 transition-colors"
+                              className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-emerald-600 dark:hover:text-teal-50 flex items-center gap-2 transition-colors"
                             >
                               <ExternalLink className="w-4 h-4" /> Samvaad
                             </a>
-                            <button onClick={() => { setOpen(false); router.push('/leaderboard'); }} className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-amber-600 dark:hover:text-orange-50 flex items-center gap-2 transition-colors">
+                            <button onClick={() => { setOpen(false); router.push('/leaderboard'); }} className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-emerald-600 dark:hover:text-teal-50 flex items-center gap-2 transition-colors">
                               <Trophy className="w-4 h-4" /> Leaderboard
                             </button>
                           </>
                         )}
                         
-                        <button onClick={() => { setOpen(false); router.push('/profile'); }} className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-amber-600 dark:hover:text-orange-50 flex items-center gap-2 transition-colors border-t border-stone-100 dark:border-stone-800 mt-1 pt-2">
+                        <button onClick={() => { setOpen(false); router.push('/profile'); }} className="w-full px-4 py-2 text-left text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-white/5 hover:text-emerald-600 dark:hover:text-teal-50 flex items-center gap-2 transition-colors border-t border-stone-100 dark:border-stone-800 mt-1 pt-2">
                           <UserIcon className="w-4 h-4" /> My Profile
                         </button>
                         
@@ -166,8 +170,8 @@ export default function Layout({ children, title = 'Lakshya Placement Portal', n
               </div>
             ) : (
               <div className="flex items-center gap-4 text-sm font-medium">
-                <Link href="/auth/login" className="text-stone-600 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Log in</Link>
-                <Link href="/auth/register" className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all shadow-glow hover:shadow-glow-lg hover:-translate-y-0.5 font-bold">Sign up</Link>
+                <Link href="/auth/login" className="text-stone-600 dark:text-stone-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Log in</Link>
+                <Link href="/auth/register" className="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all shadow-glow hover:shadow-glow-lg hover:-translate-y-0.5 font-bold">Sign up</Link>
               </div>
             )}
           </div>
@@ -176,7 +180,7 @@ export default function Layout({ children, title = 'Lakshya Placement Portal', n
       )}
 
       {/* Main Content */}
-      <main className={`relative z-10 w-full ${navHidden ? '' : 'min-h-[calc(100vh-64px)] pt-24 pb-12'} ${fullWidth || navHidden ? '' : 'px-6 max-w-7xl mx-auto'}`}>
+      <main className={`relative z-10 w-full ${navHidden ? '' : 'min-h-[calc(100vh-64px)] pt-[72px] pb-4'} ${fullWidth || navHidden ? '' : 'px-6 max-w-7xl mx-auto'}`}>
         {children}
       </main>
 

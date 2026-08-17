@@ -103,7 +103,7 @@ function Profile() {
             {/* AVATAR UPLOAD */}
             <div className="flex flex-col sm:flex-row items-center gap-8 pb-8 border-b border-white/5">
               <div className="relative group">
-                <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-stone-700 bg-stone-900 flex items-center justify-center relative z-10 hover:border-amber-500 transition-colors">
+                <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-stone-700 bg-stone-900 flex items-center justify-center relative z-10 hover:border-emerald-500 transition-colors">
                   {preview && !imageError ? (
                     <img
                       src={preview}
@@ -112,7 +112,7 @@ function Profile() {
                       onError={() => setImageError(true)}
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-amber-500 group-hover:opacity-50 transition-opacity">
+                    <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-emerald-500 group-hover:opacity-50 transition-opacity">
                       {name ? name.charAt(0).toUpperCase() : 'U'}
                     </div>
                   )}
@@ -128,7 +128,7 @@ function Profile() {
                 <h3 className="text-white font-semibold mb-1 text-lg">Profile Photo</h3>
                 <p className="text-stone-500 text-sm mb-4">Recommended: Square image, maximum size 2MB.</p>
                 <label className="cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 bg-[#1a1a1a] hover:bg-stone-800 border border-white/10 text-stone-300 text-sm font-medium rounded-xl transition-all">
-                  <Camera className="w-4 h-4 text-amber-500" /> Upload New Photo
+                  <Camera className="w-4 h-4 text-emerald-500" /> Upload New Photo
                   <input type="file" className="hidden" onChange={handleImageChange} accept="image/*" />
                 </label>
               </div>
@@ -141,7 +141,7 @@ function Profile() {
               </label>
               <input
                 type="text"
-                className="w-full bg-[#0a0a0a] border border-white/5 rounded-xl p-3.5 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder:text-stone-600"
+                className="w-full bg-[#0a0a0a] border border-white/5 rounded-xl p-3.5 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder:text-stone-600"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. John Doe"
@@ -155,7 +155,7 @@ function Profile() {
               </label>
               <input
                 type="email"
-                className="w-full bg-[#0a0a0a] border border-white/5 rounded-xl p-3.5 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder:text-stone-600"
+                className="w-full bg-[#0a0a0a] border border-white/5 rounded-xl p-3.5 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder:text-stone-600"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="e.g. john@example.com"
@@ -176,7 +176,7 @@ function Profile() {
                <button 
                 type="submit" 
                 disabled={loading}
-                className="w-full sm:w-auto bg-amber-600 hover:bg-amber-500 disabled:bg-stone-800 disabled:text-stone-500 text-white px-8 py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-amber-900/20 active:scale-95 min-w-[160px]"
+                className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 disabled:bg-stone-800 disabled:text-stone-500 text-white px-8 py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/20 active:scale-95 min-w-[160px]"
                >
                   {loading ? (
                     <>

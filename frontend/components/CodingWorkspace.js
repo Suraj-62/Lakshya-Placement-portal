@@ -15,7 +15,7 @@ const CodingWorkspace = ({ question }) => {
         {/* Left Pane: Question Details */}
         <Pane minSize={300} initialSize="40%" className="overflow-y-auto custom-scrollbar">
           <div className="p-8 pb-20 h-full">
-            <div className="flex items-center gap-2 mb-6 text-amber-500 font-bold text-sm tracking-wider uppercase">
+            <div className="flex items-center gap-2 mb-6 text-emerald-500 font-bold text-sm tracking-wider uppercase">
               <Tag className="w-4 h-4" />
               {question.topic}
             </div>
@@ -25,13 +25,13 @@ const CodingWorkspace = ({ question }) => {
             <div className="flex items-center gap-4 mb-8">
               <div className={`px-3 py-1 rounded-full text-xs font-bold border ${
                   question.difficulty === 'easy' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' :
-                  question.difficulty === 'medium' ? 'bg-amber-500/10 border-amber-500/20 text-amber-500' :
+                  question.difficulty === 'medium' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' :
                   'bg-red-500/10 border-red-500/20 text-red-500'
               }`}>
                 {question.difficulty.toUpperCase()}
               </div>
               <div className="flex items-center gap-2 text-stone-500 text-sm font-medium">
-                  <Award className="w-4 h-4 text-amber-600" />
+                  <Award className="w-4 h-4 text-emerald-600" />
                   10 Points
               </div>
             </div>
@@ -45,8 +45,8 @@ const CodingWorkspace = ({ question }) => {
               <div className="space-y-10 mt-10">
                 {question.testCases?.filter(tc => !tc.isHidden).map((tc, idx) => (
                   <div key={idx} className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-                    <h4 className="text-orange-50 font-bold mb-4 flex items-center gap-2">
-                      <span className="w-6 h-6 bg-amber-500/10 border border-amber-500/20 rounded-md flex items-center justify-center text-[10px] text-amber-500">
+                    <h4 className="text-teal-50 font-bold mb-4 flex items-center gap-2">
+                      <span className="w-6 h-6 bg-emerald-500/10 border border-emerald-500/20 rounded-md flex items-center justify-center text-[10px] text-emerald-500">
                         {idx + 1}
                       </span>
                       Example {idx + 1}:
@@ -67,7 +67,7 @@ const CodingWorkspace = ({ question }) => {
                       <div className="p-5 font-mono text-xs space-y-3">
                         <div className="flex gap-4">
                           <span className="text-stone-500 w-16 shrink-0">Input:</span> 
-                          <span className="text-orange-50 font-bold break-all">{tc.input}</span>
+                          <span className="text-teal-50 font-bold break-all">{tc.input}</span>
                         </div>
                         <div className="flex gap-4">
                           <span className="text-stone-500 w-16 shrink-0">Output:</span> 
@@ -89,7 +89,7 @@ const CodingWorkspace = ({ question }) => {
               {/* Constraints */}
               {question.constraints && (
                 <div className="mt-12 pt-10 border-t border-white/5">
-                    <h4 className="text-orange-50 font-bold mb-5 flex items-center gap-2">
+                    <h4 className="text-teal-50 font-bold mb-5 flex items-center gap-2">
                       <Braces className="w-4 h-4 text-stone-500" />
                       Constraints:
                     </h4>

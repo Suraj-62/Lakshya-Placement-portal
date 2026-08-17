@@ -140,7 +140,7 @@ function EditQuestion() {
 
   if (loading) return (
     <div className="min-h-screen bg-stone-950 flex flex-col items-center justify-center gap-4">
-        <div className="w-10 h-10 border-4 border-amber-600/20 border-t-amber-500 rounded-full animate-spin"></div>
+        <div className="w-10 h-10 border-4 border-emerald-600/20 border-t-emerald-500 rounded-full animate-spin"></div>
         <p className="text-stone-500 font-bold animate-pulse text-sm uppercase tracking-widest text-[10px]">Loading Record...</p>
     </div>
   );
@@ -149,13 +149,13 @@ function EditQuestion() {
     <div className="max-w-5xl mx-auto pb-20 px-4">
       
       {/* Navigation */}
-      <Link href="/admin" className="inline-flex items-center gap-2 text-stone-500 hover:text-orange-50 transition-colors mb-6 group">
+      <Link href="/admin" className="inline-flex items-center gap-2 text-stone-500 hover:text-teal-50 transition-colors mb-6 group">
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
       </Link>
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
         <div>
-            <h1 className="text-3xl font-bold text-orange-50 tracking-tight">
+            <h1 className="text-3xl font-bold text-teal-50 tracking-tight">
                Edit {type === 'code' ? 'Coding Challenge' : 'Repository Item'}
             </h1>
             <p className="text-stone-400 mt-1">Update question properties and judge logic.</p>
@@ -183,7 +183,7 @@ function EditQuestion() {
                     value={questionText}
                     onChange={e => setQuestionText(e.target.value)}
                     placeholder="Enter the question text here..."
-                    className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all min-h-[150px] placeholder:text-stone-700 font-medium"
+                    className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all min-h-[150px] placeholder:text-stone-700 font-medium"
                     required
                 />
             </div>
@@ -198,7 +198,7 @@ function EditQuestion() {
                       value={constraints}
                       onChange={e => setConstraints(e.target.value)}
                       placeholder="e.g. 1 <= n <= 10^5"
-                      className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all min-h-[100px] placeholder:text-stone-700 font-medium"
+                      className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all min-h-[100px] placeholder:text-stone-700 font-medium"
                   />
                </div>
             )}
@@ -210,9 +210,9 @@ function EditQuestion() {
                         <HelpCircle className="w-4 h-4" /> Validation Rules
                     </label>
                     <div className="flex bg-stone-950 p-1 rounded-xl border border-stone-800">
-                        {type === 'mcq' && <div className="px-4 py-2 rounded-lg text-xs font-black bg-amber-600 text-amber-50 flex items-center gap-2 uppercase tracking-widest"><Type className="w-3.5 h-3.5" /> MCQ</div>}
-                        {type === 'text' && <div className="px-4 py-2 rounded-lg text-xs font-black bg-amber-600 text-amber-50 flex items-center gap-2 uppercase tracking-widest"><AlignLeft className="w-3.5 h-3.5" /> Text</div>}
-                        {type === 'code' && <div className="px-4 py-2 rounded-lg text-xs font-black bg-amber-600 text-amber-50 flex items-center gap-2 uppercase tracking-widest"><Code2 className="w-3.5 h-3.5" /> Coding</div>}
+                        {type === 'mcq' && <div className="px-4 py-2 rounded-lg text-xs font-black bg-emerald-600 text-emerald-50 flex items-center gap-2 uppercase tracking-widest"><Type className="w-3.5 h-3.5" /> MCQ</div>}
+                        {type === 'text' && <div className="px-4 py-2 rounded-lg text-xs font-black bg-emerald-600 text-emerald-50 flex items-center gap-2 uppercase tracking-widest"><AlignLeft className="w-3.5 h-3.5" /> Text</div>}
+                        {type === 'code' && <div className="px-4 py-2 rounded-lg text-xs font-black bg-emerald-600 text-emerald-50 flex items-center gap-2 uppercase tracking-widest"><Code2 className="w-3.5 h-3.5" /> Coding</div>}
                     </div>
                 </div>
 
@@ -225,7 +225,7 @@ function EditQuestion() {
                                         value={opt}
                                         onChange={e => handleOptionChange(i, e.target.value)}
                                         placeholder={`Option ${i + 1}`}
-                                        className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 px-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all placeholder:text-stone-700 font-medium"
+                                        className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 px-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all placeholder:text-stone-700 font-medium"
                                         required
                                     />
                                     <button 
@@ -263,7 +263,7 @@ function EditQuestion() {
                             value={correctAnswer}
                             onChange={e => setCorrectAnswer(e.target.value)}
                             placeholder="Exact correct answer..."
-                            className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 px-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all placeholder:text-stone-700 font-medium"
+                            className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 px-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all placeholder:text-stone-700 font-medium"
                         />
                     </div>
                 )}
@@ -277,7 +277,7 @@ function EditQuestion() {
                             value={functionName}
                             onChange={e => setFunctionName(e.target.value)}
                             placeholder="e.g. solve, findMax"
-                            className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 px-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all font-mono"
+                            className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 px-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all font-mono"
                         />
                     </div>
 
@@ -285,7 +285,7 @@ function EditQuestion() {
                     <div className="space-y-4">
                         <label className="text-[10px] font-black text-stone-600 uppercase tracking-[0.2em] flex items-center justify-between">
                            Test Cases
-                           <button onClick={addTestCase} type="button" className="text-amber-500 hover:text-amber-400 flex items-center gap-1 font-black underline underline-offset-4">
+                           <button onClick={addTestCase} type="button" className="text-emerald-500 hover:text-emerald-400 flex items-center gap-1 font-black underline underline-offset-4">
                               + Add New Case
                            </button>
                         </label>
@@ -301,7 +301,7 @@ function EditQuestion() {
                                       value={tc.input} 
                                       onChange={e => updateTestCase(i, 'input', e.target.value)}
                                       placeholder="e.g. [1, 2, 3]" 
-                                      className="w-full bg-stone-900/50 border border-stone-800 rounded-lg px-3 py-2 text-xs text-stone-300 focus:ring-1 focus:ring-amber-500/50 font-mono"
+                                      className="w-full bg-stone-900/50 border border-stone-800 rounded-lg px-3 py-2 text-xs text-stone-300 focus:ring-1 focus:ring-emerald-500/50 font-mono"
                                     />
                                   </div>
                                   <div>
@@ -310,7 +310,7 @@ function EditQuestion() {
                                       value={tc.output} 
                                       onChange={e => updateTestCase(i, 'output', e.target.value)}
                                       placeholder="e.g. 6" 
-                                      className="w-full bg-stone-900/50 border border-stone-800 rounded-lg px-3 py-2 text-xs text-amber-500/80 focus:ring-1 focus:ring-amber-500/50 font-mono font-bold"
+                                      className="w-full bg-stone-900/50 border border-stone-800 rounded-lg px-3 py-2 text-xs text-emerald-500/80 focus:ring-1 focus:ring-emerald-500/50 font-mono font-bold"
                                     />
                                   </div>
                                 </div>
@@ -318,7 +318,7 @@ function EditQuestion() {
                                   <button 
                                     type="button"
                                     onClick={() => updateTestCase(i, 'isHidden', !tc.isHidden)}
-                                    className={`text-[9px] font-black px-3 py-1.5 rounded-lg border transition-all uppercase tracking-wider ${tc.isHidden ? 'bg-amber-900/20 border-amber-900/50 text-amber-500' : 'border-stone-800 text-stone-600 hover:border-stone-700'}`}
+                                    className={`text-[9px] font-black px-3 py-1.5 rounded-lg border transition-all uppercase tracking-wider ${tc.isHidden ? 'bg-emerald-900/20 border-emerald-900/50 text-emerald-500' : 'border-stone-800 text-stone-600 hover:border-stone-700'}`}
                                   >
                                     {tc.isHidden ? 'Hidden Case' : 'Example Case'}
                                   </button>
@@ -341,7 +341,7 @@ function EditQuestion() {
                                       value={tc.explanation || ''} 
                                       onChange={e => updateTestCase(i, 'explanation', e.target.value)}
                                       placeholder="Explain the logic for this example..." 
-                                      className="w-full bg-stone-900/30 border border-stone-800/50 rounded-xl p-3 text-xs text-stone-400 focus:ring-1 focus:ring-amber-500/30 h-20 resize-none"
+                                      className="w-full bg-stone-900/30 border border-stone-800/50 rounded-xl p-3 text-xs text-stone-400 focus:ring-1 focus:ring-emerald-500/30 h-20 resize-none"
                                     />
                                   </div>
                                   <div className="space-y-2">
@@ -352,7 +352,7 @@ function EditQuestion() {
                                       value={tc.imageUrl || ''} 
                                       onChange={e => updateTestCase(i, 'imageUrl', e.target.value)}
                                       placeholder="https://example.com/image.png" 
-                                      className="w-full bg-stone-900/30 border border-stone-800/50 rounded-xl p-3 text-xs text-stone-400 focus:ring-1 focus:ring-amber-500/30"
+                                      className="w-full bg-stone-900/30 border border-stone-800/50 rounded-xl p-3 text-xs text-stone-400 focus:ring-1 focus:ring-emerald-500/30"
                                     />
                                     {tc.imageUrl && (
                                       <div className="mt-2 rounded-lg overflow-hidden border border-stone-800 h-14 w-full bg-stone-900 flex items-center justify-center">
@@ -375,7 +375,7 @@ function EditQuestion() {
                              <div key={lang} className="space-y-2">
                                 <div className="text-[10px] font-black uppercase text-stone-700 ml-1">{lang}</div>
                                 <textarea 
-                                  className="w-full bg-stone-950 border border-stone-800 rounded-xl p-3 text-xs text-stone-400 focus:outline-none focus:ring-1 focus:ring-amber-500/30 font-mono h-[100px]"
+                                  className="w-full bg-stone-950 border border-stone-800 rounded-xl p-3 text-xs text-stone-400 focus:outline-none focus:ring-1 focus:ring-emerald-500/30 font-mono h-[100px]"
                                   value={starterCode[lang]}
                                   onChange={e => setStarterCode({...starterCode, [lang]: e.target.value})}
                                 />
@@ -394,7 +394,7 @@ function EditQuestion() {
                     value={explanation}
                     onChange={e => setExplanation(e.target.value)}
                     placeholder="Provide a detailed explanation for the correct answer..."
-                    className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all min-h-[100px] placeholder:text-stone-700 font-medium"
+                    className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-4 text-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all min-h-[100px] placeholder:text-stone-700 font-medium"
                 />
             </div>
         </div>
@@ -408,7 +408,7 @@ function EditQuestion() {
                    {/* DIFFICULTY: NOW PRIMARY */}
                     <div>
                         <label className="block text-[10px] font-black text-stone-600 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                            <BarChart className="w-3 h-3 text-amber-500" /> Challenge Level
+                            <BarChart className="w-3 h-3 text-emerald-500" /> Challenge Level
                         </label>
                         <div className="grid grid-cols-1 gap-2">
                             {['easy', 'medium', 'hard'].map(level => (
@@ -418,12 +418,12 @@ function EditQuestion() {
                                     onClick={() => setDifficulty(level)}
                                     className={`py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest border transition-all flex items-center justify-between px-6 ${
                                         difficulty === level 
-                                        ? (level === 'easy' ? 'bg-emerald-600/10 border-emerald-600/30 text-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.1)]' : level === 'medium' ? 'bg-amber-600/10 border-amber-600/30 text-amber-500 shadow-[0_0_20px_rgba(217,119,6,0.1)]' : 'bg-red-600/10 border-red-600/30 text-red-500 shadow-[0_0_20px_rgba(220,38,38,0.1)]')
+                                        ? (level === 'easy' ? 'bg-emerald-600/10 border-emerald-600/30 text-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.1)]' : level === 'medium' ? 'bg-emerald-600/10 border-emerald-600/30 text-emerald-500 shadow-[0_0_20px_rgba(217,119,6,0.1)]' : 'bg-red-600/10 border-red-600/30 text-red-500 shadow-[0_0_20px_rgba(220,38,38,0.1)]')
                                         : 'bg-stone-950/50 border-stone-800 text-stone-700 hover:border-stone-700'
                                     }`}
                                 >
                                     {level}
-                                    <div className={`w-2 h-2 rounded-full ${difficulty === level ? (level === 'easy' ? 'bg-emerald-500' : level === 'medium' ? 'bg-amber-500' : 'bg-red-500' ) : 'bg-stone-800'}`}></div>
+                                    <div className={`w-2 h-2 rounded-full ${difficulty === level ? (level === 'easy' ? 'bg-emerald-500' : level === 'medium' ? 'bg-emerald-500' : 'bg-red-500' ) : 'bg-stone-800'}`}></div>
                                 </button>
                             ))}
                         </div>
@@ -438,7 +438,7 @@ function EditQuestion() {
                             <select
                                 value={category}
                                 onChange={e => setCategory(e.target.value)}
-                                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-2.5 px-4 text-stone-400 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500/30 transition-all cursor-pointer"
+                                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-2.5 px-4 text-stone-400 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500/30 transition-all cursor-pointer"
                                 required
                             >
                                 <option value="" disabled>Select Category</option>
@@ -454,7 +454,7 @@ function EditQuestion() {
                                 value={topic}
                                 onChange={e => setTopic(e.target.value)}
                                 placeholder="e.g. Arrays, Sorting"
-                                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-2.5 px-4 text-stone-400 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500/30 transition-all placeholder:text-stone-800"
+                                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-2.5 px-4 text-stone-400 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500/30 transition-all placeholder:text-stone-800"
                             />
                         </div>
                     </div>
@@ -462,7 +462,7 @@ function EditQuestion() {
                     <div className="pt-4">
                         <button 
                             disabled={saving}
-                            className="w-full bg-gradient-to-br from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 disabled:opacity-50 text-amber-50 font-black uppercase tracking-[0.15em] py-5 rounded-2xl shadow-xl shadow-amber-900/40 transition-all flex items-center justify-center gap-3 text-sm"
+                            className="w-full bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 disabled:opacity-50 text-emerald-50 font-black uppercase tracking-[0.15em] py-5 rounded-2xl shadow-xl shadow-emerald-900/40 transition-all flex items-center justify-center gap-3 text-sm"
                         >
                             {saving ? 'Updating...' : (
                                 <>

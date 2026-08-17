@@ -54,7 +54,7 @@ const CodingQuestionPage = () => {
         return (
             <Layout title="Loading... | Lakshya">
                 <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                    <Loader2 className="w-10 h-10 text-amber-600 animate-spin" />
+                    <Loader2 className="w-10 h-10 text-emerald-600 animate-spin" />
                     <p className="text-stone-500 font-bold tracking-widest uppercase text-xs">Loading Workspace</p>
                 </div>
             </Layout>
@@ -65,9 +65,9 @@ const CodingQuestionPage = () => {
         return (
             <Layout title="Not Found | Lakshya">
                 <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-                    <h2 className="text-2xl font-black text-orange-50">Challenge Not Found</h2>
+                    <h2 className="text-2xl font-black text-teal-50">Challenge Not Found</h2>
                     <Link href="/practice">
-                        <button className="flex items-center gap-2 px-6 py-3 bg-stone-900 border border-white/5 rounded-2xl text-stone-300 font-bold hover:text-orange-50 transition-all">
+                        <button className="flex items-center gap-2 px-6 py-3 bg-stone-900 border border-white/5 rounded-2xl text-stone-300 font-bold hover:text-teal-50 transition-all">
                             <ChevronLeft className="w-4 h-4" />
                             Back to Workspace
                         </button>
@@ -84,16 +84,16 @@ const CodingQuestionPage = () => {
                 <div className="flex items-center gap-6">
                     <Link href="/practice">
                         <button className="p-2 hover:bg-stone-900 rounded-xl transition-all group">
-                            <ChevronLeft className="w-6 h-6 text-stone-400 group-hover:text-amber-500" />
+                            <ChevronLeft className="w-6 h-6 text-stone-400 group-hover:text-emerald-500" />
                         </button>
                     </Link>
                     <div className="h-6 w-[1px] bg-white/5"></div>
                     <div>
-                        <h2 className="text-orange-50 font-black text-lg leading-tight tracking-tight">
+                        <h2 className="text-teal-50 font-black text-lg leading-tight tracking-tight">
                             {question.topic} Challenge
                         </h2>
                         <p className="text-[10px] uppercase font-black text-stone-600 tracking-widest mt-0.5">
-                            Lakshya Placement Portal • <span className="text-amber-600/80">Workspace</span>
+                            Lakshya Placement Portal • <span className="text-emerald-600/80">Workspace</span>
                         </p>
                     </div>
                 </div>
@@ -104,14 +104,14 @@ const CodingQuestionPage = () => {
                             <p className="text-[9px] uppercase font-black text-stone-600 tracking-wider">Difficulty</p>
                             <p className={`text-xs font-black uppercase ${
                                 question.difficulty === 'easy' ? 'text-emerald-500' :
-                                question.difficulty === 'medium' ? 'text-amber-500' : 'text-red-500'
+                                question.difficulty === 'medium' ? 'text-emerald-500' : 'text-red-500'
                             }`}>{question.difficulty}</p>
                         </div>
                         <div className="h-8 w-[1px] bg-white/5"></div>
                         <div className="flex items-center gap-4">
                             <div className="text-right w-12">
                                 <p className="text-[9px] uppercase font-black text-stone-600 tracking-wider">Timer</p>
-                                <p className="text-xs font-black text-orange-50 font-mono tracking-widest">{formatTime(timeElapsed)}</p>
+                                <p className="text-xs font-black text-teal-50 font-mono tracking-widest">{formatTime(timeElapsed)}</p>
                             </div>
                             <button 
                                 onClick={() => setIsTimerRunning(!isTimerRunning)}
